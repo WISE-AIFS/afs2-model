@@ -86,7 +86,7 @@ class flow:
         """
         if self.flow_list!=None:
             for item in self.flow_list:
-                if str(item['id']) == str(self.current_node_id):
+                if str(item['id']) == str(select_node_id):
                     if is_current_node==True:
                         self.current_node_obj = item    # set into variable
 
