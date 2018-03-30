@@ -137,9 +137,15 @@ class flow:
 
             if 'url' in next_node_obj:
                 result = requests.post(next_node_obj['url'], headers=headers_obj, json=data)    # POST
+                resp_json = json.loads(result.text)   # trans POST response
 
                 if (result.status_code!=200) and (result.status_code!=204): # not success
                     error_node = item
+
+                    return error_node
+                elif (result.status_code==200) or (result.status_code==204):
+                    if ('error_node' in resp_json) and (resp_json["error_node"]!='0'):  # if error_node is not default value
+                        error_node = resp_json['error_node']
 
                     return error_node
             else:
