@@ -4,14 +4,14 @@
 from distutils.core import setup
 
 setup(
-    name='afs_client',
+    name='afs',
     version='1.0.0',
     description='For AFS developer develop analytics',
     long_description=open('README').read(),
-    author='benchuang',
+    author='Owen Lu, benchuang',
     author_email='benchuang@iii.org.tw',
-    url='',
+    url='http://140.92.25.64:8888/estherxchl/afs_project.git',
     license='MIT',
     install_requires=['setuptools'],
-    packages=['afs_client'],
+    packages=['afs'],
 )

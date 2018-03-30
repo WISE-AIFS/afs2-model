@@ -1,9 +1,9 @@
-import requests
 import json
-from io import BytesIO
 import logging
 import os
-from utils import InvalidStatusCode
+from io import BytesIO
+import requests
+from afs.utils import InvalidStatusCode
 
 _logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class models(object):
         self.entity_uri = entity_uri
         self.repo_id = None
 
-    def download_model(model_path, afs_config):
+    def _download_model(model_path, afs_config):
         download_url = afs_config['afs_url'] + 'v1/' + afs_config['instance_id'] + '/models/' + afs_config['repo_id'] + '/download'
         result = requests.get(download_url, params={'auth_code': afs_config['auth_code']},)
         with open(model_path, 'wb') as f:
@@ -42,9 +42,10 @@ class models(object):
         data = dict(tags = json.dumps(tags), evaluation_result = json.dumps(evaluation_result))
         files={'model': model_file}
         extra_paths = [self.repo_id, 'upload']
-        resp = self._put(data=data, files=files, extra_paths=extra_paths)
         f.close()
-        return resp.json()
+
+        resp = self._put(data=data, files=files, extra_paths=extra_paths)
+        return True
 
     def _create_model_repo(self, repo_name):
         request = dict(name=repo_name)
@@ -71,7 +72,6 @@ class models(object):
             url = '%s%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri)
         else:
             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
-        print(url)
         if not files:
             response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data))
         else:
@@ -84,9 +84,6 @@ class models(object):
             url = '%s%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri)
         else:
             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
-        print(url)
-        print(data)
-        print(files)
         if not files:
             response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), data=data))
         else:
@@ -102,7 +99,6 @@ class models(object):
         response = models._check_response(requests.get(url, params=get_params ))
         _logger.debug('GET - %s - %s', url, response.text)
         return response
-
 
     @staticmethod
     def _check_response(response):
