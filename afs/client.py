@@ -19,6 +19,7 @@ class afs():
 
         if not self.target_endpoint.endswith('/'):
             self.target_endpoint = self.target_endpoint + '/'
+        self.target_endpoint = self.target_endpoint + 'v1/'
 
         self.models = models(self.target_endpoint, self.instance_id, self.auth_code, 'models')
 
