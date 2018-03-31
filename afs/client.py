@@ -10,12 +10,15 @@ class afs():
         self.target_endpoint = os.getenv('afs_url', None)
         self.auth_code = os.getenv('auth_code', None)
         vcap = json.loads(os.getenv('VCAP_APPLICATION', {}))
-        if vcap is {}:
+        if not vcap:
             raise AssertionError('Environment VCAP_APPLICATION is empty')
         self.instance_id = vcap.get('space_name', None)
 
         if self.target_endpoint == None or self.instance_id == None or self.auth_code == None:
             raise AssertionError('Environment parameters need afs_url, instance_id, auth_code')
+
+        if not self.target_endpoint.endswith('/'):
+            self.target_endpoint = self.target_endpoint + '/'
 
         self.models = models(self.target_endpoint, self.instance_id, self.auth_code, 'models')
 
