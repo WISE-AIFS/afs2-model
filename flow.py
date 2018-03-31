@@ -136,8 +136,14 @@ class flow:
             headers_obj['node_id'] = item   # set request headers
 
             if 'url' in next_node_obj:
-                result = requests.post(next_node_obj['url'], headers=headers_obj, json=data)    # POST
-                resp_json = json.loads(result.text)   # trans POST response
+                try:
+                    result = requests.post(next_node_obj['url'], headers=headers_obj, json=data)    # POST
+                    resp_json = json.loads(result.text)   # trans POST response
+                except Exception as err:
+                    error_node = item
+
+                    return error_node
+
 
                 if (result.status_code!=200) and (result.status_code!=204): # not success
                     error_node = item
