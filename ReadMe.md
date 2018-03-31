@@ -2,14 +2,17 @@
 
 ## 安裝
 
-From pip
+pip install
+
 ```
 $ pip install git+http://140.92.25.64:8888/estherxchl/afs_project.git
 ```
+
 From sources
 
 To build the library run :
 ```
+$ pip install requirements
 $ python setup.py install
 ```
 
@@ -21,7 +24,7 @@ def upload_model(self, model_name, accuracy, loss, tags={}, extra_evaluation={})
 ```
 
 
-範例
+## 範例
 
 ```
 from afs.client import afs
