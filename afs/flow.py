@@ -19,32 +19,49 @@ class flow:
 
 
 
-    def __init__(self, obj):
+    def __init__(self):
         """
         Initialize.
-        Set class properties value.
+        """
+        self.flow_id = None  # Node-RED flow id
+        self.flow_list = None    # Node-RED all nodes in flow
+        self.current_node_id = None  # Node-RED current node id
+        self.current_node_obj = None # Node-RED current node config
+        self.host_url = None # host url for Node-RED
+
+
+
+    def set_flow_config(self, obj):
+        """
+        Set config(class properties value) of flow.
 
         :param  obj: (dict) request headers.
                     {flow_id, node_id, host_url}
+        
+        :return is_success: (bool) flow config information is setting success.
+            True: setting success.
+            False: lose config information.
         """
         # set flow_id
         if 'flow_id' in obj:
             self.flow_id = obj['flow_id']
         else:
-            return None
+            return False
         
         # set node_id
         if 'node_id' in obj:
             self.current_node_id = obj['node_id']
         else:
-            return None
+            return False
         
         # set host url
         if 'host_url' in obj:
             self.host_url = obj['host_url']
         else:
-            return None
-    
+            return False
+        
+        return True
+
 
 
     def get_flow_list(self):
