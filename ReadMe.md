@@ -33,8 +33,12 @@ def upload_model(model_name, accuracy, loss, tags={}, extra_evaluation={}):
 
 ## 範例
 
+
+### models function
 ```
 from afs.client import afs
+with open('model.h5', 'w') as f:
+    f.write('dummy model')
 client = afs()
 client.models.upload_model('model.h5', accuracy=0.4, loss=0.3, tags=dict(machine='machine01'))
 # 執行成功不回傳，執行失敗將raise原因
