@@ -23,6 +23,14 @@ class models(object):
         f.close()
 
     def upload_model(self, model_name, accuracy, loss, tags={}, extra_evaluation={}):
+        """
+         :rtype: None
+         :param model_name:  (required) string, model path or name
+         :param accuracy: (required) float, model accuracy value
+         :param loss: (required) float, model loss value
+         :param tags: (optional) dict, tag from model
+         :param extra_evaluation: (optional) dict, other evaluation from model
+         """
         if os.path.exists(model_name) is False:
             raise AssertionError('File %s is not exist.' % model_name)
         if type(accuracy) is not float or type(loss) is not float:
@@ -43,9 +51,7 @@ class models(object):
         files={'model': model_file}
         extra_paths = [self.repo_id, 'upload']
         f.close()
-
         resp = self._put(data=data, files=files, extra_paths=extra_paths)
-        return True
 
     def _create_model_repo(self, repo_name):
         request = dict(name=repo_name)
