@@ -11,12 +11,12 @@ install_requires = [str(ir.req) for ir in install_requires]
 
 setup(
     name='afs',
-    version='1.0.0',
+    version='1.1.3.1',
     description='For AFS developer develop analytics',
     long_description=open('README').read(),
     author='Owen Lu, benchuang',
     author_email='benchuang@iii.org.tw',
-    url='http://140.92.25.64:8888/estherxchl/afs_project.git',
+    url='https://github.com/benchuang11046/afs',
     license='MIT',
     install_requires=install_requires,
     packages=['afs'],

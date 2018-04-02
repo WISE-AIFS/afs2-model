@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import logging
 from afs.models import models
 import os
@@ -23,6 +27,3 @@ class afs():
 
         self.models = models(self.target_endpoint, self.instance_id, self.auth_code, 'models')
 
-if __name__ == '__main__':
-    client = afs()
-    print(client.models.upload_model('__init__.py', accuracy=0.4, loss=0.3, tags=dict(qwe='qwe'), extra_evaluation=dict(qwe='qwe')) )

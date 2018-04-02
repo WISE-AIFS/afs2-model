@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import json
 import logging
 import os
@@ -31,10 +35,18 @@ class models(object):
          :param tags: (optional) dict, tag from model
          :param extra_evaluation: (optional) dict, other evaluation from model
          """
-        if os.path.exists(model_name) is False:
-            raise AssertionError('File %s is not exist.' % model_name)
-        if type(accuracy) is not float or type(loss) is not float:
-            raise AssertionError('Accuacy or loss value is not float.' % model_name)
+
+        if type(accuracy) is not float or type(loss) is not float or type(tags) is not dict or extra_evaluation is not dict:
+            raise AssertionError('Type error, accuracy and loss is float, and tags and extra_evaluation are dict.')
+        try:
+            model_name = str(model_name)
+        except Exception as e:
+            raise AssertionError('Type error, model_name %s cannot convert to string' % (model_name))
+        if not os.path.isfile(model_name):
+            raise AssertionError('File not found, model %s path is not exist.' % (model_name))
+        else:
+            if os.path.sep in model_name:
+                model_name = model_name.split(os.path.sep)[-1]
 
         with open(model_name, 'rb') as f:
             model_file = BytesIO(f.read())
@@ -50,7 +62,6 @@ class models(object):
         data = dict(tags = json.dumps(tags), evaluation_result = json.dumps(evaluation_result))
         files={'model': model_file}
         extra_paths = [self.repo_id, 'upload']
-        f.close()
         resp = self._put(data=data, files=files, extra_paths=extra_paths)
 
     def _create_model_repo(self, repo_name):
@@ -65,6 +76,11 @@ class models(object):
         return self._get(params=params)
 
     def _is_repo_exist(self, repo_name=None):
+        """
+
+        :param repo_name:
+        :return: False or repo_id
+        """
         params = dict(name=repo_name)
         resp = self._get(params=params)
         if len(resp.json()) == 0:
