@@ -142,7 +142,8 @@ class flow:
 
         :return error_node: (string) node id with error occur.
         """
-        error_node = '0'
+        error_node = '0'    # node with error occur
+        error_msg = ''  # error message
         next_list = self.current_node_obj['wires'][0]
         headers_obj = self.generate_headers()
 
@@ -158,21 +159,23 @@ class flow:
                     resp_json = json.loads(result.text)   # trans POST response
                 except Exception as err:
                     error_node = item
-
-                    return error_node
-
+                    error_msg = str(err)
+                    return error_node, error_msg
 
                 if (result.status_code!=200) and (result.status_code!=204): # not success
                     error_node = item
+                    error_msg = result.text
+                    return error_node, error_msg
 
-                    return error_node
                 elif (result.status_code==200) or (result.status_code==204):
                     if ('error_node' in resp_json) and (resp_json["error_node"]!='0'):  # if error_node is not default value
                         error_node = resp_json['error_node']
+                        error_msg = resp_json['error_msg']
 
-                    return error_node
+                    return error_node, error_msg
+            
             else:
                 continue
             
-        return error_node
+        return error_node, error_msg
 
