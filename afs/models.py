@@ -26,7 +26,7 @@ class models(object):
              f.write(result.content)
         f.close()
 
-    def upload_model(self, model_name, accuracy, loss, tags={}, extra_evaluation={}):
+    def upload_model(self, model_name, accuracy: float, loss: float, tags={}, extra_evaluation={}):
         """
          :rtype: None
          :param model_name:  (required) string, model path or name
@@ -36,7 +36,7 @@ class models(object):
          :param extra_evaluation: (optional) dict, other evaluation from model
          """
 
-        if type(accuracy) is not float or type(loss) is not float or type(tags) is not dict or extra_evaluation is not dict:
+        if not isinstance(accuracy, float) or not isinstance(loss, float) is not float or not isinstance(tags, dict) or not isinstance(extra_evaluation, dict):
             raise AssertionError('Type error, accuracy and loss is float, and tags and extra_evaluation are dict.')
         try:
             model_name = str(model_name)
@@ -78,7 +78,7 @@ class models(object):
     def _is_repo_exist(self, repo_name=None):
         """
 
-        :param repo_name:
+        :param repo_name
         :return: False or repo_id
         """
         params = dict(name=repo_name)
@@ -132,6 +132,3 @@ class models(object):
             except Exception:
                 body = response.text
             raise InvalidStatusCode(response.status_code, body)
-
-
-

@@ -27,3 +27,15 @@ class afs():
 
         self.models = models(self.target_endpoint, self.instance_id, self.auth_code, 'models')
 
+    @classmethod
+    def create(self, target_endpoint , instance_id, auth_code):
+        self.target_endpoint = target_endpoint
+        self.auth_code = auth_code
+        self.instance_id = instance_id
+
+        if not self.target_endpoint.endswith('/'):
+            self.target_endpoint = self.target_endpoint + '/'
+        self.target_endpoint = self.target_endpoint + 'v1/'
+
+        self.models = models(self.target_endpoint, self.instance_id, self.auth_code, 'models')
+
