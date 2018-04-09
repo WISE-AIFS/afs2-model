@@ -8,23 +8,29 @@ import os
 from io import BytesIO
 import requests
 from afs.utils import InvalidStatusCode
+from afs.get_env import AfsEnv
 
 _logger = logging.getLogger(__name__)
 
 class models(object):
-    def __init__(self, target_endpoint, instance_id, auth_code, entity_uri):
-        self.target_endpoint = target_endpoint
-        self.instance_id = instance_id
-        self.auth_code = auth_code
-        self.entity_uri = entity_uri
+    def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
+        envir = AfsEnv(target_endpoint=target_endpoint, instance_id=instance_id, auth_code=auth_code)
+        self.target_endpoint = envir.target_endpoint
+        self.instance_id = envir.instance_id
+        self.auth_code = envir.auth_code
+        self.entity_uri = 'models'
         self.repo_id = None
 
-    def _download_model(model_path, afs_config):
-        download_url = afs_config['afs_url'] + 'v1/' + afs_config['instance_id'] + '/models/' + afs_config['repo_id'] + '/download'
-        result = requests.get(download_url, params={'auth_code': afs_config['auth_code']},)
+    def _download_model(self, model_path):
+        if self.repo_id is not None:
+            extra_paths = [self.repo_id, 'download' ]
+            self._get()
+
+
+            # download_url = afs_config['afs_url'] + 'v1/' + afs_config['instance_id'] + '/models/' + afs_config['repo_id'] + '/download'
+            # result = requests.get(download_url, params={'auth_code': afs_config['auth_code']},)
         with open(model_path, 'wb') as f:
              f.write(result.content)
-        f.close()
 
     def upload_model(self, model_name, accuracy: float, loss: float, tags={}, extra_evaluation={}):
         """
@@ -67,7 +73,6 @@ class models(object):
     def _create_model_repo(self, repo_name):
         request = dict(name=repo_name)
         resp = self._create(request)
-        # self.repo_id = resp.json()['uuid']
         return resp.json()['uuid']
 
     def _get_model_list(self, repo_name=None):
@@ -113,12 +118,15 @@ class models(object):
         _logger.debug('PUT - %s - %s', url, response.text)
         return response
 
-    def _get(self, params={}, requested_path=''):
-        url = '%s%s/%s%s' % (self.target_endpoint, self.instance_id, self.entity_uri, requested_path)
+    def _get(self, params={}, extra_paths=[]):
+        if len(extra_paths) == 0:
+            url = '%s%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri)
+        else:
+             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
         get_params = {}
         get_params.update(dict(auth_code=self.auth_code))
         get_params.update(params)
-        response = models._check_response(requests.get(url, params=get_params ))
+        response = models._check_response(requests.get(url, params=get_params))
         _logger.debug('GET - %s - %s', url, response.text)
         return response
 

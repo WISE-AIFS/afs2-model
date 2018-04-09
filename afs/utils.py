@@ -12,4 +12,3 @@ class InvalidStatusCode(Exception):
             return '%d : %s' % (self.status_code, self.body)
         else:
             return '%d : %s' % (self.status_code, json.dumps(self.body))
-

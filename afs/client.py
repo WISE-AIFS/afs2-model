@@ -10,7 +10,7 @@ import json
 _logger = logging.getLogger(__name__)
 
 class afs():
-    def __init__(self):
+    def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
         self.target_endpoint = os.getenv('afs_url', None)
         self.auth_code = os.getenv('auth_code', None)
         vcap = json.loads(os.getenv('VCAP_APPLICATION', {}))
