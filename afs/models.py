@@ -21,16 +21,27 @@ class models(object):
         self.entity_uri = 'models'
         self.repo_id = None
 
-    def _download_model(self, model_path):
+    def _download_model(self, save_path):
         if self.repo_id is not None:
             extra_paths = [self.repo_id, 'download' ]
-            self._get()
+            resp = self._get(extra_paths=extra_paths)
+            with open(save_path, 'wb') as f:
+                f.write(resp.content)
+        else:
+            AssertionError('There is no specific repo id to download.')
 
+    def download_model(self, save_path, model_name=None):
+        """
 
-            # download_url = afs_config['afs_url'] + 'v1/' + afs_config['instance_id'] + '/models/' + afs_config['repo_id'] + '/download'
-            # result = requests.get(download_url, params={'auth_code': afs_config['auth_code']},)
-        with open(model_path, 'wb') as f:
-             f.write(result.content)
+        :param model_name:  The model name exists in model repository
+        :param save_path: The path exist in file system
+        """
+        if model_name is not None:
+            self.repo_id = self.switch_repo(model_name)
+        if self.repo_id is None:
+            AssertionError('The model repository is not existed')
+        else:
+            self._download_model(save_path)
 
     def upload_model(self, model_name, accuracy: float, loss: float, tags={}, extra_evaluation={}):
         """
@@ -47,22 +58,22 @@ class models(object):
         try:
             model_name = str(model_name)
         except Exception as e:
-            raise AssertionError('Type error, model_name %s cannot convert to string' % (model_name))
+            raise AssertionError('Type error, model_name  cannot convert to string')
         if not os.path.isfile(model_name):
-            raise AssertionError('File not found, model %s path is not exist.' % (model_name))
+            raise AssertionError('File not found, model path is not exist.' )
         else:
+            medel_path = model_name
             if os.path.sep in model_name:
                 model_name = model_name.split(os.path.sep)[-1]
 
-        with open(model_name, 'rb') as f:
+
+        with open(medel_path, 'rb') as f:
             model_file = BytesIO(f.read())
         model_file.seek(0)
-        resp = self._is_repo_exist(model_name)
+        self.repo_id = self.switch_repo(model_name)
         if self.repo_id is None:
-            if resp is False:
-                self.repo_id = self._create_model_repo(model_name)
-            else:
-                self.repo_id = resp
+            self.repo_id = self._create_model_repo(model_name)
+
         evaluation_result = {'accuracy': accuracy, 'loss': loss}
         evaluation_result.update(extra_evaluation)
         data = dict(tags = json.dumps(tags), evaluation_result = json.dumps(evaluation_result))
@@ -76,20 +87,19 @@ class models(object):
         return resp.json()['uuid']
 
     def _get_model_list(self, repo_name=None):
-        print(self.target_endpoint, self.instance_id, self.auth_code)
         params = dict(name=repo_name)
         return self._get(params=params)
 
-    def _is_repo_exist(self, repo_name=None):
+    def switch_repo(self, repo_name=None):
         """
 
         :param repo_name
-        :return: False or repo_id
+        :return: None or repo_id
         """
         params = dict(name=repo_name)
         resp = self._get(params=params)
         if len(resp.json()) == 0:
-            return False
+            return None
         else:
             self.repo_id = resp.json()[0]['uuid']
             return self.repo_id

@@ -9,6 +9,7 @@ import json
 
 _logger = logging.getLogger(__name__)
 
+
 class afs():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
         self.target_endpoint = os.getenv('afs_url', None)
@@ -25,7 +26,7 @@ class afs():
             self.target_endpoint = self.target_endpoint + '/'
         self.target_endpoint = self.target_endpoint + 'v1/'
 
-        self.models = models(self.target_endpoint, self.instance_id, self.auth_code, 'models')
+        self.models = models(self.target_endpoint, self.instance_id, self.auth_code)
 
     @classmethod
     def create(self, target_endpoint , instance_id, auth_code):
@@ -37,5 +38,5 @@ class afs():
             self.target_endpoint = self.target_endpoint + '/'
         self.target_endpoint = self.target_endpoint + 'v1/'
 
-        self.models = models(self.target_endpoint, self.instance_id, self.auth_code, 'models')
+        self.models = models(self.target_endpoint, self.instance_id, self.auth_code)
 
