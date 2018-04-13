@@ -37,37 +37,39 @@ REQUEST = {
 REQUEST = json.dumps(REQUEST)
 
 
+class request_handler(object):
+    def input_format(REQUEST, input_config):
+        param = {}
+        headers = {}
 
-def input_format(REQUEST, input_config):
-    param = {}
-    headers = {}
+        request_body = json.loads(REQUEST)
+        body = request_body['body']
+        data = body['data']
+        headers = request_body['headers']
 
-    request_body = json.loads(REQUEST)
-    body = request_body['body']
-    data = body['data']
-    headers = request_body['headers']
-
-    if 'flow_id' in headers and 'node_id' in headers and 'host_url' in headers:
-        pass
-
-    required = [tag for tag in input_config['param'] if 'default' not in input_config['param'][tag]]
-    optional = [tag for tag in input_config['param'] if 'default' in input_config['param'][tag]]
-
-    for tag in required:
-        if tag in body:
-            param[tag] = body[tag]
+        if 'flow_id' in headers and 'node_id' in headers and 'host_url' in headers:
+            pass
         else:
-            AssertionError('Some required tags are lost')
+            pass
 
-    for tag in optional:
-        if tag in body:
-            param[tag] = body['tag']
-        else:
-            param[tag] = input_config['param'][tag]['default']
+        required = [tag for tag in input_config['param'] if 'default' not in input_config['param'][tag]]
+        optional = [tag for tag in input_config['param'] if 'default' in input_config['param'][tag]]
 
-    dataframe = DataFrame.from_dict(data)
+        for tag in required:
+            if tag in body:
+                param[tag] = body[tag]
+            else:
+                AssertionError('Some required tags are lost')
 
-    return dataframe, param, headers
+        for tag in optional:
+            if tag in body:
+                param[tag] = body['tag']
+            else:
+                param[tag] = input_config['param'][tag]['default']
+
+        dataframe = DataFrame.from_dict(data)
+
+        return dataframe, param, headers
 
 if __name__ == '__main__':
-    print(input_format(REQUEST,input_config))
+    # print(input_format(REQUEST,input_config))
