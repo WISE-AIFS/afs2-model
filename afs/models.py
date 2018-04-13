@@ -45,6 +45,7 @@ class models(object):
 
     def upload_model(self, model_name, accuracy: float, loss: float, tags={}, extra_evaluation={}):
         """
+        Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.
          :rtype: None
          :param model_name:  (required) string, model path or name
          :param accuracy: (required) float, model accuracy value
@@ -53,7 +54,7 @@ class models(object):
          :param extra_evaluation: (optional) dict, other evaluation from model
          """
 
-        if not isinstance(accuracy, float) or not isinstance(loss, float) is not float or not isinstance(tags, dict) or not isinstance(extra_evaluation, dict):
+        if not isinstance(accuracy, float) or not isinstance(loss, float) or not isinstance(tags, dict) or not isinstance(extra_evaluation, dict):
             raise AssertionError('Type error, accuracy and loss is float, and tags and extra_evaluation are dict.')
         try:
             model_name = str(model_name)
@@ -65,7 +66,6 @@ class models(object):
             medel_path = model_name
             if os.path.sep in model_name:
                 model_name = model_name.split(os.path.sep)[-1]
-
 
         with open(medel_path, 'rb') as f:
             model_file = BytesIO(f.read())

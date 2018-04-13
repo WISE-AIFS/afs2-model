@@ -11,7 +11,7 @@ install_requires = [str(ir.req) for ir in install_requires]
 
 setup(
     name='afs',
-    version='1.1.3.1',
+    version='1.1.4',
     description='For AFS developer develop analytics',
     long_description=open('README').read(),
     author='Owen Lu, benchuang',

@@ -1,7 +1,9 @@
 This is README file for explain how to build your Python module package.
 
 Usage:
+pip install
+$ pip install git+https://github.com/benchuang11046/afs.git
 
-from afs.client import afs
-client = afs()
-client.models.upload_model('model.h5', accuracy=0.4, loss=0.3, tags=dict(machine='machine01'))
+From sources
+To build the library run :
+$ python setup.py install
