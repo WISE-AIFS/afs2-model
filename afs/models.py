@@ -95,7 +95,7 @@ class models(object):
         else:
             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
         if not files:
-            response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data))
+            response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, verify=False))
         else:
             response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, files=files))
         _logger.debug('POST - %s - %s', url, response.text)
@@ -107,7 +107,7 @@ class models(object):
         else:
             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
         if not files:
-            response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), data=data))
+            response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), data=data, verify=False))
         else:
             response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), files=files, data=data))
         _logger.debug('PUT - %s - %s', url, response.text)
@@ -118,7 +118,7 @@ class models(object):
         get_params = {}
         get_params.update(dict(auth_code=self.auth_code))
         get_params.update(params)
-        response = models._check_response(requests.get(url, params=get_params ))
+        response = models._check_response(requests.get(url, params=get_params, verify=False))
         _logger.debug('GET - %s - %s', url, response.text)
         return response
 
