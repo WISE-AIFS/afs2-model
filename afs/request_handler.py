@@ -38,14 +38,18 @@ REQUEST = json.dumps(REQUEST)
 
 
 class request_handler(object):
-    def input_format(REQUEST, input_config):
+    def init(self, REQUEST, input_config):
+
+        if not isinstance(REQUEST, json):
+            AssertionError('REQUEST type is not json format')
+
         param = {}
         headers = {}
 
-        request_body = json.loads(REQUEST)
-        body = request_body['body']
-        data = body['data']
-        headers = request_body['headers']
+        self.request_body = json.loads(REQUEST)
+        self.body = self.request_body['body']
+        self.data = self.body['data']
+        self.headers = self.request_body['headers']
 
         if 'flow_id' in headers and 'node_id' in headers and 'host_url' in headers:
             pass
