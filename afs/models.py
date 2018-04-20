@@ -97,7 +97,7 @@ class models(object):
         if not files:
             response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, verify=False))
         else:
-            response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, files=files))
+            response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, files=files, verify=False))
         _logger.debug('POST - %s - %s', url, response.text)
         return response
 
@@ -109,7 +109,7 @@ class models(object):
         if not files:
             response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), data=data, verify=False))
         else:
-            response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), files=files, data=data))
+            response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), files=files, data=data, verify=False))
         _logger.debug('PUT - %s - %s', url, response.text)
         return response
 
