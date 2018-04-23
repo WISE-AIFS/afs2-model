@@ -51,7 +51,7 @@ class models(object):
         with open(model_name, 'rb') as f:
             model_file = BytesIO(f.read())
         model_file.seek(0)
-        resp = self._is_repo_exist(model_name)
+        resp = self.is_repo_exist(model_name)
         if self.repo_id is None:
             if resp is False:
                 self.repo_id = self._create_model_repo(model_name)
@@ -75,7 +75,7 @@ class models(object):
         params = dict(name=repo_name)
         return self._get(params=params)
 
-    def _is_repo_exist(self, repo_name=None):
+    def is_repo_exist(self, repo_name=None):
         """
 
         :param repo_name
