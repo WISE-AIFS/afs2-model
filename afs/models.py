@@ -8,6 +8,7 @@ import os
 from io import BytesIO
 import requests
 from afs.utils import InvalidStatusCode
+import afs.utils as utils
 from afs.get_env import AfsEnv
 
 _logger = logging.getLogger(__name__)
@@ -110,9 +111,9 @@ class models(object):
         else:
             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
         if not files:
-            response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data))
+            response = utils._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, verify=False))
         else:
-            response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, files=files))
+            response = utils._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, files=files, verify=False))
         _logger.debug('POST - %s - %s', url, response.text)
         return response
 
@@ -122,9 +123,9 @@ class models(object):
         else:
             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
         if not files:
-            response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), data=data))
+            response = utils._check_response(requests.put(url, params=dict(auth_code=self.auth_code), data=data, verify=False))
         else:
-            response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), files=files, data=data))
+            response = utils._check_response(requests.put(url, params=dict(auth_code=self.auth_code), files=files, data=data, verify=False))
         _logger.debug('PUT - %s - %s', url, response.text)
         return response
 
@@ -136,7 +137,7 @@ class models(object):
         get_params = {}
         get_params.update(dict(auth_code=self.auth_code))
         get_params.update(params)
-        response = models._check_response(requests.get(url, params=get_params))
+        response = utils._check_response(requests.get(url, params=get_params, verify=False))
         _logger.debug('GET - %s - %s', url, response.text)
         return response
 

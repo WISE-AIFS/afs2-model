@@ -5,8 +5,8 @@ import os
 
 class TestModels(unittest.TestCase):
     def setUp(self):
-        self.cli = models('https://portal-afs-develop.iii-cflab.com', 'f82c41f3-c6bb-478a-9c1d-670dcd3ab41c',
-                    'PBh4wB6m1hPwB4C2C7jGXg')
+        self.cli = models(target_endpoint='https://portal-afs-develop.iii-cflab.com', instance_id='f82c41f3-c6bb-478a-9c1d-670dcd3ab41c',
+                    auth_code='PBh4wB6m1hPwB4C2C7jGXg')
         self.model_path = '.\\data\\test_model.h5'
         self.model_name = 'test_model.h5'
 
