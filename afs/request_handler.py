@@ -60,18 +60,18 @@ class request_handler(object):
         optional = [tag for tag in input_config['param'] if 'default' in input_config['param'][tag]]
 
         for tag in required:
-            if tag in body:
-                param[tag] = body[tag]
+            if tag in self.body:
+                param[tag] = self.body[tag]
             else:
                 AssertionError('Some required tags are lost')
 
         for tag in optional:
-            if tag in body:
-                param[tag] = body['tag']
+            if tag in self.body:
+                param[tag] = self.body['tag']
             else:
                 param[tag] = input_config['param'][tag]['default']
 
-        dataframe = DataFrame.from_dict(data)
+        dataframe = DataFrame.from_dict(self.data)
 
         return dataframe, param, headers
 

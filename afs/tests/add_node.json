@@ -1,0 +1,1 @@
+[{"id":"2d16fe79.68ee92","type":"add_node","z":"dab0a25b.894fe","name":"b1","method":"POST","url":"","b":"10","a":"value","x":290,"y":220,"wires":[["b5f66e9d.df5a8"]]},{"id":"b5f66e9d.df5a8","type":"add_node","z":"dab0a25b.894fe","name":"b2","method":"POST","url":"","b":"2","a":"value","x":490,"y":220,"wires":[[]]}]
