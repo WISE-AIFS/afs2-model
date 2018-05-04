@@ -3,7 +3,7 @@ from pandas import DataFrame
 import pandas
 from afs import flow
 
-class config(object):
+class config_handler(object):
     def __init__(self):
         self.param = []
         self.column = []
@@ -86,7 +86,7 @@ class config(object):
 
 
 if __name__ == '__main__':
-    cfg = config()
+    cfg = config_handler()
     cfg.set_param('b', type='integer', required=True, default=10)
     cfg.set_column('value')
     cfg.summary()
