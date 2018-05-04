@@ -38,10 +38,10 @@ class flow:
             False: lose config information.
         """
         # set flow_id
-        if 'flow_id' in obj:
-            self.flow_id = obj['flow_id']
-        else:
-            return False
+        # if 'flow_id' in obj:
+        #     self.flow_id = obj['flow_id']
+        # else:
+        #     return False
 
         # set node_id
         if 'node_id' in obj:
@@ -50,10 +50,10 @@ class flow:
             return False
 
         # set host url
-        if 'host_url' in obj:
-            self.host_url = obj['host_url']
-        else:
-            return False
+        # if 'host_url' in obj:
+        #     self.host_url = obj['host_url']
+        # else:
+        #     return False
 
         return True
 
@@ -138,11 +138,14 @@ class flow:
         for item in next_list:
             next_node_obj = self.get_node_item(item, is_current_node=False)  # get next node
             headers_obj['node_id'] = item  # set request headers
+            data['node_id'] = item
 
             if 'url' in next_node_obj:
                 try:
+                    print(next_node_obj['url'])
                     result = requests.post(next_node_obj['url'], headers=headers_obj, json=data)  # POST
                     resp_json = json.loads(result.text)  # trans POST response
+                    print(resp_json)
                 except Exception as err:
                     error_node = item
                     error_msg = str(err)

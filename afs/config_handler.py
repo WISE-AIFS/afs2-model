@@ -11,17 +11,18 @@ class config_handler(object):
         self.param = []
         self.column = []
 
-    def set_flow(self, obj):
+    def set_flow(self, flow_json, node_info):
         self.flow_obj = flow()
-        self.flow_obj.get_flow_list_ab(obj)
-        print(self.flow_obj.flow_list)
-        # self.flow_obj.set_flow_config(obj)
+        self.flow_obj.set_flow_config(node_info)
+        self.flow_obj.get_flow_list_ab(flow_json)
+        self.flow_obj.get_node_item(self.flow_obj.current_node_id)
 
-    def get_node_item(self, select_node_id):
-        obj = self.flow_obj.get_node_item(select_node_id)
-        for par in self.param:
-            par
-        return obj
+    def get_param(self, key):
+        obj = self.flow_obj.current_node_obj[key]
+        if obj:
+            return obj
+        else:
+            return None
 
     def next_node(self,data):
         self.flow_obj.exe_next_node(data)
@@ -49,13 +50,23 @@ class config_handler(object):
 
 
 if __name__ == '__main__':
+    # node-red config and request body
+    with open('tests/add_node.json') as f:
+        flow_json = f.read()
+    flow_json = json.loads(flow_json)
+    req_body = {'data': {'value': {'0': 21}}, 'node_id': 'ada49faf.e05cf'}
+
     cfg = config_handler()
     cfg.set_param('b', type='integer', required=True, default=10)
     cfg.set_column('value')
     cfg.summary()
 
-    with open('tests/add_node.json') as f:
-        flow_json = f.read()
-    flow_json = json.loads(flow_json)
-    cfg.set_flow(flow_json)
-    print(cfg.get_node_item('ada49faf.e05cf'))
+    cfg.set_flow(flow_json, req_body)
+    b = cfg.get_param('b')
+    a = DataFrame.from_dict(req_body['data'])
+    result = a + int(b)
+    df_dict = dict(data=result.to_dict())
+    cfg.next_node(df_dict)
+
+
+
