@@ -44,7 +44,7 @@ class models(object):
         else:
             self._download_model(save_path)
 
-    def upload_model(self, model_name, accuracy: float, loss: float, tags={}, extra_evaluation={}):
+    def upload_model(self, model_name, accuracy, loss, tags={}, extra_evaluation={}):
         """
         Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.
          :rtype: None
