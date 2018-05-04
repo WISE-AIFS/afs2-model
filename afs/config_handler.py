@@ -2,6 +2,9 @@ import json
 from pandas import DataFrame
 import pandas
 from afs import flow
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class config_handler(object):
     def __init__(self):
