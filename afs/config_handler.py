@@ -11,54 +11,24 @@ class config_handler(object):
         self.param = []
         self.column = []
 
-
     def set_flow(self, obj):
         self.flow_obj = flow()
-        self.flow_obj.set_flow_config(obj)
+        self.flow_obj.get_flow_list_ab(obj)
+        print(self.flow_obj.flow_list)
+        # self.flow_obj.set_flow_config(obj)
 
-        self.flow_obj.get_node_item()
+    def get_node_item(self, select_node_id):
+        obj = self.flow_obj.get_node_item(select_node_id)
+        for par in self.param:
+            par
+        return obj
 
     def next_node(self,data):
         self.flow_obj.exe_next_node(data)
 
-
-
-        # if not isinstance(REQUEST, json):
-        #     AssertionError('REQUEST type is not json format')
-        #
-        # param = {}
-        # headers = {}
-        #
-        # self.request_body = json.loads(REQUEST)
-        # self.body = self.request_body['body']
-        # self.data = self.body['data']
-        # self.headers = self.request_body['headers']
-        #
-        # if 'flow_id' in headers and 'node_id' in headers and 'host_url' in headers:
-        #     pass
-        # else:
-        #     pass
-        #
-        # required = [tag for tag in input_config['param'] if 'default' not in input_config['param'][tag]]
-        # optional = [tag for tag in input_config['param'] if 'default' in input_config['param'][tag]]
-        #
-        # for tag in required:
-        #     if tag in self.body:
-        #         param[tag] = self.body[tag]
-        #     else:
-        #         AssertionError('Some required tags are lost')
-        #
-        # for tag in optional:
-        #     if tag in self.body:
-        #         param[tag] = self.body['tag']
-        #     else:
-        #         param[tag] = input_config['param'][tag]['default']
-        #
-        # dataframe = DataFrame.from_dict(data)
-
-
     def set_param(self, key, type='string', required=False ,default=None):
         param = {}
+        param['name'] = key
         param['tpye'] = type
         param['required'] = required
         param['default'] = default
@@ -73,19 +43,9 @@ class config_handler(object):
         # print('AFS module information')
         smry = {}
         smry['param'] = self.param
-        # smry['output'] = self.output
         smry['column'] = self.column
         print(json.dumps(smry))
         pass
-
-    def set_output(self):
-
-        pass
-
-    def _read_flow(self, flow_json):
-        print(flow_json)
-        pass
-
 
 
 if __name__ == '__main__':
@@ -97,4 +57,5 @@ if __name__ == '__main__':
     with open('tests/add_node.json') as f:
         flow_json = f.read()
     flow_json = json.loads(flow_json)
-    cfg._read_flow(flow_json)
+    cfg.set_flow(flow_json)
+    print(cfg.get_node_item('ada49faf.e05cf'))

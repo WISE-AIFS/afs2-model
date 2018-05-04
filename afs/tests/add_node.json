@@ -1,1 +1,53 @@
-[{"id":"2d16fe79.68ee92","type":"add_node","z":"dab0a25b.894fe","name":"b1","method":"POST","url":"","b":"10","a":"value","x":290,"y":220,"wires":[["b5f66e9d.df5a8"]]},{"id":"b5f66e9d.df5a8","type":"add_node","z":"dab0a25b.894fe","name":"b2","method":"POST","url":"","b":"2","a":"value","x":490,"y":220,"wires":[[]]}]
+{
+    "id": "6805569a.b11218",
+    "label": "Flow 2",
+    "nodes": [
+        {
+            "id": "ada49faf.e05cf",
+            "type": "add_node",
+            "z": "6805569a.b11218",
+            "name": "b1",
+            "method": "POST",
+            "url": "",
+            "b": "10",
+            "a": "value",
+            "x": 270,
+            "y": 160,
+            "wires": [
+                [
+                    "b6cae0f6.cb2fd"
+                ]
+            ]
+        },
+        {
+            "id": "b6cae0f6.cb2fd",
+            "type": "add_node",
+            "z": "6805569a.b11218",
+            "name": "b2",
+            "method": "POST",
+            "url": "",
+            "b": "2",
+            "a": "value",
+            "x": 470,
+            "y": 160,
+            "wires": [
+                []
+            ]
+        },
+        {
+            "id": "7871d23e.a4e75c",
+            "type": "test_node",
+            "z": "6805569a.b11218",
+            "name": "test2",
+            "method": "POST",
+            "url": "",
+            "b": "10",
+            "a": "aaa",
+            "x": 370,
+            "y": 280,
+            "wires": [
+                []
+            ]
+        }
+    ]
+}

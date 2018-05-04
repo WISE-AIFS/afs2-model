@@ -165,3 +165,10 @@ class flow:
                 continue
 
         return error_node, error_msg
+
+    def get_flow_list_ab(self, result):
+        # set flow_list
+        if 'nodes' in result:
+            self.flow_list = result['nodes']
+        else:
+            self.flow_list = None
