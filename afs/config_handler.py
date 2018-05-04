@@ -1,15 +1,22 @@
 import json
 from pandas import DataFrame
 import pandas
-
+from afs import flow
 
 class config(object):
     def __init__(self):
-        self.input = {}
-        self.output = {}
-        self.column_mapping = []
+        self.param = []
+        self.column = []
 
 
+    def set_flow(self, obj):
+        self.flow_obj = flow()
+        self.flow_obj.set_flow_config(obj)
+
+        self.flow_obj.get_node_item()
+
+    def next_node(self,data):
+        self.flow_obj.exe_next_node(data)
 
 
 
@@ -47,26 +54,29 @@ class config(object):
         # dataframe = DataFrame.from_dict(data)
 
 
-    def set_input(self, key, type='string', required=False ,default=None):
-        self.input[key] = {}
-        self.input[key]['tpye'] = type
-        self.input[key]['required'] = required
-        self.input[key]['default'] = default
+    def set_param(self, key, type='string', required=False ,default=None):
+        param = {}
+        param['tpye'] = type
+        param['required'] = required
+        param['default'] = default
+        self.param.append(param)
         pass
 
-    def set_column_mapping(self, column_name):
-        self.column_mapping.append(column_name)
+    def set_column(self, column_name):
+        self.column.append(column_name)
         pass
 
     def summary(self):
+        # print('AFS module information')
         smry = {}
-        smry['input'] = self.input
-        smry['output'] = self.output
-        smry['column_mapping'] = self.column_mapping
+        smry['param'] = self.param
+        # smry['output'] = self.output
+        smry['column'] = self.column
         print(json.dumps(smry))
         pass
 
     def set_output(self):
+
         pass
 
     def _read_flow(self, flow_json):
@@ -77,8 +87,8 @@ class config(object):
 
 if __name__ == '__main__':
     cfg = config()
-    cfg.set_input('b', type='integer', required=True, default=10)
-    cfg.set_column_mapping('value')
+    cfg.set_param('b', type='integer', required=True, default=10)
+    cfg.set_column('value')
     cfg.summary()
 
     with open('tests/add_node.json') as f:

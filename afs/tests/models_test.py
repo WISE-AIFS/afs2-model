@@ -1,4 +1,3 @@
-
 from afs import models
 import unittest
 import os
