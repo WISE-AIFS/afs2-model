@@ -115,7 +115,7 @@ class flow:
 
 
 
-    def generate_headers(self):
+    def set_headers(self):
         """
         Generate headers object for request headers.
 
@@ -136,7 +136,7 @@ class flow:
     def exe_next_node(self, data):
         """
         Request next node api to execute.
-        Dependency: get_node_item(), generate_headers()
+        Dependency: get_node_item(), set_headers()
 
         :param  data: (list) data will send to next node.
 
@@ -145,7 +145,7 @@ class flow:
         error_node = '0'    # node with error occur
         error_msg = ''  # error message
         next_list = self.current_node_obj['wires'][0]
-        headers_obj = self.generate_headers()
+        headers_obj = self.set_headers()
 
 
         # POST to each next node
