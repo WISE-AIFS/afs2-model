@@ -101,7 +101,6 @@ if __name__ == '__main__':
     a = cfg.get_data(req_body)
     result = a + b
     ret = cfg.next_node(result, debug=True)
-    ret[]
     print(json.dumps(ret))
 
 
