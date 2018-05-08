@@ -1,7 +1,7 @@
 import json
 from pandas import DataFrame
 import pandas
-from afs import flow
+from afs.flow import flow
 import logging
 
 _logger = logging.getLogger(__name__)
