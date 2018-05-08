@@ -19,9 +19,9 @@ class config_handler(object):
         try:
             headers = json.loads(REQUEST)['headers']
             flow_info = {}
-            flow_info['node_id'] = headers['node_id']
-            flow_info['flow_id'] = headers['flow_id']
-            flow_info['host_url'] = headers['host_url']
+            flow_info['node_id'] = headers['Node_id']
+            flow_info['flow_id'] = headers['Flow_id']
+            flow_info['host_url'] = headers['Host_url']
             self.flow_obj.set_flow_config(flow_info)
         except Exception as e:
             raise AssertionError('REQUEST must be json format, or headers contains not enough information')

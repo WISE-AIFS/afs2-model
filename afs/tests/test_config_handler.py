@@ -23,7 +23,7 @@ REQUEST="""
 
 cfg = config_handler()
 cfg.set_param('b', type='integer', required=True, default=10)
-cfg.set_column('value')
+cfg.set_column('a')
 cfg.summary()
 
 cfg.set_kernel_gateway(REQUEST, flow_json_file=flow_json_file)
