@@ -25,7 +25,7 @@
             "z": "6805569a.b11218",
             "name": "b2",
             "method": "POST",
-            "url": "http://140.92.27.70:5002/get_value",
+            "url": "http://140.92.27.70:5010/get_value",
             "b": "2",
             "a": "value",
             "x": 470,
