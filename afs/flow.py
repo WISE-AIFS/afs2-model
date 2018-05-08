@@ -37,6 +37,7 @@ class flow:
             True: setting success.
             False: lose config information.
         """
+
         # set flow_id
         # if 'flow_id' in obj:
         #     self.flow_id = obj['flow_id']
@@ -171,6 +172,7 @@ class flow:
 
     def get_flow_list_ab(self, result):
         # set flow_list
+        # print(result)
         if 'nodes' in result:
             self.flow_list = result['nodes']
         else:

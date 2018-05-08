@@ -14,11 +14,13 @@ class config_handler(object):
     def set_flow(self, flow_json, request_body):
         try:
             request_body = json.loads(request_body)
+            flow_json = json.loads(flow_json)
         except Exception as e:
             raise AssertionError('Type error, request_body must be JSON')
 
         self.flow_obj = flow()
         self.flow_obj.set_flow_config(request_body)
+        print(self.flow_obj.current_node_id)
         self.flow_obj.get_flow_list_ab(flow_json)
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
 
@@ -86,7 +88,6 @@ if __name__ == '__main__':
     # node-red config and request body
     with open('tests/add_node.json') as f:
         flow_json = f.read()
-    flow_json = json.loads(flow_json)
     req_body = {'data': {'value': {'0': 21}}, 'node_id': 'ada49faf.e05cf'}
     req_body = json.dumps(req_body)
 
