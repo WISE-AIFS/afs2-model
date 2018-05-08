@@ -2,22 +2,39 @@
 from afs import config_handler
 import json
 
+# node-red config and request body
+# with open('add_node.json') as f:
+#     flow_json = f.read()
+# req_body = {'data': {'value': {'0': 21}}, 'node_id': 'ada49faf.e05cf'}
+# req_body = json.dumps(req_body)
+
+flow_json_file='add_node.json'
+REQUEST="""
+{
+	"headers": {
+		"node_id": "ada49faf.e05cf",
+		"flow_id": "6805569a.b11218",
+		"host_url": ""
+	},
+	"body": {
+		"data": {
+			"value": {
+				"0": 21
+			}
+		}
+	}
+}
+"""
+
+
 cfg = config_handler()
 cfg.set_param('b', type='integer', required=True, default=10)
 cfg.set_column('value')
 cfg.summary()
 
-with open('add_node.json') as f:
-    flow_json = f.read()
-flow_json = json.loads(flow_json)
-flow_json = json.dumps(flow_json)
-print(flow_json)
-
-req_body = {'data': {'value': {'0': 21}}, 'node_id': 'ada49faf.e05cf'}
-req_body = json.dumps(req_body)
-
-cfg.set_flow(flow_json, req_body)
+cfg.set_kernel_gateway(REQUEST, flow_json_file=flow_json_file)
 b = cfg.get_param('b')
-a = cfg.get_data(req_body)
+a = cfg.get_data()
 result = a + b
-cfg.next_node(result)
+ret = cfg.next_node(result, debug=True)
+print(json.dumps(ret))

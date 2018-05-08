@@ -39,22 +39,25 @@ class flow:
         """
 
         # set flow_id
-        # if 'flow_id' in obj:
-        #     self.flow_id = obj['flow_id']
-        # else:
-        #     return False
+        if 'flow_id' in obj:
+            self.flow_id = obj['flow_id']
+        else:
+            raise AssertionError('flow_id not found.')
+            return False
 
         # set node_id
         if 'node_id' in obj:
             self.current_node_id = obj['node_id']
         else:
+            raise AssertionError('node_id not found.')
             return False
 
         # set host url
-        # if 'host_url' in obj:
-        #     self.host_url = obj['host_url']
-        # else:
-        #     return False
+        if 'host_url' in obj:
+            self.host_url = obj['host_url']
+        else:
+            raise AssertionError('host_url not found.')
+            return False
 
         return True
 
@@ -175,4 +178,5 @@ class flow:
         if 'nodes' in result:
             self.flow_list = result['nodes']
         else:
+            raise AssertionError('Dict has no key name "node"')
             self.flow_list = None

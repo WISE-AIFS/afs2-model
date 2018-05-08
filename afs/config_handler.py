@@ -11,18 +11,39 @@ class config_handler(object):
         self.param = []
         self.column = []
 
-    def set_flow(self, flow_json, request_body):
-        try:
-            request_body = json.loads(request_body)
-            flow_json = json.loads(flow_json)
-        except Exception as e:
-            raise AssertionError('Type error, request_body must be JSON')
+    def set_kernel_gateway(self, REQUEST, flow_json_file=None):
 
         self.flow_obj = flow()
-        self.flow_obj.set_flow_config(request_body)
-        # print(self.flow_obj.current_node_id)
-        self.flow_obj.get_flow_list_ab(flow_json)
+
+        try:
+            headers = json.loads(REQUEST)['headers']
+            flow_info = {}
+            flow_info['node_id'] = headers['node_id']
+            flow_info['flow_id'] = headers['flow_id']
+            flow_info['host_url'] = headers['host_url']
+            self.flow_obj.set_flow_config(flow_info)
+        except Exception as e:
+            raise AssertionError('REQUEST must be json format, or headers contains not enough information')
+
+        try:
+            if flow_json_file:
+                with open(flow_json_file) as f:
+                    flow_json = f.read()
+                flow_json = json.loads(flow_json)
+                self.flow_obj.get_flow_list_ab(flow_json)
+            else:
+                self.flow_obj.get_flow_list()
+        except Exception as e:
+            raise AssertionError('Type error, flow_json must be JSON')
+
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
+
+        try:
+            data = json.loads(REQUEST)['body']
+            self.data = DataFrame.from_dict(data)
+        except Exception as e:
+            raise AssertionError('Request contains no key named "data", or cannot transform to dataframe.')
+
 
     def get_param(self, key):
         obj_value = self.flow_obj.current_node_obj[key]
@@ -46,11 +67,18 @@ class config_handler(object):
         try:
             request_body = json.loads(request_body)
             if request_body['data']:
-                return DataFrame.from_dict(request_body['data'])
+                self.data = DataFrame.from_dict(request_body['data'])
+                return self.data
             else:
                 raise AssertionError('Data is not existed in request_body')
         except Exception as e:
             raise AssertionError('Type error, request_body must be JSON')
+
+    def get_data(self):
+        if self.data:
+            return self.data
+        else:
+            return None
 
     def next_node(self,data, debug=False):
         if isinstance(data, DataFrame):
@@ -83,25 +111,6 @@ class config_handler(object):
         print(json.dumps(smry))
         pass
 
-
-if __name__ == '__main__':
-    # node-red config and request body
-    with open('tests/add_node.json') as f:
-        flow_json = f.read()
-    req_body = {'data': {'value': {'0': 21}}, 'node_id': 'ada49faf.e05cf'}
-    req_body = json.dumps(req_body)
-
-    cfg = config_handler()
-    cfg.set_param('b', type='integer', required=True, default=10)
-    cfg.set_column('value')
-    cfg.summary()
-
-    cfg.set_flow(flow_json, req_body)
-    b = cfg.get_param('b')
-    a = cfg.get_data(req_body)
-    result = a + b
-    ret = cfg.next_node(result, debug=True)
-    print(json.dumps(ret))
 
 
 
