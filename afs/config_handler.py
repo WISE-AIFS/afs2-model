@@ -20,7 +20,7 @@ class config_handler(object):
 
         self.flow_obj = flow()
         self.flow_obj.set_flow_config(request_body)
-        print(self.flow_obj.current_node_id)
+        # print(self.flow_obj.current_node_id)
         self.flow_obj.get_flow_list_ab(flow_json)
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
 
@@ -101,6 +101,7 @@ if __name__ == '__main__':
     a = cfg.get_data(req_body)
     result = a + b
     ret = cfg.next_node(result, debug=True)
+    ret[]
     print(json.dumps(ret))
 
 

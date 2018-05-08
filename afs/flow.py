@@ -143,13 +143,10 @@ class flow:
 
             if 'url' in next_node_obj:
                 try:
-                    if debug:
-                        print(next_node_obj['url'])
                     result = requests.post(next_node_obj['url'], headers=headers_obj, json=data)  # POST
                     resp_json = json.loads(result.text)  # trans POST response
                     if debug:
                         return resp_json
-
                 except Exception as err:
                     error_node = item
                     error_msg = str(err)
