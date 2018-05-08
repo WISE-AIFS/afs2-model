@@ -52,10 +52,10 @@ class config_handler(object):
         except Exception as e:
             raise AssertionError('Type error, request_body must be JSON')
 
-    def next_node(self,data):
+    def next_node(self,data, debug=False):
         if isinstance(data, DataFrame):
             data = dict(data=data.to_dict())
-            self.flow_obj.exe_next_node(data)
+            return self.flow_obj.exe_next_node(data, debug)
         else:
             raise AssertionError('Type error, data must be Dataframe')
 
@@ -100,7 +100,8 @@ if __name__ == '__main__':
     b = cfg.get_param('b')
     a = cfg.get_data(req_body)
     result = a + b
-    cfg.next_node(result)
+    ret = cfg.next_node(result, debug=True)
+    print(json.dumps(ret))
 
 
 

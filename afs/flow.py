@@ -121,7 +121,7 @@ class flow:
 
         return obj
 
-    def exe_next_node(self, data):
+    def exe_next_node(self, data, debug=False):
         """
         Request next node api to execute.
         Dependency: get_node_item(), generate_headers()
@@ -143,10 +143,13 @@ class flow:
 
             if 'url' in next_node_obj:
                 try:
-                    print(next_node_obj['url'])
+                    if debug:
+                        print(next_node_obj['url'])
                     result = requests.post(next_node_obj['url'], headers=headers_obj, json=data)  # POST
                     resp_json = json.loads(result.text)  # trans POST response
-                    print(resp_json)
+                    if debug:
+                        return resp_json
+
                 except Exception as err:
                     error_node = item
                     error_msg = str(err)
@@ -172,7 +175,6 @@ class flow:
 
     def get_flow_list_ab(self, result):
         # set flow_list
-        # print(result)
         if 'nodes' in result:
             self.flow_list = result['nodes']
         else:
