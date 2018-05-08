@@ -10,6 +10,7 @@ class config_handler(object):
     def __init__(self):
         self.param = []
         self.column = []
+        self.data = DataFrame.empty
 
     def set_kernel_gateway(self, REQUEST, flow_json_file=None):
 
@@ -39,7 +40,7 @@ class config_handler(object):
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
 
         try:
-            data = json.loads(REQUEST)['body']
+            data = json.loads(REQUEST)['body']['data']
             self.data = DataFrame.from_dict(data)
         except Exception as e:
             raise AssertionError('Request contains no key named "data", or cannot transform to dataframe.')
@@ -75,7 +76,7 @@ class config_handler(object):
             raise AssertionError('Type error, request_body must be JSON')
 
     def get_data(self):
-        if self.data:
+        if not self.data.empty:
             return self.data
         else:
             return None

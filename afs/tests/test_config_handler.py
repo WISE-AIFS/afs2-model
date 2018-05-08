@@ -2,12 +2,6 @@
 from afs import config_handler
 import json
 
-# node-red config and request body
-# with open('add_node.json') as f:
-#     flow_json = f.read()
-# req_body = {'data': {'value': {'0': 21}}, 'node_id': 'ada49faf.e05cf'}
-# req_body = json.dumps(req_body)
-
 flow_json_file='add_node.json'
 REQUEST="""
 {
