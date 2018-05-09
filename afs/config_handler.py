@@ -56,7 +56,7 @@ class config_handler(object):
         elif obj_para['type'] in 'float':
             obj_value = float(obj_value)
         else:
-            _logger.warning('Type has no specific type.')
+            _logger.warning('Param has no specific type.')
             obj_value = str(obj_value)
 
         if obj_value:

@@ -4,7 +4,7 @@
 ### pip install
 
 ```
-$ pip install git+https://github.com/benchuang11046/afs.git
+$ pip install https://github.com/benchuang11046/afs/archive/model-dev.zip
 ```
 
 ### From sources
@@ -16,6 +16,9 @@ $ python setup.py install
 
 ## 支援python版本
 python-3.X
+
+## 1.2.0版本新增
+config_handler:提供開發者用於node-red串接資料SDK。使用範例[連結](./examples/adder_0509.md)。
 
 
 ## models用法
