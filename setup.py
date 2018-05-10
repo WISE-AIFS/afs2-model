@@ -25,7 +25,7 @@ setup(
     name='afs',
     version=version_tag,
     description='For AFS developer develop analytics',
-    long_description=open('README').read(),
+    long_description=open('README.md').read(),
     author='benchuang',
     author_email='benchuang@iii.org.tw',
     url='https://github.com/benchuang11046/afs',
