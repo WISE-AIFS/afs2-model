@@ -3,8 +3,15 @@
 ## 安裝
 ### pip install
 
+
+Release branch
 ```
-$ pip install https://github.com/benchuang11046/afs/archive/model-dev.zip
+$ pip install git+https://github.com/benchuang11046/afs.git
+```
+
+QA branch
+```
+$ pip install https://github.com/benchuang11046/afs/archive/QA.zip
 ```
 
 ### From sources

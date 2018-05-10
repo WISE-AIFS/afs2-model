@@ -1,9 +1,0 @@
-This is README file for explain how to build your Python module package.
-
-Usage:
-pip install
-$ pip install git+https://github.com/benchuang11046/afs.git
-
-From sources
-To build the library run :
-$ python setup.py install
