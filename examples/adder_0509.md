@@ -57,13 +57,17 @@ cfg.summary()
 
 # Set flow architecture, REQUEST is the request including body and headers from client
 cfg.set_kernel_gateway(REQUEST)
+
 # Get the parameter from node-red setting
 b = cfg.get_param('b')
+
 # Get the data from request, and transform to DataFrame Type
 a = cfg.get_data()
 result = a + b
+
 # Send the result to next node, and result is  DataFrame Type
 ret = cfg.next_node(result, debug=True)
+
 # The printing is the API response.
 print(json.dumps(ret))
 ```
