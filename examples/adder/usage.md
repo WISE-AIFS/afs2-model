@@ -1,7 +1,4 @@
 
-# Start Jupyter kernel gateway in local
-$ jupyter-kernelgateway --KernelGatewayApp.port=9090 --KernelGatewayApp.ip='0.0.0.0' --KernelGatewayApp.api=notebook-http --KernelGatewayApp.seed_uri='adder.ipynb' --NotebookHTTPPersonality.static_path='./results'
-
 # adder REQUEST example
  {
      "headers": {
@@ -9,12 +6,12 @@ $ jupyter-kernelgateway --KernelGatewayApp.port=9090 --KernelGatewayApp.ip='0.0.
          "Connection": "keep-alive",
          "Content-Length": "61",
          "Origin": "chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop",
-         "Flow_id": "6805569a.b11218",
+         "Flow_id": "b896452e.73d968",
          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36",
          "Content-Type": "application/json",
          "Cache-Control": "no-cache",
-         "Host_url": "http://140.92.27.70:1880/",
-         "Node_id": "ada49faf.e05cf",
+         "Host_url": "http://portal-nodered-afs.wise-paas.com/",
+          "Node_id": "fb3d279.613efd8",
          "Postman-Token": "17190eb2-0bff-f66a-b146-1e96bc8ce97a",
          "Accept": "*/*",
          "Accept-Encoding": "gzip, deflate",

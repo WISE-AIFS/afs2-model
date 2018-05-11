@@ -14,7 +14,6 @@ class TestConfigHandler(unittest.TestCase):
         with open('./data/config_handler_request.json') as f:
             self.REQUEST = f.read()
 
-
     def test_adder(self):
         cfg = config_handler()
         cfg.set_param('b', type='integer', required=True, default=10)
@@ -28,7 +27,7 @@ class TestConfigHandler(unittest.TestCase):
         ret = cfg.next_node(result, debug=True)
         print(json.dumps(ret))
 
-    def test_data_column(self):
+    def test_data_column_running(self):
         cfg = config_handler()
         cfg.set_param('b', type='integer', required=True, default=10)
         cfg.set_column('a')

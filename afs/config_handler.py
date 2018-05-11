@@ -133,17 +133,22 @@ Set API parameter will be used in the API.
         :param required: the parameter is required or not
         :param default: the parameter is given in default
         """
+        type_list = ['string', 'integer', 'float']
 
-        param = {}
-        param['name'] = str(key)
-        param['type'] = type
-        param['required'] = required
-        param['default'] = default
+        if type not in type_list:
+            raise AssertionError('Type not found.')
+        if not isinstance(required, bool):
+            raise AssertionError('Required is True/False.')
 
         # check if the name is the same, raise error
-        if param['name'] in self.variable_name:
+        if key in self.variable_name:
             raise AssertionError('It has already the same name of the parameter.')
         else:
+            param = {}
+            param['name'] = str(key)
+            param['type'] = type
+            param['required'] = required
+            param['default'] = default
             self.variable_name.append(key)
             self.param.append(param)
 
