@@ -12,6 +12,7 @@ class config_handler(object):
 Config handler is the class which handle AFS flow framework. User can use function fetch parameters, or send data to next node.
         """
         self.param = []
+        self.param_name = []
         self.column = []
         self.data = DataFrame.empty
 
@@ -34,16 +35,20 @@ For Jupyter kernel gateway API, REQUEST is pure request given by kernel gateway.
         except Exception as e:
             raise AssertionError('REQUEST must be json format, or headers contains not enough information')
 
-        try:
-            if flow_json_file:
+        if flow_json_file:
+            try:
                 with open(flow_json_file) as f:
                     flow_json = f.read()
                 flow_json = json.loads(flow_json)
                 self.flow_obj.get_flow_list_ab(flow_json)
-            else:
+            except Exception as e:
+                raise AssertionError('Type error, flow_json must be JSON')
+        else:
+            try:
                 self.flow_obj.get_flow_list()
-        except Exception as e:
-            raise AssertionError('Type error, flow_json must be JSON')
+            except Exception as e:
+                raise AssertionError('Request to NodeRed has porblem.')
+
 
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
 
@@ -131,8 +136,11 @@ Set API parameter will be used in the API.
         param['default'] = default
 
         # check if the name is the same, raise error
-
-        self.param.append(param)
+        if key in self.param_name:
+            raise AssertionError('It has already the same name parameter.')
+        else:
+            self.param_name.append(key)
+            self.param.append(param)
         pass
 
     def set_column(self, column_name):
