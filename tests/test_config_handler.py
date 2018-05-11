@@ -5,7 +5,7 @@ import unittest
 import configparser
 
 
-class TestModels(unittest.TestCase):
+class TestConfigHandler(unittest.TestCase):
     def setUp(self):
         config = configparser.ConfigParser()
         config.read('config.ini')
@@ -13,6 +13,7 @@ class TestModels(unittest.TestCase):
         self.flow_json_file='./data/flow_json.json'
         with open('./data/config_handler_request.json') as f:
             self.REQUEST = f.read()
+
 
     def test_adder(self):
         cfg = config_handler()
@@ -26,3 +27,18 @@ class TestModels(unittest.TestCase):
         result = a + b
         ret = cfg.next_node(result, debug=True)
         print(json.dumps(ret))
+
+    def test_data_column(self):
+        cfg = config_handler()
+        cfg.set_param('b', type='integer', required=True, default=10)
+        cfg.set_column('a')
+        cfg.summary()
+
+        cfg.set_kernel_gateway(self.REQUEST, flow_json_file=self.flow_json_file)
+        a = cfg.get_data()
+        print(a)
+
+# if __name__ == '__main__':
+#     cli = TestConfigHandler
+#     cli.setUp()
+#     cli.test_adder()

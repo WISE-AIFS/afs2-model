@@ -12,7 +12,7 @@ class config_handler(object):
 Config handler is the class which handle AFS flow framework. User can use function fetch parameters, or send data to next node.
         """
         self.param = []
-        self.param_name = []
+        self.variable_name = []
         self.column = []
         self.data = DataFrame.empty
 
@@ -73,7 +73,7 @@ Get parameter from key name, and it should be set from set_param.
         elif obj_para['type'] in 'float':
             obj_value = float(obj_value)
         else:
-            _logger.warning('Param has no specific type.')
+            _logger.warning('Parameter has no specific type.')
             obj_value = str(obj_value)
 
         if obj_value:
@@ -103,22 +103,27 @@ Transform REQUEST data to DataFrame type.
         :return: DataFrame type from REQUEST
         """
         if self.data is not DataFrame.empty:
-            return self.data
+            return self.data.rename(columns=self.get_column())
         else:
             return DataFrame.empty
+
+    def get_column(self):
+        return {self.flow_obj.current_node_obj[column_name]: column_name for column_name in self.flow_obj.current_node_obj if column_name in self.column}
 
     def next_node(self,data, debug=False):
         """
 Send data to next node according to flow.
         :param data: DataFrame type.
         :param debug: if debug is True, method will return response message from next node.
-        :return:
+        :return: Response JSON
         """
         if isinstance(data, DataFrame):
+            column_reverse_mapping = {v: k for k, v in self.get_column().items()}
+            data = data.rename(columns=column_reverse_mapping)
             data = dict(data=data.to_dict())
             return self.flow_obj.exe_next_node(data, debug)
         else:
-            raise AssertionError('Type error, data must be Dataframe')
+            raise AssertionError('Type error, data must be DataFrame type')
 
     def set_param(self, key, type='string', required=False ,default=None):
         """
@@ -130,26 +135,29 @@ Set API parameter will be used in the API.
         """
 
         param = {}
-        param['name'] = key
+        param['name'] = str(key)
         param['type'] = type
         param['required'] = required
         param['default'] = default
 
         # check if the name is the same, raise error
-        if key in self.param_name:
-            raise AssertionError('It has already the same name parameter.')
+        if param['name'] in self.variable_name:
+            raise AssertionError('It has already the same name of the parameter.')
         else:
-            self.param_name.append(key)
+            self.variable_name.append(key)
             self.param.append(param)
-        pass
 
     def set_column(self, column_name):
         """
 The column will be used in this API.
-        :param column_name:
+        :param column_name: String, the column name used in the following API
         """
-        self.column.append(column_name)
-        pass
+        column_name = str(column_name)
+        if column_name in self.variable_name:
+            raise AssertionError('It has already the same column name.')
+        else:
+            self.variable_name.append(column_name)
+            self.column.append(column_name)
 
     def summary(self):
         """
@@ -159,8 +167,3 @@ Summary what parameters and column the API need.This method should be called by 
         smry['param'] = self.param
         smry['column'] = self.column
         print(json.dumps(smry))
-        pass
-
-
-
-
