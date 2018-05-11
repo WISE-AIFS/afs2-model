@@ -13,7 +13,7 @@ $ jupyter-kernelgateway --KernelGatewayApp.port=9090 --KernelGatewayApp.ip='0.0.
          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36",
          "Content-Type": "application/json",
          "Cache-Control": "no-cache",
-         "Host_url": "123",
+         "Host_url": "http://140.92.27.70:1880/",
          "Node_id": "ada49faf.e05cf",
          "Postman-Token": "17190eb2-0bff-f66a-b146-1e96bc8ce97a",
          "Accept": "*/*",
@@ -41,3 +41,4 @@ $ jupyter-kernelgateway --KernelGatewayApp.port=9090 --KernelGatewayApp.ip='0.0.
         "node_id": "db4f28d6.59d7e8"
     }
 }
+

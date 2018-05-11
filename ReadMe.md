@@ -25,10 +25,10 @@ $ python setup.py install
 python-3.X
 
 ## 1.2.0版本新增
-config_handler:提供開發者用於node-red串接資料SDK。使用範例[連結](./examples/adder_0509.md)。
+config_handler:提供開發者用於node-red串接資料SDK。使用範例[連結](examples/adder/adder_0509.md)。
 
 
-## models用法
+## models usage
 ### 上傳model
 ```
 def upload_model(model_name, accuracy, loss, tags={}, extra_evaluation={}):
@@ -44,7 +44,7 @@ def upload_model(model_name, accuracy, loss, tags={}, extra_evaluation={}):
 ```
 
 
-## 範例
+## Eamples
 ### upload models function (On AFS developer)
 ```
 from afs import models

@@ -5,6 +5,10 @@ manifest = {
     'memory': 256,
     'disk_quota': 256,
     'buildpack': 'python_buildpack',
+    "requirements":[
+        "pandas",
+        "https://github.com/benchuang11046/afs/archive/QA.zip"
+    ],
     'type': 'API'
 }
 ```
