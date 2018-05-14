@@ -10,8 +10,8 @@ class TestConfigHandler(unittest.TestCase):
         config = configparser.ConfigParser()
         config.read('config.ini')
 
-        self.flow_json_file='./data/flow_json.json'
-        with open('./data/config_handler_request.json') as f:
+        self.flow_json_file=config['config_handler']['flow_json_file']
+        with open(config['config_handler']['config_handler_request']) as f:
             self.REQUEST = f.read()
 
     def test_adder(self):
@@ -27,7 +27,7 @@ class TestConfigHandler(unittest.TestCase):
         ret = cfg.next_node(result, debug=True)
         print(json.dumps(ret))
 
-    def test_data_column_running(self):
+    def test_get_data(self):
         cfg = config_handler()
         cfg.set_param('b', type='integer', required=True, default=10)
         cfg.set_column('a')
@@ -36,8 +36,3 @@ class TestConfigHandler(unittest.TestCase):
         cfg.set_kernel_gateway(self.REQUEST, flow_json_file=self.flow_json_file)
         a = cfg.get_data()
         print(a)
-
-# if __name__ == '__main__':
-#     cli = TestConfigHandler
-#     cli.setUp()
-#     cli.test_adder()
