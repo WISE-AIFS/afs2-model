@@ -4,15 +4,18 @@
 ### pip install
 
 
-Release branch
+version 1.2.1
 ```
-$ pip install git+https://github.com/benchuang11046/afs.git
+$ pip install https://github.com/benchuang11046/afs/archive/1.2.1.zip
 ```
 
-QA branch
+version 1.1.3
 ```
-$ pip install https://github.com/benchuang11046/afs/archive/QA.zip
+$ pip install https://github.com/benchuang11046/afs/archive/1.1.3.zip
 ```
+
+
+
 
 ### From sources
 

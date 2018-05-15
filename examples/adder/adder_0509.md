@@ -7,7 +7,7 @@ manifest = {
     'buildpack': 'python_buildpack',
     "requirements":[
         "pandas",
-        "https://github.com/benchuang11046/afs/archive/QA.zip"
+        "https://github.com/benchuang11046/afs/archive/1.2.1.zip"
     ],
     'type': 'API'
 }
