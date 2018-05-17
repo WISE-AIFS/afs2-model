@@ -10,11 +10,16 @@ import requests
 from afs.utils import InvalidStatusCode
 import afs.utils as utils
 from afs.get_env import AfsEnv
+import urllib3
 
 _logger = logging.getLogger(__name__)
 
 class models(object):
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
+        """
+Connect to afs models service, user can connect to service by enviroment parameter. Another way is input when created.
+        """
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         envir = AfsEnv(target_endpoint=target_endpoint, instance_id=instance_id, auth_code=auth_code)
         self.target_endpoint = envir.target_endpoint
         self.instance_id = envir.instance_id
@@ -33,7 +38,7 @@ class models(object):
 
     def download_model(self, save_path, model_name=None):
         """
-
+Download model from model repository to a file
         :param model_name:  The model name exists in model repository
         :param save_path: The path exist in file system
         """
@@ -93,7 +98,7 @@ class models(object):
 
     def switch_repo(self, repo_name=None):
         """
-
+Switch current repository.
         :param repo_name
         :return: None or repo_id
         """

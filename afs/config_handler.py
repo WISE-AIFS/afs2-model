@@ -1,6 +1,5 @@
 import json
 from pandas import DataFrame
-import pandas
 from afs.flow import flow
 import logging
 

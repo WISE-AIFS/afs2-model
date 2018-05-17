@@ -19,12 +19,12 @@ install_requires = parse_requirements(requirements_path, session='hack')
 install_requires = [str(ir.req) for ir in install_requires]
 
 # version_tag = subprocess.check_output(["git", "describe"]).strip().decode()
-version_tag='1.2.0'
+version_tag='1.2.1'
 
 setup(
     name='afs',
     version=version_tag,
-    description='For AFS developer develop analytics',
+    description='For AFS developer to develop analytics',
     long_description=open('ReadMe.md').read(),
     author='benchuang',
     author_email='benchuang@iii.org.tw',
