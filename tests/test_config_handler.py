@@ -20,7 +20,7 @@ class TestConfigHandler(unittest.TestCase):
         cfg.set_column('a')
         cfg.summary()
 
-        cfg.set_kernel_gateway(self.REQUEST, flow_json_file=self.flow_json_file)
+        cfg.set_kernel_gateway(self.REQUEST)
         b = cfg.get_param('b')
         a = cfg.get_data()
         result = a + b
@@ -33,6 +33,6 @@ class TestConfigHandler(unittest.TestCase):
         cfg.set_column('a')
         cfg.summary()
 
-        cfg.set_kernel_gateway(self.REQUEST, flow_json_file=self.flow_json_file)
+        cfg.set_kernel_gateway(self.REQUEST)
         a = cfg.get_data()
         print(a)

@@ -127,7 +127,7 @@ Send data to next node according to flow.
             column_reverse_mapping = {v: k for k, v in self.get_column().items()}
             data = data.rename(columns=column_reverse_mapping)
             data = dict(data=data.to_dict())
-            return self.flow_obj.exe_next_node(data, debug)
+            return self.flow_obj.exe_next_node(data, next_list=None, debug=debug)
         else:
             raise AssertionError('Type error, data must be DataFrame type')
 
