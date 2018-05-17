@@ -33,7 +33,7 @@ For Jupyter kernel gateway API, REQUEST is the request given by kernel gateway. 
             flow_info['host_url'] = headers['Host_url']
             self.flow_obj.set_flow_config(flow_info)
         except Exception as e:
-            raise AssertionError('REQUEST must be json format, or headers contains not enough information')
+            raise AssertionError('REQUEST must be json format, or headers contains not enough information.')
 
         if flow_json_file:
             try:
