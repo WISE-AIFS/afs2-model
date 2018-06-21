@@ -1,0 +1,4 @@
+coverage
+aiohttp
+beautifulsoup4
+configparser

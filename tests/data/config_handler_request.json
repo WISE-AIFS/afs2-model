@@ -1,0 +1,14 @@
+{
+     "headers": {
+         "Flow_id": "b896452e.73d968",
+         "Host_url": "http://portal-nodered-afs.wise-paas.com/",
+		 "Node_id": "fb3d279.613efd8"
+     },
+     "body": {
+         "data": {
+             "value": {
+                 "0": 21
+             }
+         }
+      }
+ }
