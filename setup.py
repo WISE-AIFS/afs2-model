@@ -3,7 +3,10 @@
 
 import os
 import subprocess
-from pip.req import parse_requirements
+try: # for pip >= 10
+    from pip._internal.req import parse_requirements
+except ImportError: # for pip <= 9.0.3
+    from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 setup_requirements_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requirements_setup.txt')
