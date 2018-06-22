@@ -8,26 +8,50 @@ import os
 from io import BytesIO
 import requests
 from afs.utils import InvalidStatusCode
+import afs.utils as utils
+from afs.get_env import AfsEnv
+import urllib3
 
 _logger = logging.getLogger(__name__)
 
 class models(object):
-    def __init__(self, target_endpoint, instance_id, auth_code, entity_uri):
-        self.target_endpoint = target_endpoint
-        self.instance_id = instance_id
-        self.auth_code = auth_code
-        self.entity_uri = entity_uri
+    def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
+        """
+Connect to afs models service, user can connect to service by enviroment parameter. Another way is input when created.
+        """
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        envir = AfsEnv(target_endpoint=target_endpoint, instance_id=instance_id, auth_code=auth_code)
+        self.target_endpoint = envir.target_endpoint
+        self.instance_id = envir.instance_id
+        self.auth_code = envir.auth_code
+        self.entity_uri = 'models'
         self.repo_id = None
 
-    def _download_model(model_path, afs_config):
-        download_url = afs_config['afs_url'] + 'v1/' + afs_config['instance_id'] + '/models/' + afs_config['repo_id'] + '/download'
-        result = requests.get(download_url, params={'auth_code': afs_config['auth_code']},)
-        with open(model_path, 'wb') as f:
-             f.write(result.content)
-        f.close()
+    def _download_model(self, save_path):
+        if self.repo_id is not None:
+            extra_paths = [self.repo_id, 'download' ]
+            resp = self._get(extra_paths=extra_paths)
+            with open(save_path, 'wb') as f:
+                f.write(resp.content)
+        else:
+            AssertionError('There is no specific repo id to download.')
 
-    def upload_model(self, model_name, accuracy: float, loss: float, tags={}, extra_evaluation={}):
+    def download_model(self, save_path, model_name=None):
         """
+Download model from model repository to a file
+        :param model_name:  The model name exists in model repository
+        :param save_path: The path exist in file system
+        """
+        if model_name is not None:
+            self.repo_id = self.switch_repo(model_name)
+        if self.repo_id is None:
+            AssertionError('The model repository is not existed')
+        else:
+            self._download_model(save_path)
+
+    def upload_model(self, model_name, accuracy, loss, tags={}, extra_evaluation={}):
+        """
+        Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.
          :rtype: None
          :param model_name:  (required) string, model path or name
          :param accuracy: (required) float, model accuracy value
@@ -36,27 +60,26 @@ class models(object):
          :param extra_evaluation: (optional) dict, other evaluation from model
          """
 
-        if not isinstance(accuracy, float) or not isinstance(loss, float) is not float or not isinstance(tags, dict) or not isinstance(extra_evaluation, dict):
+        if not isinstance(accuracy, float) or not isinstance(loss, float) or not isinstance(tags, dict) or not isinstance(extra_evaluation, dict):
             raise AssertionError('Type error, accuracy and loss is float, and tags and extra_evaluation are dict.')
         try:
             model_name = str(model_name)
         except Exception as e:
-            raise AssertionError('Type error, model_name %s cannot convert to string' % (model_name))
+            raise AssertionError('Type error, model_name  cannot convert to string')
         if not os.path.isfile(model_name):
-            raise AssertionError('File not found, model %s path is not exist.' % (model_name))
+            raise AssertionError('File not found, model path is not exist.' )
         else:
+            medel_path = model_name
             if os.path.sep in model_name:
                 model_name = model_name.split(os.path.sep)[-1]
 
-        with open(model_name, 'rb') as f:
+        with open(medel_path, 'rb') as f:
             model_file = BytesIO(f.read())
         model_file.seek(0)
-        resp = self.is_repo_exist(model_name)
+        self.repo_id = self.switch_repo(model_name)
         if self.repo_id is None:
-            if resp is False:
-                self.repo_id = self._create_model_repo(model_name)
-            else:
-                self.repo_id = resp
+            self.repo_id = self._create_model_repo(model_name)
+
         evaluation_result = {'accuracy': accuracy, 'loss': loss}
         evaluation_result.update(extra_evaluation)
         data = dict(tags = json.dumps(tags), evaluation_result = json.dumps(evaluation_result))
@@ -67,24 +90,22 @@ class models(object):
     def _create_model_repo(self, repo_name):
         request = dict(name=repo_name)
         resp = self._create(request)
-        # self.repo_id = resp.json()['uuid']
         return resp.json()['uuid']
 
     def _get_model_list(self, repo_name=None):
-        print(self.target_endpoint, self.instance_id, self.auth_code)
         params = dict(name=repo_name)
         return self._get(params=params)
 
-    def is_repo_exist(self, repo_name=None):
+    def switch_repo(self, repo_name=None):
         """
-
+Switch current repository.
         :param repo_name
-        :return: False or repo_id
+        :return: None or repo_id
         """
         params = dict(name=repo_name)
         resp = self._get(params=params)
         if len(resp.json()) == 0:
-            return False
+            return None
         else:
             self.repo_id = resp.json()[0]['uuid']
             return self.repo_id
@@ -95,9 +116,9 @@ class models(object):
         else:
             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
         if not files:
-            response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, verify=False))
+            response = utils._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, verify=False))
         else:
-            response = models._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, files=files, verify=False))
+            response = utils._check_response(requests.post(url, params=dict(auth_code=self.auth_code), json=data, files=files, verify=False))
         _logger.debug('POST - %s - %s', url, response.text)
         return response
 
@@ -107,18 +128,21 @@ class models(object):
         else:
             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
         if not files:
-            response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), data=data, verify=False))
+            response = utils._check_response(requests.put(url, params=dict(auth_code=self.auth_code), data=data, verify=False))
         else:
-            response = models._check_response(requests.put(url, params=dict(auth_code=self.auth_code), files=files, data=data, verify=False))
+            response = utils._check_response(requests.put(url, params=dict(auth_code=self.auth_code), files=files, data=data, verify=False))
         _logger.debug('PUT - %s - %s', url, response.text)
         return response
 
-    def _get(self, params={}, requested_path=''):
-        url = '%s%s/%s%s' % (self.target_endpoint, self.instance_id, self.entity_uri, requested_path)
+    def _get(self, params={}, extra_paths=[]):
+        if len(extra_paths) == 0:
+            url = '%s%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri)
+        else:
+             url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id, self.entity_uri, '/'.join(extra_paths))
         get_params = {}
         get_params.update(dict(auth_code=self.auth_code))
         get_params.update(params)
-        response = models._check_response(requests.get(url, params=get_params, verify=False))
+        response = utils._check_response(requests.get(url, params=get_params, verify=False))
         _logger.debug('GET - %s - %s', url, response.text)
         return response
 

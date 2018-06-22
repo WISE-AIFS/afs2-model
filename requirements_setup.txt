@@ -1,0 +1,4 @@
+# pylint
+nose-htmloutput
+nose-timer
+nose
