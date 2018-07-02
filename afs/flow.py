@@ -1,4 +1,4 @@
-# -*-coding:utf-8 -*-
+ -*-coding:utf-8 -*-
 #  for a+b demo 20180504 clone from chi
 import datetime
 import time
@@ -38,10 +38,8 @@ class flow:
     def set_flow_config(self, obj):
         """
         Set config(class properties value) of flow.
-
         :param  obj: (dict) request headers.
                     {flow_id, node_id, host_url}
-
         :return is_success: (bool) flow config information is setting success.
             True: setting success.
             False: lose config information.
@@ -78,9 +76,7 @@ class flow:
     def get_flow_list(self):
         """
         Call Node-RED api to get flow list.
-
         needed variable: flow_id, host_url
-
         generate: flow_list (list) all nodes in this flow_id.
             if not exist, variable will be None.
         """
@@ -103,12 +99,10 @@ class flow:
     def get_node_item(self, select_node_id, is_current_node=True):
         """
         Get Node-RED item from flow_list.
-
         :param  select_node_id: (string) node id in Node-RED, for select node.
         :param  is_current_node: (bool) This node id is current node.
             True: Set this node information into node_obj.
             False: Do not set this node information into node_obj.
-
         :return node: (dict) get this node setting information.
             if not exist, return None.
         """
@@ -130,7 +124,6 @@ class flow:
         """
         Find node id of firehose type in flow.
         (check for key name: _node_type)
-
         :return node_id: (string) node id of firehose
         """
         node_id = ''
@@ -151,7 +144,6 @@ class flow:
     def set_headers(self):
         """
         Generate headers object for request headers.
-
         :return obj: (dict) request headers object.
             {Content-Type, flow_id, node_id, host_url}
         """
@@ -170,10 +162,8 @@ class flow:
         """
         Request next node api to execute.
         Dependency: get_node_item(), set_headers()
-
         :param  next_list: (list) list of next nodes.
         :param  data: (dict) data will send to next node. (dataframe dict)
-
         :return error_node: (string) node id with error occur.
         """
         error_node = '0'    # node with error occur
@@ -289,5 +279,4 @@ class flow:
         else:
             raise AssertionError('Dict has no key name "node"')
             self.flow_list = None
-    
-
+	
