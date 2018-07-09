@@ -153,7 +153,6 @@ test
         
         # which means SCADA retrieve no data from InfluxDB
         if len(scada_idb['timestamp']) == 0:
-A
             return 'no data retrieve from SCADA'
 
         ## Align SCADA and Grafana Dataframe ##
