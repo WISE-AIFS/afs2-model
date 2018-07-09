@@ -2,3 +2,4 @@
 nose-htmloutput
 nose-timer
 nose
+wheel
