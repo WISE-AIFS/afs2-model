@@ -1,4 +1,3 @@
-#  for a+b demo 20180504 clone from chi
 import datetime
 import time
 import json
