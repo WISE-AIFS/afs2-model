@@ -105,8 +105,8 @@ test
                    "Authorization": encode_base64(GRAFANA_USERNAME, GRAFANA_PASSWORD)}
 
         url = GRAFANA_HOST + GRAFANA_REQUEST_ANNO_QUERY + '?' +\
-                                                          '&tags'= GRAFANA_TAG1 +\
-                                                          '&tags'= GRAFANA_TAG2 +\
+                                                          '&tags=' + GRAFANA_TAG1 +\
+                                                          '&tags=' + GRAFANA_TAG2 +\
                                                           '&from=' + GRAFANA_FROM +\
                                                           '&to=' + GRAFANA_TO
         
