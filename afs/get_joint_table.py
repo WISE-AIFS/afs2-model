@@ -136,8 +136,8 @@ test
         #scada_idb.rename(index=str, columns={'Unnamed: 0': 'timestamp'}, inplace=True)
         #cada_idb = scada_idb.sort_values(by=['timestamp'])
         
-        IDB_TIME_START = datetime.datetime.fromtimestamp(int(DATE_FROM)).strftime('%Y-%m-%d %H:%M:%S')
-        IDB_TIME_END = datetime.datetime.fromtimestamp(int(DATE_TO)).strftime('%Y-%m-%d %H:%M:%S')
+        IDB_TIME_START = datetime.datetime.fromtimestamp(query_date['DATE_FROM']).strftime('%Y-%m-%d %H:%M:%S')
+        IDB_TIME_END = datetime.datetime.fromtimestamp(query_date['DATE_TO']).strftime('%Y-%m-%d %H:%M:%S')
         
         measurement, scada_idb = read_influxdb_data(host = IDB_HOST,
                                        port = IDB_PORT,
