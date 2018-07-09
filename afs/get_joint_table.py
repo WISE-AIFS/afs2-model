@@ -2,6 +2,7 @@
 import boto
 import boto.s3.connection
 from boto.s3.key import Key
+B
 import pandas as pd
 from pandas.io.json import json_normalize
 import numpy
@@ -9,6 +10,7 @@ import os
 import json
 import datetime
 import time
+B
 import random
 import requests
 import base64
@@ -16,7 +18,7 @@ from influxdb import DataFrameClient
 
 class GetJointTable(object):
 
-    def __call__(self, DATE_FROM, DATE_TO, TAG):
+    def __call__(self, DATE_FROM, DATE_TO, TAG, Z):
 
         """
 test
@@ -24,7 +26,7 @@ test
 
 
     
-        #print(From, To)
+        print(Z['HOST'])
     
         GRAFANA_HOST = 'http://dashboard-grafana-1-1-14.fomos.csc.com.tw'
         GRAFANA_REQUEST_ANNO_QUERY = '/api/annotations'
@@ -193,4 +195,4 @@ test
         
         return output_df
 
-get_joint_table = GetJointTable()
+get = GetJointTable()
