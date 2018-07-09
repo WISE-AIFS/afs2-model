@@ -110,7 +110,8 @@ test
                                                           '&from=' + GRAFANA_FROM +\
                                                           '&to=' + GRAFANA_TO
         
-        #print(url)
+        print(url)
+        print(headers)
 
         req = requests.get(url, headers=headers)
         req_data_json = req.json()
