@@ -16,7 +16,7 @@ from influxdb import DataFrameClient
 
 class GetJointTable(object):
 
-    def __call__(self, DATE_FROM, DATE_TO, TAG, Z):
+    def __call__(self, query_date, grafana_dict, idb_dict, tag):
 
         """
 test
@@ -30,7 +30,7 @@ test
         GRAFANA_REQUEST_ANNO_QUERY = '/api/annotations'
         GRAFANA_USERNAME = 'wenting@icsc.com.tw'
         GRAFANA_PASSWORD = 'Pa$$w0rd'
-        GRAFANA_FROM = DATE_FROM + '000'
+        GRAFANA_FROM = query_date['DATE_FROM'] + '000'
         GRAFANA_TO =   DATE_TO + '000'
         GRAFANA_TAG1 = 'test_2'
         GRAFANA_TAG2 = ''
