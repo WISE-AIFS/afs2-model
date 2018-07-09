@@ -21,28 +21,24 @@ class GetJointTable(object):
         """
 test
         """
-
-
     
-        print(Z['HOST'])
-    
-        GRAFANA_HOST = 'http://dashboard-grafana-1-1-14.fomos.csc.com.tw'
+        GRAFANA_HOST = grafana_dict['GRAFANA_HOST']
         GRAFANA_REQUEST_ANNO_QUERY = '/api/annotations'
-        GRAFANA_USERNAME = 'wenting@icsc.com.tw'
-        GRAFANA_PASSWORD = 'Pa$$w0rd'
+        GRAFANA_USERNAME = grafana_dict['GRAFANA_USERNAME']
+        GRAFANA_PASSWORD = grafana_dict['GRAFANA_PASSWORD']
         GRAFANA_FROM = query_date['DATE_FROM'] + '000'
-        GRAFANA_TO =   DATE_TO + '000'
+        GRAFANA_TO =   query_date['DATE_TO'] + '000'
         GRAFANA_TAG1 = 'test_2'
         GRAFANA_TAG2 = ''
         GRAFANA_PANEL_ID = '16'
         GRAFANA_DASHBOARD_ID = '15'
 
-        IDB_HOST = '192.168.123.245'
-        IDB_PORT = 8086
-        IDB_DBNAME = 'c9377a95-82f3-4af3-ac14-40d14f6d2abe'
-        IDB_CHANNEL = TAG
-        IDB_USER = 'c6e23c03-dd57-4c8f-a6e2-b683ad76e8e4'
-        IDB_PASSWORD = 'NSr8dUZ6meiRlal8zqGcV6avK'
+        IDB_HOST = idb_dict['IDB_HOST']
+        IDB_PORT = idb_dict['IDB_PORT']
+        IDB_DBNAME = idb_dict['IDB_DBNAME']
+        IDB_CHANNEL = tag
+        IDB_USER = idb_dict['IDB_USER']
+        IDB_PASSWORD = idb_dict['IDB_PASSWORD']
         KEYWORD = ''
 
         
@@ -131,7 +127,6 @@ test
         annotation = annotation.sort_values(by=['regionId', 'time'])
         annotation['time'] = pd.to_datetime(annotation['time'], unit='ms')
         annotation.rename(index=str, columns={'time': 'timestamp'}, inplace=True)
-
         
         
         ## Request SCADA eigen value from InfluxDB ##
@@ -158,6 +153,7 @@ test
         
         # which means SCADA retrieve no data from InfluxDB
         if len(scada_idb['timestamp']) == 0:
+A
             return 'no data retrieve from SCADA'
 
         ## Align SCADA and Grafana Dataframe ##
