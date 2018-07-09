@@ -28,10 +28,10 @@ test
         GRAFANA_PASSWORD = grafana_dict['GRAFANA_PASSWORD']
         GRAFANA_FROM = query_date['DATE_FROM'] + '000'
         GRAFANA_TO =   query_date['DATE_TO'] + '000'
-        GRAFANA_TAG1 = 'test_2'
-        GRAFANA_TAG2 = ''
-        GRAFANA_PANEL_ID = '16'
-        GRAFANA_DASHBOARD_ID = '15'
+        GRAFANA_TAG1 = grafana_dict['GRAFANA_TAG1']
+        GRAFANA_TAG2 = grafana_dict['GRAFANA_TAG2']
+        #GRAFANA_PANEL_ID = '16'
+        #GRAFANA_DASHBOARD_ID = '15'
 
         IDB_HOST = idb_dict['IDB_HOST']
         IDB_PORT = idb_dict['IDB_PORT']
@@ -105,8 +105,8 @@ test
                    "Authorization": encode_base64(GRAFANA_USERNAME, GRAFANA_PASSWORD)}
 
         url = GRAFANA_HOST + GRAFANA_REQUEST_ANNO_QUERY + '?' +\
-                                                          '&panelId=' + GRAFANA_PANEL_ID +\
-                                                          '&dashboardId=' + GRAFANA_DASHBOARD_ID +\
+                                                          '&tags'= GRAFANA_TAG1 +\
+                                                          '&tags'= GRAFANA_TAG2 +\
                                                           '&from=' + GRAFANA_FROM +\
                                                           '&to=' + GRAFANA_TO
         
