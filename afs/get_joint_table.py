@@ -2,7 +2,6 @@
 import boto
 import boto.s3.connection
 from boto.s3.key import Key
-B
 import pandas as pd
 from pandas.io.json import json_normalize
 import numpy
@@ -10,7 +9,6 @@ import os
 import json
 import datetime
 import time
-B
 import random
 import requests
 import base64
