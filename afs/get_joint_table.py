@@ -124,7 +124,7 @@ test
         #    return 'no data retrieve from Grafana'
         
         #GMT+8
-        annotation = req_data_pd[['regionId', 'tags', 'time']]
+        annotation = req_data_pd[['regionId', 'tags', 'time', 'email']]
         annotation = annotation.sort_values(by=['regionId', 'time'])
         annotation['time'] = pd.to_datetime(annotation['time'], unit='ms')
         annotation.rename(index=str, columns={'time': 'timestamp'}, inplace=True)
@@ -161,6 +161,8 @@ test
         for regionID in annotation.regionId.unique():
 
             tags_list = annotation[annotation['regionId'] == regionID]['tags'].iloc[0]
+            mail_list = annotation[annotation['regionId'] == regionID]['email'].iloc[0]
+            
             label_start_time = str(annotation[annotation['regionId'] == regionID]['timestamp'].iloc[0])
             label_end_time = str(annotation[annotation['regionId'] == regionID]['timestamp'].iloc[1])
             label_start_time = datetime.datetime.strptime(label_start_time, '%Y-%m-%d %H:%M:%S')
@@ -174,13 +176,15 @@ test
                 label_df.at[i, 'timestamp'] = scada_idb['timestamp'][i]
 
                 if (datetime_object > label_start_time) and (datetime_object < label_end_time):
-                    for tags in tags_list:
+                    for num, tags in enumerate(tags_list):
                         #print (tags)
                         label_df.at[i, tags] = 1
+                        label_df.at[i, mail_list[num]] = 1
                 else:
-                    for tags in tags_list:
+                    for num, tags in enumerate(tags_list):
                         #print (tags)
                         label_df.at[i, tags] = -1
+                        label_df.at[i, mail_list[num]] = -1
 
             #print (label_start_time, label_end_time, datetime_object)
             
