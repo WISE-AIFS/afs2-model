@@ -129,6 +129,10 @@ test
         annotation['time'] = pd.to_datetime(annotation['time'], unit='ms')
         annotation.rename(index=str, columns={'time': 'timestamp'}, inplace=True)
         
+        # Remove in-duplicate rows
+        anno_dup_list = annotation.set_index('regionId').index.get_duplicates()
+        annotation = annotation.loc[annotation['regionId'].isin(anno_dup_list)]
+        
         
         ## Request SCADA eigen value from InfluxDB ##
         #scada_idb = pd.read_csv('test.csv')
@@ -161,7 +165,7 @@ test
         for regionID in annotation.regionId.unique():
 
             tags_list = annotation[annotation['regionId'] == regionID]['tags'].iloc[0]
-            mail_list = annotation[annotation['regionId'] == regionID]['email'].iloc[0]
+            mail = annotation[annotation['regionId'] == regionID]['email'].iloc[0]
             
             label_start_time = str(annotation[annotation['regionId'] == regionID]['timestamp'].iloc[0])
             label_end_time = str(annotation[annotation['regionId'] == regionID]['timestamp'].iloc[1])
@@ -179,12 +183,12 @@ test
                     for num, tags in enumerate(tags_list):
                         #print (tags)
                         label_df.at[i, tags] = 1
-                        label_df.at[i, mail_list[num]] = 1
+                        label_df.at[i, mail] = 1
                 else:
                     for num, tags in enumerate(tags_list):
                         #print (tags)
                         label_df.at[i, tags] = -1
-                        label_df.at[i, mail_list[num]] = -1
+                        label_df.at[i, mail] = -1
 
             #print (label_start_time, label_end_time, datetime_object)
             
