@@ -21,7 +21,6 @@ requirements_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'r
 install_requires = parse_requirements(requirements_path, session='hack')
 install_requires = [str(ir.req) for ir in install_requires]
 
-# version_tag = subprocess.check_output(["git", "describe"]).strip().decode()
 version_tag = '1.2.8'
 
 setup(
@@ -34,7 +33,6 @@ setup(
     url='https://github.com/benchuang11046/afs',
     license='MIT',
     install_requires=install_requires,
-    # packages=['afs'],
     packages=find_packages(exclude=["tests", "test_reports", "prometheus-data", "build"]),
     setup_requires=setup_requires,
     tests_require=tests_require,
@@ -46,6 +44,7 @@ setup(
             'iii_afs = afs.__main__:main'
         ]
     },
+    keywords=['afs', 'WISE-PaaS', 'EI-PaaS', 'analytics framework service', 'afs-sdk']
 )
 
 # build wheel pacakge

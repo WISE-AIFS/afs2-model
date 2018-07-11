@@ -4,35 +4,39 @@
 ### pip install
 
 
-version 1.2.1
+version latest
 ```
-$ pip install https://github.com/benchuang11046/afs/archive/1.2.1.zip
+$ pip install https://github.com/benchuang11046/afs.git
 ```
-
-version 1.1.3
-```
-$ pip install https://github.com/benchuang11046/afs/archive/1.1.3.zip
-```
-
-
-
 
 ### From sources
 
-To build the library run :
+To build the library run:
 ```
 $ python setup.py install
+```
+
+To build the wheel package:
+```
+$ python setup.py bdist_wheel
 ```
 
 ## 支援python版本
 python-3.X
 
-## 1.2.0版本新增
-config_handler:提供開發者用於node-red串接資料SDK。使用範例[連結](examples/adder/adder_0509.md)。
+## version 1.2.8 新增
+Module
+ 
+* join_table
+
+## version 1.2.0 新增
+Module
+
+* config_handler: 提供開發者用於Online Flow IDE串接資料之SDK。使用範例[連結](examples/adder/adder_0509.md)。
 
 
 ## models usage
-### 上傳model
+### 上傳training model
 ```
 def upload_model(model_name, accuracy, loss, tags={}, extra_evaluation={}):
         """
@@ -48,7 +52,7 @@ def upload_model(model_name, accuracy, loss, tags={}, extra_evaluation={}):
 
 
 ## Eamples
-### upload models function (On AFS developer)
+### upload training models function (On AFS developer)
 ```
 from afs import models
 with open('model.h5', 'w') as f:
@@ -59,7 +63,7 @@ afs_models.upload_model('model.h5', accuracy=0.4, loss=0.3, tags=dict(machine='m
 ```
 
 
-### upload models function (Local developer)
+### upload training models function (Local developer)
 ```
 from afs import models
 with open('model.h5', 'w') as f:
