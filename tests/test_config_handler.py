@@ -9,8 +9,6 @@ class TestConfigHandler(unittest.TestCase):
     def setUp(self):
         config = configparser.ConfigParser()
         config.read('config.ini')
-
-        self.flow_json_file=config['config_handler']['flow_json_file']
         with open(config['config_handler']['config_handler_request']) as f:
             self.REQUEST = f.read()
 
