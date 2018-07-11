@@ -19,7 +19,13 @@ class GetJointTable(object):
     def __call__(self, query_date, grafana_dict, idb_dict, tag):
 
         """
-test
+        Parameters:
+            query_date: dict
+                DATE_FROM: end date
+                DATE_TO: end date
+            grafana_dict: dict
+            idb_dict: dict
+            tag: string
         """
     
         GRAFANA_HOST = grafana_dict['GRAFANA_HOST']
