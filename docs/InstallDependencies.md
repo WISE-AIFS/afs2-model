@@ -9,7 +9,7 @@ If you want install AFS-SDK without external network, you should install depende
 ! pipdeptree -fl
 ```
 
-![afs_pipdeptree](images/pipdeptree.PNG)
+![afs_pipdeptree](_static/images/pipdeptree.PNG)
 
 
 ## AFS-SDK dependency tree
