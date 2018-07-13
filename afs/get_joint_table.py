@@ -1,7 +1,7 @@
 
-import boto
-import boto.s3.connection
-from boto.s3.key import Key
+#import boto
+#import boto.s3.connection
+#from boto.s3.key import Key
 import pandas as pd
 from pandas.io.json import json_normalize
 import numpy
@@ -10,7 +10,7 @@ import json
 import datetime
 import time
 import random
-import requests
+#import requests
 import base64
 from influxdb import DataFrameClient
 
