@@ -185,21 +185,28 @@ class GetJointTable(object):
                 #label_df.at[i, tags]= 0
                 label_df.at[i, 'timestamp'] = scada_idb['timestamp'][i]
 
+                #if (datetime_object > label_start_time) and (datetime_object < label_end_time):
+                #    for num, tags in enumerate(tags_list):
+                #        #print (tags)
+                #        label_df.at[i, tags] = 1
+                #        label_df.at[i, mail] = 1
+                #else:
+                #    for num, tags in enumerate(tags_list):
+                #        #print (tags)
+                #        label_df.at[i, tags] = -1
+                #        label_df.at[i, mail] = -1
+                        
                 if (datetime_object > label_start_time) and (datetime_object < label_end_time):
                     for num, tags in enumerate(tags_list):
                         #print (tags)
                         label_df.at[i, tags] = 1
                         label_df.at[i, mail] = 1
-                else:
-                    for num, tags in enumerate(tags_list):
-                        #print (tags)
-                        label_df.at[i, tags] = -1
-                        label_df.at[i, mail] = -1
 
             #print (label_start_time, label_end_time, datetime_object)
             
         #label_df.drop('x', axis=1, inplace=True)
         output_df = pd.merge(scada_idb, label_df.fillna(-1), on=['timestamp'])
+        output_df.drop([GRAFANA_TAG2], axis=1, inplace=True)
         
         return output_df
 
