@@ -21,7 +21,7 @@ requirements_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'r
 install_requires = parse_requirements(requirements_path, session='hack')
 install_requires = [str(ir.req) for ir in install_requires]
 
-version_tag = '1.2.8'
+version_tag = '1.2.9'
 
 setup(
     name='afs',
