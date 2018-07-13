@@ -10,7 +10,7 @@ import json
 import datetime
 import time
 import random
-#import requests
+import requests
 import base64
 from influxdb import DataFrameClient
 
