@@ -1,0 +1,21 @@
+# For develop
+pylint
+yapf
+
+# For docs
+sphinx
+sphinx-autobuild
+recommonmark
+sphinx_rtd_theme
+
+# For test
+pytest
+pytest-runner
+pytest-cov
+pytest-html
+pytest-pylint
+configparser
+
+# For release
+zest.releaser
+wheel

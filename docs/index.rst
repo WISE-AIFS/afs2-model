@@ -8,10 +8,10 @@ Welcome to afs's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Getting Started:
 
-   ReadMe
+   overview
    InstallDependencies
+   api_reference
 
 
 

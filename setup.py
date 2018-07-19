@@ -9,43 +9,33 @@ except ImportError: # for pip <= 9.0.3
     from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
-setup_requirements_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requirements_setup.txt')
-setup_requires = parse_requirements(setup_requirements_path, session='hack')
-setup_requires = [str(ir.req) for ir in setup_requires]
+dev_requirements_path = os.path.join(os.path.dirname(__file__), 'requirements_dev.txt')
+dev_requires = parse_requirements(dev_requirements_path, session='hack')
+dev_requires = [str(ir.req) for ir in dev_requires]
 
-tests_requirements_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requirements_test.txt')
-tests_require = parse_requirements(tests_requirements_path, session='hack')
-tests_require = [str(ir.req) for ir in tests_require]
-
-requirements_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requirements.txt')
+requirements_path = os.path.join(os.path.dirname(__file__), 'requirements.txt')
 install_requires = parse_requirements(requirements_path, session='hack')
 install_requires = [str(ir.req) for ir in install_requires]
 
-version = {}
-with open("afs/version.py") as fp:
-    exec(fp.read(), version)
+with open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'r') as f:
+    version = f.read()
+
+with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
+    long_description = f.read()
 
 setup(
     name='afs',
-    version=version['__version__'],
+    version=version,
     description='For AFS developer to develop analytics',
-    long_description=open('ReadMe.md').read(),
+    long_description=long_description,
     author='benchuang',
     author_email='benchuang@iii.org.tw',
     url='https://github.com/benchuang11046/afs',
     license='MIT',
     install_requires=install_requires,
-    packages=find_packages(exclude=["tests", "test_reports", "prometheus-data", "build"]),
-    setup_requires=setup_requires,
-    tests_require=tests_require,
-    test_suite='nose.collector',
+    packages=find_packages(exclude=["tests", "test_reports"]),
+    tests_require=dev_requires,
     zip_safe=False,
-    include_package_data=True,
-    entry_points={
-        'console_scripts': [
-            'iii_afs = afs.__main__:main'
-        ]
-    },
     keywords=['afs', 'WISE-PaaS', 'EI-PaaS', 'analytics framework service', 'afs-sdk']
 )
 

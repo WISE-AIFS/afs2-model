@@ -42,7 +42,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
+    'sphinx.ext.githubpages'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -168,6 +168,7 @@ texinfo_documents = [
 intersphinx_mapping = {'https://docs.python.org/': None}
 
 from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
 
 source_parsers = {
     '.md': CommonMarkParser,

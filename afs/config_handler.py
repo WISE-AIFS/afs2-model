@@ -9,7 +9,7 @@ class config_handler(object):
 
     def __init__(self):
         """
-Config handler is the class which handle AFS flow framework. User can use function fetch parameters, or send data to next node.
+        Config handler is the class which handle AFS flow framework. User can use function fetch parameters, or send data to next node.
         """
         self.param = []
         self.variable_name = []
@@ -19,9 +19,10 @@ Config handler is the class which handle AFS flow framework. User can use functi
 
     def set_kernel_gateway(self, REQUEST, flow_json_file=None):
         """
-For Jupyter kernel gateway API, REQUEST is the request given by kernel gateway. Reference REQUEST: http://jupyter-kernel-gateway.readthedocs.io/en/latest/http-mode.html
-        :param REQUEST: JSON type. Jupyter kernel gateway request.
-        :param flow_json_file: String of file path. For debug, developer can use file which contains the flow json as the flow json gotten from NodeRed.
+        For Jupyter kernel gateway API, REQUEST is the request given by kernel gateway. Reference REQUEST: http://jupyter-kernel-gateway.readthedocs.io/en/latest/http-mode.html
+
+        :param str REQUEST: Jupyter kernel gateway request.
+        :param str flow_json_file: String of file path. For debug, developer can use file which contains the flow json as the flow json gotten from NodeRed.
         """
         self.flow_obj = flow()
 
@@ -59,8 +60,9 @@ For Jupyter kernel gateway API, REQUEST is the request given by kernel gateway. 
 
     def get_param(self, key):
         """
-Get parameter from the key name, and it should be set from set_param.
-        :param key: String type. The parameter key set from method set_param
+        Get parameter from the key name, and it should be set from set_param.
+
+        :param str key: The parameter key set from method set_param
         :return: Speicfic type depends on set_param. The value of the key name.
         """
         obj_value = self.flow_obj.current_node_obj[key]
@@ -101,7 +103,8 @@ Get parameter from the key name, and it should be set from set_param.
 
     def get_data(self):
         """
-Transform REQUEST data to DataFrame type.
+        Transform REQUEST data to DataFrame type.
+
         :return: DataFrame type. Data from REQUEST and rename column name.
         """
         if self.data is not DataFrame.empty:
@@ -111,17 +114,21 @@ Transform REQUEST data to DataFrame type.
 
     def get_column(self):
         """
-Get the column mapping list.
-        :return: Dict type. The value is the column name would use in the AFS API, and the key is the mapping column name.
+        Get the column mapping list.
+
+        :return: The value is the column name would use in the AFS API, and the key is the mapping column name.
+        :rtype: dict
         """
         return {self.flow_obj.current_node_obj[column_name]: column_name for column_name in self.flow_obj.current_node_obj if column_name in self.column}
 
     def next_node(self,data, debug=False):
         """
-Send data to next node according to flow.
+        Send data to next node according to flow.
+
         :param data: DataFrame type.
-        :param debug:  bool type. If debug is True, method will return response message from the next node.
-        :return: JSON type. Response JSON
+        :param bool debug: If debug is True, method will return response message from the next node.
+        :return: Response JSON
+        :rtype: dict
         """
         if isinstance(data, DataFrame):
             column_reverse_mapping = {v: k for k, v in self.get_column().items()}
@@ -133,11 +140,12 @@ Send data to next node according to flow.
 
     def set_param(self, key, type='string', required=False ,default=None):
         """
-Set API parameter will be used in the AFS API.
-        :param key: String type. The key name for this parameter
-        :param type: String type. The type of the paramter, including integer, string or float.
-        :param required: Bool type. The parameter is required or not
-        :param default: The parameter is given in default
+        Set API parameter will be used in the AFS API.
+
+        :param str key: The key name for this parameter
+        :param str type: The type of the paramter, including integer, string or float.
+        :param bool required: The parameter is required or not
+        :param str default: The parameter is given in default
         """
         if type not in self.type_list:
             raise AssertionError('Type not found.')
@@ -161,8 +169,9 @@ Set API parameter will be used in the AFS API.
 
     def set_column(self, column_name):
         """
-The column name will be used in the AFS API.
-        :param column_name: String type. The column name used in the following API
+        The column name will be used in the AFS API.
+
+        :param str column_name: The column name used in the following API
         """
         column_name = str(column_name)
         if column_name in self.variable_name:
@@ -173,7 +182,7 @@ The column name will be used in the AFS API.
 
     def summary(self):
         """
-Summary what parameters and column the AFS API need.This method should be called by the last line in the 2nd cell.
+        Summary what parameters and column the AFS API need.This method should be called by the last line in the 2nd cell.
         """
         smry = {}
         smry['param'] = self.param
