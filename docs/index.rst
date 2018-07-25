@@ -11,6 +11,7 @@ Welcome to afs's documentation!
 
    overview
    InstallDependencies
+   Examples
    api_reference
 
 

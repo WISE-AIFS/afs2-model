@@ -1,21 +1,32 @@
-from afs import models
-import unittest
-import os
-import configparser
 
-class TestModels(unittest.TestCase):
+import pytest
+import os
+from afs import models
+from dotenv import Dotenv
+dotenv = Dotenv(os.path.join(os.path.dirname(__file__), ".env")) # Of course, replace by your correct path
+os.environ.update(dotenv)
+
+# class  TestSample :
+#    @pytest.fixture()
+#    def  count (self) :
+#        print( 'init count' )
+#        return  10
+#    def  test_answer (self, count) :
+#        print( 'get count %s' % count)
+#        assert count == 10
+#    def test_env(self):
+#        print(os.getenv('afs_url'))
+#        assert 1 == 1
+
+
+class TestModels:
     def setUp(self):
-        config = configparser.ConfigParser()
-        config.read('config.ini')
-        self.target_endpoint = config['TestModels']['target_endpoint']
-        self.instance_id = config['TestModels']['instance_id']
-        self.auth_code = config['TestModels']['auth_code']
         self.model_path = config['TestModels']['model_path']
         self.model_name = config['TestModels']['model_name']
 
-        self.cli = models(target_endpoint=self.target_endpoint, instance_id=self.instance_id,
-                    auth_code=self.auth_code)
+        self.cli = models()
 
+    @pytest.fixture
     def test_upload_model(self):
         with open(self.model_path, 'w') as f:
             f.write('this is a model.')
@@ -26,8 +37,5 @@ class TestModels(unittest.TestCase):
         self.cli.download_model(self.model_path, model_name=self.model_name)
         with open(self.model_path) as f:
             content = f.read()
-        self.assertEqual('this is a model.', content)
+        assert 'this is a model.' == content
         os.remove('./data/test_model.h5')
-
-
-
