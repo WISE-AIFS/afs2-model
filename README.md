@@ -52,7 +52,7 @@ def upload_model(model_name, accuracy, loss, tags={}, extra_evaluation={}):
 ```
 
 
-## Eamples
+## Examples
 ### upload training models function (On AFS developer)
 ```
 from afs import models
