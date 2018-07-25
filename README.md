@@ -1,5 +1,12 @@
 # AFS SDK
 
+[![Documentation Status](https://readthedocs.org/projects/afs-docs/badge/?version=latest)](https://afs-docs.readthedocs.io/en/latest/?badge=latest)
+
+
+## 文件
+文件請參考[Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/)
+
+
 ## 安裝
 ### pip install
 
