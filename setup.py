@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 import os
-import subprocess
+
 try: # for pip >= 10
     from pip._internal.req import parse_requirements
 except ImportError: # for pip <= 9.0.3
