@@ -27,6 +27,11 @@ def models_resource():
     afs_models=models()
     yield afs_models
 
+@pytest.fixture(scope='class')
+def conf_resource():
+    conf={ "model_name":"test_model.h5"}
+    return conf
+
 @pytest.fixture(scope="function")
 def models_path(tmpdir):
     yield tmpdir.mkdir('data').join("test_model.h5")
