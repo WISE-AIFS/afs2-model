@@ -32,7 +32,7 @@ afs.flow module
 afs.GetJointTable module
 -------------------------
 
-.. automodule:: afs.GetJointTable
+.. automodule:: afs.get_joint_table
     :members:
     :undoc-members:
     :show-inheritance:

@@ -17,28 +17,14 @@ from influxdb import DataFrameClient
 class GetJointTable(object):
 
     def __call__(self, query_date, grafana_dict, idb_dict, tag):
+        """
+	abc
 
+        :param dict query_date: DATE_FROM: from date require to joint, format: %YYYY-%MM-%DD. DATE_TO: to date require to joint, format: %YYYY-%MM-%DD
+        :param dict grafana_dict: GRAFANA_HOST: Grafana endpoint, for example: http://grafana.wise-paas.com/. GRAFANA_USERNAME: Username of Grafana, require premission to get annotation. GRAFANA_PASSWORD: Password of Grafana user. GRAFANA_TAG1: First tag require to merge. GRAFANA_TAG2: Second tag require to merge.
+        :param dict idb_dict: dict IDB_HOST: InflixDB endpoint, for example: http://inflixdb.wise-paas.com. IDB_PORT: Port of InfluxDB. IDB_DBNAME: InfliuxDB database. IDB_USERNAME: Username of InfluxDB, require premission to read. IDB_PASSWORD: Passoed of InfluxDB user
+        :param str tag: tag name which require to merge
         """
-        Parameters:
-            query_date: dict
-                DATE_FROM: from date require to joint, format: %YYYY-%MM-%DD
-                DATE_TO: to date require to joint, format: %YYYY-%MM-%DD
-            grafana_dict: dict
-	    	GRAFANA_HOST: Grafana endpoint, for example: http://grafana.wise-paas.com/
-		GRAFANA_USERNAME: Username of Grafana, require premission to get annotation
-		GRAFANA_PASSWORD: Password of Grafana user
-		GRAFANA_TAG1: First tag require to merge
-		GRAFANA_TAG2: Second tag require to merge
-            idb_dict: dict
-	    	IDB_HOST: InflixDB endpoint, for example: http://inflixdb.wise-paas.com
-		IDB_PORT: Port of InfluxDB
-		IDB_DBNAME: InfliuxDB database
-		IDB_USERNAME: Username of InfluxDB, require premission to read
-		IDB_PASSWORD: Passoed of InfluxDB user
-            tag: string
-	    	tag: tag name which require to merge
-        """
-    
         GRAFANA_HOST = grafana_dict['GRAFANA_HOST']
         GRAFANA_REQUEST_ANNO_QUERY = '/api/annotations'
         GRAFANA_USERNAME = grafana_dict['GRAFANA_USERNAME']
