@@ -43,7 +43,7 @@ class models(object):
     def download_model(self, save_path, model_name=None):
         """Download model from model repository to a file.
 
-        :param str model_name:  The model name exists in model repository
+        :param str model_name: The model name exists in model repository
         :param str save_path: The path exist in file system
         """
         if model_name is not None:
