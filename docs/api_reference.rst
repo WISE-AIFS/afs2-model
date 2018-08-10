@@ -27,3 +27,13 @@ afs.flow module
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+afs.GetJointTable module
+-------------------------
+
+.. automodule:: afs.GetJointTable
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
