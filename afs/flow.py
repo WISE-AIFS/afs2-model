@@ -153,7 +153,7 @@ class flow:
                 raise AssertionError('list of next node is error.')
 
         headers_obj = self.set_headers()
-        data = {'data': data}  # dataframe dict set value into key:data
+        # data = {'data': data}  # dataframe dict set value into key:data
 
         # POST to each next node
         for item in next_list:

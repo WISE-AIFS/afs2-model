@@ -7,10 +7,10 @@ import logging
 import os
 from io import BytesIO
 import requests
-from afs.utils import InvalidStatusCode
 import afs.utils as utils
 from afs.get_env import AfsEnv
 import urllib3
+
 
 _logger = logging.getLogger(__name__)
 
@@ -192,13 +192,3 @@ class models(object):
         _logger.debug('GET - %s - %s', url, response.text)
         return response
 
-    @staticmethod
-    def _check_response(response):
-        if int(response.status_code / 100) == 2:
-            return response
-        else:
-            try:
-                body = response.json()
-            except Exception:
-                body = response.text
-            raise InvalidStatusCode(response.status_code, body)

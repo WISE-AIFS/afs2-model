@@ -8,6 +8,7 @@ import pkg_resources
 from .config_handler import config_handler
 from .flow import flow
 from .models import models
+from .services import services
 
 __version__ = pkg_resources.get_distribution('afs').version
 __all__ = [

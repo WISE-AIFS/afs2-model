@@ -15,7 +15,7 @@ class config_handler(object):
         self.variable_name = []
         self.column = []
         self.data = DataFrame.empty
-        self.type_list = {'string': str, 'integer': int, 'float': float}
+        self.type_list = {'string': str, 'integer': int, 'float': float, 'list': list}
 
     def set_kernel_gateway(self, REQUEST, flow_json_file=None):
         """
@@ -74,6 +74,9 @@ class config_handler(object):
                 obj_value = str(obj_value)
             elif obj_para['type'] in 'float':
                 obj_value = float(obj_value)
+            elif obj_para['type'] in 'list:':
+                assert isinstance(obj_value, list)
+                obj_value = list(obj_value)
             else:
                 _logger.warning('Parameter has no specific type.')
                 obj_value = str(obj_value)
@@ -85,22 +88,6 @@ class config_handler(object):
         else:
             return None
 
-    # def get_data(self, request_body):
-    #     """
-    #
-    #     :param request_body:
-    #     :return: DataFrame type from REQUEST
-    #     """
-        # try:
-        #     request_body = json.loads(request_body)
-        #     if request_body['data']:
-        #         self.data = DataFrame.from_dict(request_body['data'])
-        #         return self.data
-        #     else:
-        #         raise AssertionError('Data is not existed in request_body')
-        # except Exception as e:
-        #     raise AssertionError('Type error, request_body must be JSON')
-
     def get_data(self):
         """
         Transform REQUEST data to DataFrame type.
@@ -108,6 +95,7 @@ class config_handler(object):
         :return: DataFrame type. Data from REQUEST and rename column name.
         """
         if self.data is not DataFrame.empty:
+
             return self.data.rename(columns=self.get_column())
         else:
             return DataFrame.empty
@@ -147,13 +135,18 @@ class config_handler(object):
         :param bool required: The parameter is required or not
         :param str default: The parameter is given in default
         """
+        # check type in type list
         if type not in self.type_list:
             raise AssertionError('Type not found.')
         else:
-            if not isinstance(default, self.type_list[type]):
-                raise AssertionError('Default value is not the specific type.')
+            # check default type
+            if default:
+                if not isinstance(default, self.type_list[type]):
+                    raise AssertionError('Default value is not the specific type.')
+
+        # check required value
         if not isinstance(required, bool):
-            raise AssertionError('Required is True/False.')
+            raise AssertionError('required is true/false.')
 
         # check if the name is the same, raise error
         if key in self.variable_name:

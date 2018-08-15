@@ -1,5 +1,4 @@
 import os
-import pytest
 
 def test_upload_model(models_resource,  models_path, test):
     p=models_path
