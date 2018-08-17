@@ -14,6 +14,7 @@ class config_handler(object):
         self.param = []
         self.variable_name = []
         self.column = []
+        self.features = False
         self.data = DataFrame.empty
         self.type_list = {'string': str, 'integer': int, 'float': float, 'list': list}
 
@@ -173,11 +174,33 @@ class config_handler(object):
             self.variable_name.append(column_name)
             self.column.append(column_name)
 
+    def set_features(self, enable=False):
+        """
+        The feature name will be used in the AFS API.
+
+        :param list feature_list: The feature name used in the following API
+        """
+        if isinstance(enable, bool):
+            self.features = enable
+        else:
+            raise AssertionError('Type Error enable  is bool type')
+
+    def get_features_target(self):
+        return self.flow_obj.current_node_obj['target']
+
+    def get_features_selected(self):
+        return self.flow_obj.current_node_obj['select_feature']
+
+    def get_features_numerical(self):
+        return self.flow_obj.current_node_obj['numerical']
+
     def summary(self):
         """
         Summary what parameters and column the AFS API need.This method should be called by the last line in the 2nd cell.
         """
         smry = {}
+        if self.features:
+            smry['features'] = self.features
         smry['param'] = self.param
         smry['column'] = self.column
         print(json.dumps(smry))

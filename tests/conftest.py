@@ -3,6 +3,7 @@ import uuid
 import os
 from afs import models
 from afs import services
+from afs import config_handler
 
 from dotenv import load_dotenv
 env_path = os.path.join(os.path.dirname(__file__), ".env_779f")
@@ -23,6 +24,11 @@ def services_resource():
     yield afs_services
 
 @pytest.fixture(scope='class')
+def config_handler_resource():
+    afs_config_handler = config_handler_resource()
+    yield afs_config_handler
+
+@pytest.fixture(scope='class')
 def conf_resource():
     conf={ "model_name":"test_model.h5"}
     return conf
@@ -30,3 +36,5 @@ def conf_resource():
 @pytest.fixture(scope="function")
 def models_path(tmpdir):
     yield tmpdir.mkdir('data').join("test_model.h5")
+
+

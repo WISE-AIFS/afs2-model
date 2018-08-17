@@ -69,11 +69,12 @@ class models(object):
         :param dict extra_evaluation: (optional) other evaluation from model
         """
 
-        if not isinstance(accuracy, float) or not isinstance(
-                loss, float) or not isinstance(tags, dict) or not isinstance(
-                    extra_evaluation, dict):
+        if not isinstance(accuracy, float) or \
+                not isinstance(loss, float) or \
+                not isinstance(tags, dict) or \
+                not isinstance(extra_evaluation, dict):
             raise AssertionError(
-                'Type error, accuracy and loss is float, and tags and extra_evaluation are dict.'
+                'Type error, accuracy and loss are float, and tags and extra_evaluation are dict.'
             )
         try:
             model_name = str(model_name)
