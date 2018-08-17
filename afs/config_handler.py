@@ -1,7 +1,9 @@
 import json
 from pandas import DataFrame
-from afs.flow import flow
+from afs.flow_0817 import flow
 import logging
+from . import app_env
+
 
 _logger = logging.getLogger(__name__)
 
@@ -18,24 +20,24 @@ class config_handler(object):
         self.data = DataFrame.empty
         self.type_list = {'string': str, 'integer': int, 'float': float, 'list': list}
 
-    def set_kernel_gateway(self, REQUEST, flow_json_file=None):
+    def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj=None):
         """
         For Jupyter kernel gateway API, REQUEST is the request given by kernel gateway. Reference REQUEST: http://jupyter-kernel-gateway.readthedocs.io/en/latest/http-mode.html
 
         :param str REQUEST: Jupyter kernel gateway request.
+        :param dict env_obj: Key names are VCAP_APPLICATION, afs_host_url, node_host_url, afs_auth_code, sso_host_url, rmm_host_url(option).
         :param str flow_json_file: String of file path. For debug, developer can use file which contains the flow json as the flow json gotten from NodeRed.
         """
-        self.flow_obj = flow()
+        self.flow_obj = flow(env_obj=env_obj)
 
         try:
             headers = json.loads(REQUEST)['headers']
             flow_info = {}
             flow_info['node_id'] = headers['Node_id']
             flow_info['flow_id'] = headers['Flow_id']
-            flow_info['host_url'] = headers['Host_url']
             self.flow_obj.set_flow_config(flow_info)
         except Exception as e:
-            raise AssertionError('REQUEST must be json format, or headers contains not enough information.')
+            raise AssertionError('REQUEST must be json format, or headers contains not enough information(node_id, flow_id).')
 
         if flow_json_file:
             try:
@@ -44,13 +46,14 @@ class config_handler(object):
                 flow_json = json.loads(flow_json)
                 self.flow_obj.get_flow_list_ab(flow_json)
             except Exception as e:
-                raise AssertionError('Type error, flow_json must be JSON')
+                raise AssertionError('Type error, flow_json must be JSON(For nodered request type not UI type)')
         else:
             try:
                 self.flow_obj.get_flow_list()
             except Exception as e:
                 raise AssertionError('Request to NodeRed has porblem.')
 
+        # get the node information in current_node_obj
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
 
         try:
@@ -76,7 +79,6 @@ class config_handler(object):
             elif obj_para['type'] in 'float':
                 obj_value = float(obj_value)
             elif obj_para['type'] in 'list:':
-                assert isinstance(obj_value, list)
                 obj_value = list(obj_value)
             else:
                 _logger.warning('Parameter has no specific type.')
@@ -96,7 +98,6 @@ class config_handler(object):
         :return: DataFrame type. Data from REQUEST and rename column name.
         """
         if self.data is not DataFrame.empty:
-
             return self.data.rename(columns=self.get_column())
         else:
             return DataFrame.empty
@@ -108,7 +109,9 @@ class config_handler(object):
         :return: The value is the column name would use in the AFS API, and the key is the mapping column name.
         :rtype: dict
         """
-        return {self.flow_obj.current_node_obj[column_name]: column_name for column_name in self.flow_obj.current_node_obj if column_name in self.column}
+        return {self.flow_obj.current_node_obj[column_name]: column_name
+                for column_name in self.flow_obj.current_node_obj
+                if column_name in self.column}
 
     def next_node(self,data, debug=False):
         """
@@ -123,7 +126,7 @@ class config_handler(object):
             column_reverse_mapping = {v: k for k, v in self.get_column().items()}
             data = data.rename(columns=column_reverse_mapping)
             data = dict(data=data.to_dict())
-            return self.flow_obj.exe_next_node(data, next_list=None, debug=debug)
+            return self.flow_obj.exe_next_node(data, debug=debug)
         else:
             raise AssertionError('Type error, data must be DataFrame type')
 
