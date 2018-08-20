@@ -1,0 +1,87 @@
+{
+    "id": "2c3e36f5.79745a",
+    "label": "test parser",
+    "nodes": [
+        {
+            "id": "1603f0e2.15482f",
+            "type": "sso_setting",
+            "z": "2c3e36f5.79745a",
+            "name": "sso wise-paas",
+            "sso_user": "wisepaas.qa@devops.com.cn",
+            "sso_password": "P@ssw0rd/",
+            "x": 150,
+            "y": 80,
+            "wires": []
+        },
+        {
+            "id": "5da078ac.7ab548",
+            "type": "firehose_influxdb_query",
+            "z": "2c3e36f5.79745a",
+            "name": "arfa titanic",
+            "url": "",
+            "_node_type": "firehose",
+            "sso_token": "",
+            "service_name": "influxdb_demo",
+            "service_key": "influxdb_demo",
+            "service_credentials": {},
+            "feature_names": [
+                "time",
+                "Age",
+                "Embarked",
+                "Fare",
+                "Name",
+                "PassengerId",
+                "Pclass",
+                "Sex",
+                "SibSp",
+                "Survived"
+            ],
+            "query": "select * from titanic_data",
+            "x": 160,
+            "y": 140,
+            "wires": [
+                []
+            ]
+        },
+        {
+            "id": "7d3b635a.f0a75c",
+            "type": "test_node",
+            "z": "2c3e36f5.79745a",
+            "name": "test_sdk",
+            "b": 2,
+            "url": "",
+            "feature_names": [
+                "time",
+                "Age",
+                "Embarked",
+                "Fare",
+                "Name",
+                "PassengerId",
+                "Pclass",
+                "Sex",
+                "SibSp",
+                "Survived"
+            ],
+            "target": [
+                "tar_1",
+                "tar_2",
+                "tar_3"
+            ],
+            "select_feature": [
+                "sel_1",
+                "sel_2",
+                "sel_3",
+                "sel_4"
+            ],
+            "numerical": [
+                "num_1",
+                "num_2"
+            ],
+            "x": 340,
+            "y": 120,
+            "wires": [
+                []
+            ]
+        }
+    ]
+}

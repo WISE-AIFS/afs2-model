@@ -5,8 +5,7 @@ import traceback
 import requests
 import os, sys
 import pandas as pd
-
-from . import app_env
+from .get_env import app_env
 
 
 class flow(object):

@@ -4,8 +4,8 @@ import os
 from afs import models
 from afs import services
 from afs import config_handler
-
 from dotenv import load_dotenv
+
 env_path = os.path.join(os.path.dirname(__file__), ".env_779f")
 load_dotenv(dotenv_path=env_path)
 
@@ -25,7 +25,7 @@ def services_resource():
 
 @pytest.fixture(scope='class')
 def config_handler_resource():
-    afs_config_handler = config_handler_resource()
+    afs_config_handler = config_handler()
     yield afs_config_handler
 
 @pytest.fixture(scope='class')

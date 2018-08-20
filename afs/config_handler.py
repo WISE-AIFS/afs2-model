@@ -1,6 +1,6 @@
 import json
 from pandas import DataFrame
-from afs.flow_0817 import flow
+from afs.flow import flow
 import logging
 import afs
 
@@ -20,7 +20,7 @@ class config_handler(object):
         self.data = DataFrame.empty
         self.type_list = {'string': str, 'integer': int, 'float': float, 'list': list}
 
-    def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj=None):
+    def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj={}):
         """
         For Jupyter kernel gateway API, REQUEST is the request given by kernel gateway. Reference REQUEST: http://jupyter-kernel-gateway.readthedocs.io/en/latest/http-mode.html
 
@@ -41,9 +41,7 @@ class config_handler(object):
 
         if flow_json_file:
             try:
-                with open(flow_json_file) as f:
-                    flow_json = f.read()
-                flow_json = json.loads(flow_json)
+                flow_json = json.loads(flow_json_file)
                 self.flow_obj.get_flow_list_ab(flow_json)
             except Exception as e:
                 raise AssertionError('Type error, flow_json must be JSON(For nodered request type not UI type)')
