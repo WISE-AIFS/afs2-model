@@ -70,11 +70,11 @@ class flow(object):
         self.sso_host_url = self.env_obj.sso_host_url  # host url for sso
         self.node_host_url = self.env_obj.node_host_url  # host url for Node-RED
 
-        print("_flow instance_id: " + str(self.afs_instance_id))
-        print("_flow workspace_id: " + str(self.afs_workspace_id))
-        print("_flow afs_host_url: " + str(self.afs_host_url))
-        print("_flow sso_host_url: " + str(self.sso_host_url))
-        print("_flow node_host_url: " + str(self.node_host_url))
+        # print("_flow instance_id: " + str(self.afs_instance_id))
+        # print("_flow workspace_id: " + str(self.afs_workspace_id))
+        # print("_flow afs_host_url: " + str(self.afs_host_url))
+        # print("_flow sso_host_url: " + str(self.sso_host_url))
+        # print("_flow node_host_url: " + str(self.node_host_url))
 
         # set request timeout
         # self.req_timeout = 300    # 300 secs

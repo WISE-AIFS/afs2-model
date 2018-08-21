@@ -86,7 +86,7 @@ class app_env(object):
         param_obj = None
         str_url = host_url + '/v1/' + self.vcap_app.get('space_name') + '/workspaces/' + self.vcap_app.get(
             'space_id') + '/env?auth_code=' + self.afs_auth_code
-        print(str_url)
+        # print(str_url)
         headers_obj = {
             'Authorization': self.afs_auth_code
         }
