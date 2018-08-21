@@ -10,6 +10,14 @@ afs.models module
     :undoc-members:
     :show-inheritance:
 
+afs.services module
+-------------------------
+
+.. automodule:: afs.services
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 afs.config_handler module
 -------------------------

@@ -111,7 +111,7 @@ class config_handler(object):
                 for column_name in self.flow_obj.current_node_obj
                 if column_name in self.column}
 
-    def next_node(self,data, debug=False):
+    def next_node(self, data=None, debug=False):
         """
         Send data to next node according to flow.
 
@@ -120,13 +120,14 @@ class config_handler(object):
         :return: Response JSON
         :rtype: dict
         """
-        if isinstance(data, DataFrame):
-            column_reverse_mapping = {v: k for k, v in self.get_column().items()}
-            data = data.rename(columns=column_reverse_mapping)
-            data = dict(data=data.to_dict())
-            return self.flow_obj.exe_next_node(data, debug=debug)
-        else:
-            raise AssertionError('Type error, data must be DataFrame type')
+        if data:
+            if isinstance(data, DataFrame):
+                column_reverse_mapping = {v: k for k, v in self.get_column().items()}
+                data = data.rename(columns=column_reverse_mapping)
+                data = dict(data=data.to_dict())
+                return self.flow_obj.exe_next_node(data, debug=debug)
+            else:
+                raise AssertionError('Type error, data must be DataFrame type')
 
     def set_param(self, key, type='string', required=False ,default=None):
         """

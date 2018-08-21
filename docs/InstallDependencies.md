@@ -14,8 +14,35 @@ If you want install AFS-SDK without external network, you should install depende
 
 ## AFS-SDK dependency tree
 Install dependency package first.
+
+### afs==1.2.16
 ```
-* afs==1.2.8
+  * influxdb
+    * python-dateutil
+      * six
+    * pytz
+    * requests
+      * certifi
+      * chardet
+      * idna
+      * urllib3
+    * six
+  * pandas
+    * numpy
+    * python-dateutil
+      * six
+    * pytz
+  * requests
+    * certifi
+    * chardet
+    * idna
+    * urllib3
+  * urllib3 
+```
+
+
+### afs==1.2.8
+```* 
   *  pandas
   *  numpy
   *  python-dateutil
@@ -27,7 +54,6 @@ Install dependency package first.
     * idna
     * urllib3
 ```
-
 
 ## Build AFS-SDK whl  
 To build the wheel package:
