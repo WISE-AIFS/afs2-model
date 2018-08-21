@@ -187,12 +187,30 @@ class config_handler(object):
             raise AssertionError('Type Error enable  is bool type')
 
     def get_features_target(self):
+        """
+        Get feature target from flow json.
+
+        :return: feature target name
+        :rtype: str
+        """
         return self.flow_obj.current_node_obj['target']
 
     def get_features_selected(self):
+        """
+        Get feature selected from flow json.
+
+        :return: feature select list
+        :rtype: list
+        """
         return self.flow_obj.current_node_obj['select_feature']
 
     def get_features_numerical(self):
+        """
+        Get feature numerical from flow json.
+
+        :return: feature numerical list
+        :rtype: list
+        """
         return self.flow_obj.current_node_obj['numerical']
 
     def summary(self):
@@ -200,8 +218,7 @@ class config_handler(object):
         Summary what parameters and column the AFS API need.This method should be called by the last line in the 2nd cell.
         """
         smry = {}
-        if self.features:
-            smry['features'] = self.features
+        smry['features'] = self.features
         smry['param'] = self.param
         smry['column'] = self.column
         print(json.dumps(smry))
