@@ -1,6 +1,5 @@
-
-import os
-import json
+import os, json
+import requests
 
 class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
