@@ -269,7 +269,10 @@ class flow(object):
                 return error_node, error_msg
 
         else:
-            next_list = self.current_node_obj['wires'][0]
+            if len(self.current_node_obj['wires']) > 0:    # not endpoint
+                next_list = self.current_node_obj['wires'][0]
+            else:   # endpoint
+                next_list = []
 
         headers_obj = self.set_headers()  # request headers
         # data = {'data': data}   # dataframe dict set value into key:data
