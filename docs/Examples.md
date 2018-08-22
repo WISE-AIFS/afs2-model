@@ -56,4 +56,12 @@ API response
 
 ### Data
 
-How to write a AFS API to get data. 
+How to write a AFS API to get data.  [[Example]()]
+
+Flow setting
+
+
+API response
+
+
+
