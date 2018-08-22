@@ -38,12 +38,18 @@ class services(object):
                     for service_key in service_keys:
                         info = {}
                         key = list(service_key.keys())[0]
-                        username = service_key[key]['username']
-                        password = service_key[key]['password']
-                        host = service_key[key]['host']
-                        database = service_key[key]['database']
-                        port = service_key[key]['port']
-                        uri = service_key[key]['uri']
+                        if 'username' in service_key[key]:
+                            username = service_key[key]['username']
+                        if 'password' in service_key[key]:
+                            password = service_key[key]['password']
+                        if 'host' in service_key[key]:
+                            host = service_key[key]['host']
+                        if 'database' in service_key[key]:
+                            database = service_key[key]['database']
+                        if 'port' in service_key[key]:
+                            port = service_key[key]['port']
+                        if 'uri' in service_key[key]:
+                            uri = service_key[key]['uri']
                         info = dict(key=key, username=username, password=password, host=host, database=database,
                                     port=port,
                                     uri=uri, service_name=service_name, service_type=service_type)
@@ -51,21 +57,9 @@ class services(object):
                 else:
                     pass
                 service_info[service_type] = service_keys_info_list
-
-                # if service:
-                #     if specific_key:
-                #         for service_key_info in service_info[service]:
-                #             print(service_key_info['key'])
-                #             if specific_key is service_key_info['key']:
-                #                 return service_key_info
-                #         else:
-                #             raise AssertionError('key not found')
-                #     else:
-                #         return {service: service_info[service]}
-
             return service_info
         except Exception as e:
-            print(e)
+            print(e.with_traceback())
             return {}
 
     def _get(self, params={}, extra_paths=[]):
@@ -85,6 +79,8 @@ class services(object):
 
 
 if __name__=='__main__':
-    services_resource = services("https://portal-afs-develop.iii-arfa.com/",  "779fd10d-24ee-4603-b18a-dcb279eac8b5", "iV8KIPe3nG0aAH2FBrhRMQ")
+    services_resource = services("https://portal-afs-develop.iii-arfa.com/",  "70c2d65c-1f91-4607-843d-12b90a4faa7b", "CpSmlfe-J4RGZmoaF607fA")
     resp = services_resource.get_service_info()
-    print(resp['influxdb'])
+    assert resp is not {}
+    assert 'influxdb' in resp
+    print('test finish')

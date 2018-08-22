@@ -33,6 +33,27 @@ afs_models.upload_model(
 ### Features
 How to write a AFS API to get features, including target, select_features, numerical. [[Example](jupyter_md/sdk_featrues.md)]
 
-### Parameter (Type list)
-How to write a AFS API to get parameters with the list type.  [[Example](jupyter_md/sdk_para_list.md)]
+Flow setting
 
+![Flow setting](_static/images/examples/features01.PNG)
+
+API response
+
+![API response](_static/images/examples/features02.PNG)
+
+### Parameter (Type string, integet, float, list)
+
+How to write a AFS API to get parameters with types.  [[Example](jupyter_md/sdk_parameters.md)]
+
+Flow setting
+
+![Flow setting](_static/images/examples/parameter01.PNG)
+
+API response
+
+![API response](_static/images/examples/parameter02.PNG)
+
+
+### Data
+
+How to write a AFS API to get data. 

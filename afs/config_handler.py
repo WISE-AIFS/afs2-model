@@ -120,7 +120,7 @@ class config_handler(object):
         :return: Response JSON
         :rtype: dict
         """
-        if data:
+        if data is not None:
             if isinstance(data, DataFrame):
                 column_reverse_mapping = {v: k for k, v in self.get_column().items()}
                 data = data.rename(columns=column_reverse_mapping)
