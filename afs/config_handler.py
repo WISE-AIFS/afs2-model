@@ -2,8 +2,6 @@ import json
 from pandas import DataFrame
 from afs.flow import flow
 import logging
-import afs
-
 
 _logger = logging.getLogger(__name__)
 

@@ -40,10 +40,9 @@ ft = cfg.get_features_target()
 fs = cfg.get_features_selected()
 fn = cfg.get_features_numerical()
 
+# The printing is the API response.
 print('target:{0}'.format(ft))
 print('select_features:{0}'.format(fs))
 print('numerical:{0}'.format(fn))
 
-# The printing is the API response.
-print(json.dumps(ret))
 ```

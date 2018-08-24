@@ -10,7 +10,7 @@ import requests
 import afs.utils as utils
 from afs.get_env import AfsEnv
 import urllib3
-
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -84,11 +84,19 @@ class models(object):
         if not os.path.isfile(model_name):
             raise AssertionError('File not found, model path is not exist.')
         else:
-            medel_path = model_name
+            model_path = model_name
             if os.path.sep in model_name:
                 model_name = model_name.split(os.path.sep)[-1]
+            if len(model_name) > 128 or len(model_name) < 1:
+                raise AssertionError('Model name length  is upper limit 1-128')
+            pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.\s]).{1,128}')
+            match = pattern.match(model_name)
+            if match is None:
+                raise AssertionError('Model name length  is upper limit char 1-128.')
 
-        with open(medel_path, 'rb') as f:
+        if os.path.getsize(model_name)/(1024*1024) > 200:
+            raise AssertionError('Model size is upper limit 200 MB.')
+        with open(model_path, 'rb') as f:
             model_file = BytesIO(f.read())
         model_file.seek(0)
         self.repo_id = self.switch_repo(model_name)

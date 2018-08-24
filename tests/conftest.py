@@ -35,6 +35,12 @@ def conf_resource():
 
 @pytest.fixture(scope="function")
 def models_path(tmpdir):
-    yield tmpdir.mkdir('data').join("test_model.h5")
+   yield tmpdir.mkdir('data').join("test_model.h5")
 
-
+@pytest.fixture(scope="function")
+def models_path_error(tmpdir):
+    # yield tmpdir.mkdir('data').join("error_=.h5")
+    # a = ['a' for i in range(10)]
+    # a = '.'.join(a)
+    # a = 'jdklasjifopweqr'
+    yield tmpdir.mkdir('data').join('jdklasjifopweqr')
