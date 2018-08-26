@@ -9,6 +9,7 @@
    overview
    InstallDependencies
    Examples
+   CLI
    api_reference
 
 

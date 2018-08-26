@@ -44,3 +44,10 @@ def models_path_error(tmpdir):
     # a = '.'.join(a)
     # a = 'jdklasjifopweqr'
     yield tmpdir.mkdir('data').join('jdklasjifopweqr')
+
+
+@pytest.fixture(scope='session')
+def client_session():
+    from afs.client import EIPaaSAFSSession
+
+    yield EIPaaSAFSSession()
