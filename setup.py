@@ -36,7 +36,11 @@ setup(
     packages=find_packages(exclude=["tests", "test_reports"]),
     tests_require=dev_requires,
     zip_safe=False,
-    keywords=['afs', 'WISE-PaaS', 'EI-PaaS', 'analytics framework service', 'afs-sdk']
+    keywords=['afs', 'WISE-PaaS', 'EI-PaaS', 'analytics framework service', 'afs-sdk'],
+    entry_points='''
+        [console_scripts]
+        eipaas-afs=afs.cli:cli
+    '''
 )
 
 # build wheel pacakge

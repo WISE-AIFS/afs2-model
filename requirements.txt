@@ -2,3 +2,9 @@ requests
 pandas
 influxdb
 urllib3
+
+# For client
+pyyaml
+
+# For CLI
+click
