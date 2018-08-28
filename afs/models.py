@@ -1,7 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import json
 import logging
 import os
@@ -11,16 +7,15 @@ import afs.utils as utils
 from afs.get_env import AfsEnv
 import urllib3
 import re
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 _logger = logging.getLogger(__name__)
-
 
 class models(object):
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
         """
         Connect to afs models service, user can connect to service by enviroment parameter. Another way is input when created.
         """
-        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         envir = AfsEnv(
             target_endpoint=target_endpoint,
             instance_id=instance_id,
@@ -63,7 +58,7 @@ class models(object):
         Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.
 
         :param str model_name:  (required) model path or name
-        :param float accuracy: (required) model accuracy value
+        :param float accuracy: (required) model accuracy value, between 0-1
         :param float loss: (required) model loss value
         :param dict tags: (optional) tag from model
         :param dict extra_evaluation: (optional) other evaluation from model
@@ -76,11 +71,8 @@ class models(object):
             raise AssertionError(
                 'Type error, accuracy and loss are float, and tags and extra_evaluation are dict.'
             )
-        try:
-            model_name = str(model_name)
-        except Exception as e:
-            raise AssertionError(
-                'Type error, model_name  cannot convert to string')
+        if not isinstance(model_name, str):
+            raise AssertionError('Type error, model_name  cannot convert to string')
         if not os.path.isfile(model_name):
             raise AssertionError('File not found, model path is not exist.')
         else:
@@ -88,14 +80,14 @@ class models(object):
             if os.path.sep in model_name:
                 model_name = model_name.split(os.path.sep)[-1]
             if len(model_name) > 128 or len(model_name) < 1:
-                raise AssertionError('Model name length  is upper limit 1-128')
-            pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.\s]).{1,128}')
+                raise AssertionError('Model name length  is upper limit 1-35')
+            pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,35}')
             match = pattern.match(model_name)
             if match is None:
-                raise AssertionError('Model name length  is upper limit char 1-128.')
+                raise AssertionError('Model naming rule is only a-z, A-Z, 0-9, - and _ allowed.')
 
-        if os.path.getsize(model_name)/(1024*1024) > 200:
-            raise AssertionError('Model size is upper limit 200 MB.')
+        if os.path.getsize(model_name) > 2*(1024*1024*1024):
+            raise AssertionError('Model size is upper limit 2 GB.')
         with open(model_path, 'rb') as f:
             model_file = BytesIO(f.read())
         model_file.seek(0)
@@ -103,6 +95,8 @@ class models(object):
         if self.repo_id is None:
             self.repo_id = self._create_model_repo(model_name)
 
+        if accuracy > 1.0 or accuracy < 0:
+            raise AssertionError('Accuracy value should be between 0-1')
         evaluation_result = {'accuracy': accuracy, 'loss': loss}
         evaluation_result.update(extra_evaluation)
         data = dict(

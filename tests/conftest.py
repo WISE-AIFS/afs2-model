@@ -23,7 +23,7 @@ def services_resource():
     afs_services=services()
     yield afs_services
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='function')
 def config_handler_resource():
     afs_config_handler = config_handler()
     yield afs_config_handler
@@ -33,18 +33,9 @@ def conf_resource():
     conf={ "model_name":"test_model.h5"}
     return conf
 
-@pytest.fixture(scope="function")
-def models_path(tmpdir):
-   yield tmpdir.mkdir('data').join("test_model.h5")
-
-@pytest.fixture(scope="function")
-def models_path_error(tmpdir):
-    # yield tmpdir.mkdir('data').join("error_=.h5")
-    # a = ['a' for i in range(10)]
-    # a = '.'.join(a)
-    # a = 'jdklasjifopweqr'
-    yield tmpdir.mkdir('data').join('jdklasjifopweqr')
-
+# @pytest.fixture(scope="function")
+# def models_path(tmpdir):
+#    yield tmpdir.mkdir('data').join("test_model.h5")
 
 @pytest.fixture(scope='session')
 def client_session():

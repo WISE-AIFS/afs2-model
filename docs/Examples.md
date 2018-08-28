@@ -4,6 +4,9 @@
 ## models
 
 ### upload_models
+
+How to upload a model file on workspace. 
+
 ```
 from afs import models
 
@@ -31,7 +34,7 @@ afs_models.upload_model(
 ## config_handler
 
 ### Features
-How to write a AFS API to get features, including target, select_features, numerical. [[Example](jupyter_md/sdk_featrues.md)]
+How to write a AFS API to get features, including target, select_features, numerical. [[Example](https://github.com/benchuang11046/afs/blob/master/docs/jupyter_md/sdk_featrues.md)]
 
 Flow setting
 
@@ -43,7 +46,7 @@ API response
 
 ### Parameter (Type string, integet, float, list)
 
-How to write a AFS API to get parameters with types.  [[Example](jupyter_md/sdk_parameters.md)]
+How to write a AFS API to get parameters with types.  [[Example](https://github.com/benchuang11046/afs/blob/master/docs/jupyter_md/sdk_parameters.md)]
 
 Flow setting
 
@@ -65,3 +68,28 @@ API response
 
 
 
+### services
+
+How to get the subscribed influxdb credential. 
+
+```
+from afs import services
+
+myservice =  services()
+credential = myservice.get_service_info()
+
+# Show all the subscribed services.
+print(credential)
+
+# Select one of the influxdb service, check which influxdb you want.  
+myinfluxdbl =  credential['influxdb'][0]
+
+# Influxdb credential
+username = myinfluxdb['username']
+password = myinfluxdb['password']
+host = myinfluxdb['host']
+port = myinfluxdb['port']
+database = myinfluxdb['database']
+key = myinfluxdb['key']
+
+```

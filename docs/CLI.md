@@ -23,7 +23,7 @@ The CLI only provides one function, to **push** analytic app into your service i
     ```
     eipaas-afs push
     ```
-    This will read the **manifest,yml** and push this analytic app into your workspace.
+    This will read the **manifest.yml** and push this analytic app into your workspace.
     This operation may take a while, just patient.
 
 5. Use AFS portal to check the result.

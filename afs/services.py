@@ -10,7 +10,7 @@ class services(object):
 
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
         """
-        Connect to afs models service, user can connect to service by enviroment parameter. Another way is input when created.
+        The module can get the credential or the subscribed service.
         """
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         envir = AfsEnv(
@@ -21,11 +21,14 @@ class services(object):
         self.instance_id = envir.instance_id
         self.auth_code = envir.auth_code
         self.entity_uri = 'services'
-        self.repo_id = None
 
     # def get_service_info(self, service=None, specific_key=None):
     def get_service_info(self):
+        """
+        List all credentials which the services you subscribed.
 
+        :return: dict. The credential info.
+        """
         try:
             resp = self._get().json()
             service_info = {}
@@ -78,9 +81,9 @@ class services(object):
         return response
 
 
-if __name__=='__main__':
-    services_resource = services("https://portal-afs-develop.iii-arfa.com/",  "70c2d65c-1f91-4607-843d-12b90a4faa7b", "CpSmlfe-J4RGZmoaF607fA")
-    resp = services_resource.get_service_info()
-    assert resp is not {}
-    assert 'influxdb' in resp
-    print('test finish')
+# if __name__=='__main__':
+#     services_resource = services("https://portal-afs-develop.iii-arfa.com/",  "70c2d65c-1f91-4607-843d-12b90a4faa7b", "CpSmlfe-J4RGZmoaF607fA")
+#     resp = services_resource.get_service_info()
+#     assert resp is not {}
+#     assert 'influxdb' in resp
+#     print('test finish')
