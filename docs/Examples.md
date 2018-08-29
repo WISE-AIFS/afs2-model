@@ -36,11 +36,22 @@ afs_models.upload_model(
 ### Features
 How to write a AFS API to get features, including target, select_features, numerical. [[Example](https://github.com/benchuang11046/afs/blob/master/docs/jupyter_md/sdk_featrues.md)]
 
-Flow setting
+#### Flow setting
 
 ![Flow setting](_static/images/examples/features01.PNG)
 
-API response
+#### API response
+
+Post Request
+```
+ {
+    "data": {
+        "mc": {
+            "0": 21
+        }
+    }
+ }
+```
 
 ![API response](_static/images/examples/features02.PNG)
 
@@ -48,12 +59,22 @@ API response
 
 How to write a AFS API to get parameters with types.  [[Example](https://github.com/benchuang11046/afs/blob/master/docs/jupyter_md/sdk_parameters.md)]
 
-Flow setting
+#### Flow setting
 
 ![Flow setting](_static/images/examples/parameter01.PNG)
 
-API response
+#### API response
 
+Post Request
+```
+ {
+    "data": {
+        "mc": {
+            "0": 21
+        }
+    }
+ }
+```
 ![API response](_static/images/examples/parameter02.PNG)
 
 
@@ -61,12 +82,13 @@ API response
 
 How to write a AFS API to get data.  [[Example]()]
 
-Flow setting
+#### Flow setting
 
+![Flow setting](_static/images/examples/get_data01.PNG)
 
-API response
+#### API response
 
-
+![Flow setting](_static/images/examples/get_data02.PNG)
 
 ### services
 
