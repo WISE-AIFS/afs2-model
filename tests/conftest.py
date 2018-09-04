@@ -13,6 +13,10 @@ load_dotenv(dotenv_path=env_path)
 def test():
     return uuid.uuid4()
 
+@pytest.fixture(scope='session')
+def data_dir():
+    yield os.path.join(os.path.dirname(__file__), 'data')
+
 @pytest.fixture(scope='class')
 def models_resource():
     afs_models=models()

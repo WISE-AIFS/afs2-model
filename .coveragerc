@@ -1,0 +1,5 @@
+[run]
+source = afs
+
+[html]
+directory = test_reports/coverage

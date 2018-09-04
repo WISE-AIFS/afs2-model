@@ -1,14 +1,21 @@
 import os
 
+from dotenv import load_dotenv
+
+# Write your usernameand password in .env, this file will not be commit to GitHub.
+load_dotenv()
+
 
 def test_login(client_session):
-    target_endpoint = ''
-    username = ''
-    password = ''
+    target_endpoint = os.getenv('afs_url')
+
+    # Don't commit username and password to GitHub!!!
+    username = os.getenv('AFS_USERNAME')
+    password = os.getenv('AFS_PASSWORD')
 
     client_session.login(target_endpoint, username, password)
 
-    assert client_session.target_endpoint == 'https://' + target_endpoint
+    assert client_session.target_endpoint == target_endpoint
     assert client_session.api_version == 'v1'
 
 

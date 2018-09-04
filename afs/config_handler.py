@@ -75,7 +75,12 @@ class config_handler(object):
             elif obj_para['type'] in 'float':
                 obj_value = float(obj_value)
             elif obj_para['type'] in 'list:':
-                obj_value = list(obj_value)
+                obj_value = json.loads(obj_value)
+                if not isinstance(obj_value, list):
+                    message = {
+                        'error': 'Type of {0} is not list.'.format(key)
+                    }
+                    raise Exception(message)
             else:
                 _logger.warning('Parameter has no specific type.')
                 obj_value = str(obj_value)
