@@ -71,16 +71,21 @@ class models(object):
             raise AssertionError(
                 'Type error, accuracy and loss are float, and tags and extra_evaluation are dict.'
             )
+
         if not isinstance(model_name, str):
             raise AssertionError('Type error, model_name  cannot convert to string')
+
         if not os.path.isfile(model_name):
             raise AssertionError('File not found, model path is not exist.')
+
         else:
             model_path = model_name
             if os.path.sep in model_name:
                 model_name = model_name.split(os.path.sep)[-1]
+
             if len(model_name) > 128 or len(model_name) < 1:
                 raise AssertionError('Model name length  is upper limit 1-35')
+
             pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,35}')
             match = pattern.match(model_name)
             if match is None:
@@ -88,6 +93,7 @@ class models(object):
 
         if os.path.getsize(model_name) > 2*(1024*1024*1024):
             raise AssertionError('Model size is upper limit 2 GB.')
+
         with open(model_path, 'rb') as f:
             model_file = BytesIO(f.read())
         model_file.seek(0)
@@ -97,6 +103,7 @@ class models(object):
 
         if accuracy > 1.0 or accuracy < 0:
             raise AssertionError('Accuracy value should be between 0-1')
+
         evaluation_result = {'accuracy': accuracy, 'loss': loss}
         evaluation_result.update(extra_evaluation)
         data = dict(
@@ -117,9 +124,9 @@ class models(object):
 
     def switch_repo(self, repo_name=None):
         """
-        Switch current repository.
+        Switch current repository. If the model is not exist, return none.
 
-        :param str repo_name: Name of model repository.
+        :param str repo_name: (optional)The name of model repository.
         :return: None or repo_id
         """
         params = dict(name=repo_name)
@@ -129,6 +136,19 @@ class models(object):
         else:
             self.repo_id = resp.json()[0]['uuid']
             return self.repo_id
+
+    def get_latest_model_info(self, repo_name=None):
+        """
+        Get the latest model info, including created_at, tags, evaluation_result.
+        
+        :param repo_name: (optional)The name of model repository.
+        :return: dict type. model info
+        """
+        if repo_name:
+            self.switch_repo(repo_name)
+
+        resp = self._get(extra_paths=[self.repo_id, 'info'])
+        return resp.json()
 
     def _create(self, data, files=None, extra_paths=[]):
         if len(extra_paths) == 0:

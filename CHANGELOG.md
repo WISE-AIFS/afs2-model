@@ -1,6 +1,9 @@
 1.2.18 (unreleased)
 
 
+- Add Feature - add models module get the latest model info
+   Add Feature - add services modules get the credential by key
+
 - Nothing changed yet.
 
 

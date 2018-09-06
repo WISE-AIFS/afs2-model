@@ -63,7 +63,7 @@ class config_handler(object):
         Get parameter from the key name, and it should be set from set_param.
 
         :param str key: The parameter key set from method set_param
-        :return: Speicfic type depends on set_param. The value of the key name.
+        :return: Specfic type depends on set_param. The value of the key name.
         """
         obj_value = self.flow_obj.current_node_obj[key]
         obj_para = [x for x in self.param if x['name'] in key][0]

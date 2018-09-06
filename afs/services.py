@@ -23,14 +23,30 @@ class services(object):
         self.entity_uri = 'services'
 
     # def get_service_info(self, service=None, specific_key=None):
-    def get_service_info(self):
+    def get_service_info(self, specific_key=None):
         """
         List all credentials which the services you subscribed.
 
         :return: dict. The credential info.
         """
+
+
+
         try:
             resp = self._get().json()
+        except Exception as e:
+            print(e)
+
+
+        if specific_key != None:
+            for service_inst in resp:
+                service_keys = service_inst['service_keys']
+                for key_pair in service_keys:
+                    if specific_key in key_pair:
+                        return key_pair[specific_key]
+                AssertionError('Key {0} is not existed in any the subscribed service'.format(specific_key))
+
+        try:
             service_info = {}
             for service_inst in resp:
                 service_name = service_inst['name']
