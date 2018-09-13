@@ -1,8 +1,11 @@
 1.2.19 (unreleased)
 -------------------
 
-- Nothing changed yet.
-
+- Add Feature #536 - Limit accuracy between 0-1
+- Fix bug #703 - Update the SDK part of ReadtheDocs
+- Fix bug #714 - Disable InsecureRequestWarning
+- Add Feature #722 - Get the metadata info of the latest model
+​
 
 1.2.18 (2018-09-07)
 -------------------
