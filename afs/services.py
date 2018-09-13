@@ -30,8 +30,6 @@ class services(object):
         :return: dict. The credential info.
         """
 
-
-
         try:
             resp = self._get().json()
         except Exception as e:

@@ -9,25 +9,42 @@ Reference documents [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/)
 
 ## Installation
 
-Support python version 3.5 later
-
-### pip install
+Support python version 3.5 or later
 
 
-Version latest
+### pip install on AFS online code IDE
+ 
+### On public cloud (RELEASE)
+```
+pip install https://github.com/benchuang11046/afs/releases/download/1.2.18/afs-1.2.18-py3-none-any.whl
+```
+
+
+#### On private cloud
+
+[Install Documents](https://afs-docs.readthedocs.io/en/latest/sdk/docs/InstallDependencies.html)
+
+### (For SDK developer) pip install the latest version (NOT RELEASE)
+
+*The latest develop version*
 ```
 $ pip install https://github.com/benchuang11046/afs.git
 ```
 
-### From sources
+### (For SDK developer) From sources
 
+1. Clone the repository to local.
 
-To build the library run:
+2. To build the library run:
 ```
 $ python setup.py install
 ```
 
-To build the wheel package:
+### (For SDK developer) Build from source
+
+1. Clone the repository to local.
+
+2. To build the wheel package:
 ```
 $ python setup.py bdist_wheel
 ```

@@ -7,7 +7,6 @@ import afs.utils as utils
 from afs.get_env import AfsEnv
 import urllib3
 import re
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 _logger = logging.getLogger(__name__)
 
