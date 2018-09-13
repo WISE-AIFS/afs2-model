@@ -33,7 +33,7 @@ afs_models.upload_model(
 
 
 
-# get_latest_model_info
+### get_latest_model_info
 
 **Code**
 ```
