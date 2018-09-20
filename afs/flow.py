@@ -63,6 +63,7 @@ class flow(object):
         self.ERR_MSG_GET_FLOW = 'Get flow list error occur.'
         self.ERR_MSG_FLOW_NULL = 'Flow list is null.'
         self.ERR_MSG_GET_NODE = 'Get node error occur.'
+        self.ERR_MSG_URL_NOT_EXIST_IN_NODE = 'Url is not exist in next node.'
 
     def set_flow_config(self, obj):
         """
@@ -300,8 +301,12 @@ class flow(object):
 
                         return error_node, error_msg
             else:
-                continue
-
+                # url not exist
+                error_node = item
+                error_msg = self.ERR_MSG_URL_NOT_EXIST_IN_NODE
+                
+                return error_node, error_msg
+                
         return error_node, error_msg
 
     def get_sso_token(self, req_body):
