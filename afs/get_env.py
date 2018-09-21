@@ -49,7 +49,7 @@ class app_env(object):
             self._afs_auth_code = str(os.getenv('auth_code'))
 
         # get param from AFS api
-        self._param_obj = self.get_required_param()  # *** fix url
+        self._param_obj = self.get_required_param()
 
         # sso_host_url
         if os.getenv('sso_host_url') is None:
@@ -58,7 +58,7 @@ class app_env(object):
                 self._sso_host_url = self._param_obj.get('sso_host_url')  # get from afs api
             except Exception as err:
                 print('Get sso host url error occur.')
-                self._sso_host_url = ''
+                self._sso_host_url = None
         else:
             self._sso_host_url = self.format_url(str(os.getenv('sso_host_url')))
 
@@ -69,7 +69,7 @@ class app_env(object):
                 self._rmm_host_url = self._param_obj.get('rmm_host_url')  # get from afs api
             except Exception as err:
                 print('Get rmm host url error occur.')
-                self._rmm_host_url = ''
+                self._rmm_host_url = None
         else:
             self._rmm_host_url = self.format_url(str(os.getenv('rmm_host_url')))
 
@@ -96,6 +96,11 @@ class app_env(object):
             result = requests.get(str_url, headers=headers_obj, timeout=5)
         except Exception as err:
             print('Request AFS api: ' + str(err))
+            return None
+
+        # status code not success
+        if result.status_code != requests.codes.ok:
+            print('Request AFS api get env variable status code: ' + str(result.status_code))
             return None
 
         # parse json
