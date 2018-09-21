@@ -84,9 +84,15 @@ class app_env(object):
         # if host_url is None use self._afs_host_url
         host_url = self.format_url(host_url) if host_url is not None else self._afs_host_url
         param_obj = None
-        str_url = host_url + '/v1/' + self.vcap_app.get('space_name') + '/workspaces/' + self.vcap_app.get(
-            'space_id') + '/env?auth_code=' + self.afs_auth_code
+        
+        try:
+            str_url = host_url + '/v1/' + self.vcap_app.get('space_name') + '/workspaces/' + self.vcap_app.get(
+                'space_id') + '/env?auth_code=' + self.afs_auth_code
+        except Exception as err:
+            print('Request AFS api get required param error occur: ' + str(err))
+            return None
         # print(str_url)
+        
         headers_obj = {
             'Authorization': self.afs_auth_code
         }

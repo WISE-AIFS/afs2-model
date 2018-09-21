@@ -321,6 +321,12 @@ class flow(object):
         :return resp: (string) response sso token
         :return status: (int) status code
         """
+        # check
+        if self.sso_host_url is None:
+            print(self.ERR_MSG_GET_ENV_VAR_NONE + ': sso host url')
+            raise Exception(self.ERR_MSG_GET_ENV_VAR_NONE + ': sso host url')
+        
+        # execute
         sso_url = self.sso_host_url + '/v1.5/auth/native'
         headers_obj = {
             'Content-Type': 'application/json'
@@ -361,6 +367,17 @@ class flow(object):
         :return resp: (string) response afs credentials list
         :return status: (int) status code
         """
+        # check
+        if self.afs_host_url is None:
+            print(self.ERR_MSG_GET_ENV_VAR_NONE + ': afs host url')
+            raise Exception(self.ERR_MSG_GET_ENV_VAR_NONE + ': afs host url')
+
+        if self.afs_instance_id is None:
+            print(self.ERR_MSG_GET_ENV_VAR_NONE + ': afs instance id')
+            raise Exception(self.ERR_MSG_GET_ENV_VAR_NONE + ': afs instance id')
+
+
+        # execute
         afs_url = self.afs_host_url + "/v1/" + self.afs_instance_id + "/services"
         headers_obj = {
             'Content-Type': 'application/json',
