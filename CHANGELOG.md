@@ -1,7 +1,13 @@
 1.2.21 (unreleased)
 -------------------
 
-- Nothing changed yet.
+
+- Fix bug - Check value of environment variable is exist in function which use these variable.
+
+- Fix bug - Check status code of request afs api to get env variable.
+
+- Fix bug - Check key of url is exist in next node when request next node.
+
 
 
 1.2.20 (2018-09-19)
