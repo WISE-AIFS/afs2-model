@@ -18,6 +18,16 @@ class flow(object):
             (parse, node)
         :param  env_obj: (object: app_env) object for storing env variable. (default = {})
         """
+        # set message
+        self.ERR_MSG_NEXT_LIST_TYPE = 'List of next node data type is error.'
+        self.ERR_MSG_NUMBER_OF_FIREHOSE = 'Number of firehose is error.'
+        self.ERR_MSG_CONFIG_PARAM_NOT_FOUND = 'Need param is not found.'
+        self.ERR_MSG_GET_FLOW = 'Get flow list error occur.'
+        self.ERR_MSG_FLOW_NULL = 'Flow list is null.'
+        self.ERR_MSG_GET_NODE = 'Get node error occur.'
+        self.ERR_MSG_URL_NOT_EXIST_IN_NODE = 'Url is not exist in next node.'
+        self.ERR_MSG_GET_ENV_VAR_NONE = 'Get environment variable failed.'
+
         # set initial value
         self.mode = mode  # mode for switch data and constrant
         self.mode_type = {
@@ -56,13 +66,6 @@ class flow(object):
             'get_afs_credentials': 40
         }
 
-        # set message
-        self.ERR_MSG_NEXT_LIST_TYPE = 'List of next node data type is error.'
-        self.ERR_MSG_NUMBER_OF_FIREHOSE = 'Number of firehose is error.'
-        self.ERR_MSG_CONFIG_PARAM_NOT_FOUND = 'Need param is not found.'
-        self.ERR_MSG_GET_FLOW = 'Get flow list error occur.'
-        self.ERR_MSG_FLOW_NULL = 'Flow list is null.'
-        self.ERR_MSG_GET_NODE = 'Get node error occur.'
 
     def set_flow_config(self, obj):
         """
@@ -300,8 +303,12 @@ class flow(object):
 
                         return error_node, error_msg
             else:
-                continue
-
+                # url not exist
+                error_node = item
+                error_msg = self.ERR_MSG_URL_NOT_EXIST_IN_NODE
+                
+                return error_node, error_msg
+                
         return error_node, error_msg
 
     def get_sso_token(self, req_body):
@@ -314,6 +321,12 @@ class flow(object):
         :return resp: (string) response sso token
         :return status: (int) status code
         """
+        # check
+        if self.sso_host_url is None:
+            print(self.ERR_MSG_GET_ENV_VAR_NONE + ': sso host url')
+            raise Exception(self.ERR_MSG_GET_ENV_VAR_NONE + ': sso host url')
+        
+        # execute
         sso_url = self.sso_host_url + '/v1.5/auth/native'
         headers_obj = {
             'Content-Type': 'application/json'
@@ -354,6 +367,17 @@ class flow(object):
         :return resp: (string) response afs credentials list
         :return status: (int) status code
         """
+        # check
+        if self.afs_host_url is None:
+            print(self.ERR_MSG_GET_ENV_VAR_NONE + ': afs host url')
+            raise Exception(self.ERR_MSG_GET_ENV_VAR_NONE + ': afs host url')
+
+        if self.afs_instance_id is None:
+            print(self.ERR_MSG_GET_ENV_VAR_NONE + ': afs instance id')
+            raise Exception(self.ERR_MSG_GET_ENV_VAR_NONE + ': afs instance id')
+
+
+        # execute
         afs_url = self.afs_host_url + "/v1/" + self.afs_instance_id + "/services"
         headers_obj = {
             'Content-Type': 'application/json',
