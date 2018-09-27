@@ -1,5 +1,8 @@
 import pkg_resources
 import requests
+import warnings
+from urllib.parse import urljoin
+import os
 
 # afs-sdk module
 from .config_handler import config_handler
@@ -15,3 +18,31 @@ else:
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 __version__ = pkg_resources.get_distribution('afs').version
+
+def _check_version(__version__):
+    target_endpoint = os.getenv('afs_url', None)
+
+    if target_endpoint is not None:
+
+        if not target_endpoint.startswith(('http://', 'https://')):
+            target_endpoint = 'https://' + target_endpoint
+
+        resp = requests.get(
+            urljoin(target_endpoint, 'info')
+        )
+
+        if not resp.ok:
+            message = {
+                'error': 'Get info from {0} failed'.format(target_endpoint),
+                'response': resp.text
+            }
+            raise Exception(message)
+
+        resp = resp.json()
+        afs_version = resp['AFS_version']
+        if afs_version != __version__:
+            warnings.warn('SDK version is {0}, and AFS platform version is {1}. It will cause some compatibility issues.'.format(__version__, afs_version))
+    else:
+        warnings.warn('User environment is not on AFS.')
+
+_check_version(__version__)

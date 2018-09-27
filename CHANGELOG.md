@@ -8,6 +8,8 @@
 
 - Fix bug - Check key of url is exist in next node when request next node.
 
+- Add Feature #757 - Warning message when SDK does not meet AFS version.
+
 
 
 1.2.20 (2018-09-19)

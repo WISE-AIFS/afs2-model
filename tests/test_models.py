@@ -8,6 +8,7 @@ def test_upload_model(models_resource, test):
     name = 'test_model.h5'
     with open(name, 'w') as f:
         f.write(str(test))
+    print(test)
     models_resource.upload_model(name, accuracy=.123, loss=.123)
     if os.path.exists(name):
         os.remove(name)
