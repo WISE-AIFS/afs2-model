@@ -1,4 +1,4 @@
-1.2.23 (unreleased)
+1.2.23 (2018-10-15)
 -------------------
 
 - Nothing changed yet.
