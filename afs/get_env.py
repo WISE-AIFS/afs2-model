@@ -3,13 +3,10 @@ import requests
 
 class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
-        if target_endpoint is None or instance_id is None or auth_code is None:
+        if target_endpoint is ㄉNone or instance_id is None or auth_code is None:
             self.target_endpoint = os.getenv('afs_url', None)
             self.auth_code = os.getenv('auth_code', None)
-            vcap = json.loads(os.getenv('VCAP_APPLICATION', {}))
-            if not vcap:
-                raise AssertionError('Environment VCAP_APPLICATION is empty')
-            self.instance_id = vcap.get('space_name', None)
+            self.instance_id = os.getenv('instance_id', None)
 
             if self.target_endpoint == None or self.instance_id == None or self.auth_code == None:
                 raise AssertionError('Environment parameters need afs_url, instance_id, auth_code')
@@ -29,6 +26,11 @@ class app_env(object):
             self._app = {}
         else:
             self._app = json.loads(os.getenv('VCAP_APPLICATION'))
+
+        if os.getenv('instance_id') is None:
+            self._instance_id = {}
+        else:
+            self._instance_id = str(os.getenv('instance_id'))
 
         # afs_host_url
         if os.getenv('afs_url') is None:
