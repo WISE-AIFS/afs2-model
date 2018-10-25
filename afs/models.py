@@ -82,10 +82,10 @@ class models(object):
             if os.path.sep in model_name:
                 model_name = model_name.split(os.path.sep)[-1]
 
-            if len(model_name) > 128 or len(model_name) < 1:
-                raise AssertionError('Model name length  is upper limit 1-35')
+            if len(model_name) > 42 or len(model_name) < 1:
+                raise AssertionError('Model name length  is upper limit 1-42 char')
 
-            pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,35}')
+            pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,42}')
             match = pattern.match(model_name)
             if match is None:
                 raise AssertionError('Model naming rule is only a-z, A-Z, 0-9, - and _ allowed.')
@@ -98,7 +98,7 @@ class models(object):
         model_file.seek(0)
         self.repo_id = self.switch_repo(model_name)
         if self.repo_id is None:
-            self.repo_id = self._create_model_repo(model_name)
+            self.repo_id = self.create_model_repo(model_name)
 
         if accuracy > 1.0 or accuracy < 0:
             raise AssertionError('Accuracy value should be between 0-1')
@@ -112,7 +112,23 @@ class models(object):
         extra_paths = [self.repo_id, 'upload']
         resp = self._put(data=data, files=files, extra_paths=extra_paths)
 
-    def _create_model_repo(self, repo_name):
+    def create_model_repo(self, repo_name):
+        """
+        Create a new model repository.
+        
+        :param str repo_name: (optional)The name of model repository.
+        :return: the new uuid of the repository
+        """
+        if isinstance(repo_name, str):
+            if len(repo_name) > 42 or len(repo_name) < 1:
+                raise AssertionError('Model name length  is upper limit 1-42 char')
+            pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,42}')
+            match = pattern.match(repo_name)
+            if match is None:
+                raise AssertionError('Model naming rule is only a-z, A-Z, 0-9, - and _ allowed.')
+        else:
+            raise AssertionError('Repo name must be string')
+
         request = dict(name=repo_name)
         resp = self._create(request)
         return resp.json()['uuid']

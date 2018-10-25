@@ -1,6 +1,8 @@
 1.2.26 (unreleased)
 -------------------
 
+- Add Feature - Integrate AFS hidden space
+
 - Nothing changed yet.
 
 

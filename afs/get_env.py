@@ -1,12 +1,23 @@
 import os, json
 import requests
+import warnings
 
 class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
-        if target_endpoint is ㄉNone or instance_id is None or auth_code is None:
+        self.version = os.getenv('version', None)
+        if self.version is None:
+            warnings.warn('To solve hidden space problem, environment variable has change. RECOMMEND upgrading AFS instance')
+
+        if target_endpoint is None or instance_id is None or auth_code is None:
             self.target_endpoint = os.getenv('afs_url', None)
             self.auth_code = os.getenv('auth_code', None)
-            self.instance_id = os.getenv('instance_id', None)
+            if self.version is None:
+                vcap = json.loads(os.getenv('VCAP_APPLICATION', {}))
+                if not vcap:
+                    raise AssertionError('Environment VCAP_APPLICATION is empty')
+                self.instance_id = vcap.get('space_name', None)
+            else:
+                self.instance_id = os.getenv('instance_id', None)
 
             if self.target_endpoint == None or self.instance_id == None or self.auth_code == None:
                 raise AssertionError('Environment parameters need afs_url, instance_id, auth_code')
@@ -21,16 +32,28 @@ class AfsEnv():
 
 class app_env(object):
     def __init__(self):
+        # version
+        self.version = os.getenv('version', None)
+        if self.version is None:
+            warnings.warn('To solve hidden space problem, environment variable has change. RECOMMEND upgrading AFS instance')
+
         # VCAP_APPLICATION
         if os.getenv('VCAP_APPLICATION') is None:
             self._app = {}
         else:
             self._app = json.loads(os.getenv('VCAP_APPLICATION'))
 
+        # instance_id
         if os.getenv('instance_id') is None:
             self._instance_id = {}
         else:
             self._instance_id = str(os.getenv('instance_id'))
+
+        # workspace_id
+        if os.getenv('workspace_id') is None:
+            self._workspace_id = {}
+        else:
+            self._workspace_id = str(os.getenv('workspace_id'))
 
         # afs_host_url
         if os.getenv('afs_url') is None:
@@ -88,8 +111,13 @@ class app_env(object):
         param_obj = None
         
         try:
-            str_url = host_url + '/v1/' + self.vcap_app.get('space_name') + '/workspaces/' + self.vcap_app.get(
-                'space_id') + '/env?auth_code=' + self.afs_auth_code
+            if self.version is None:
+                str_url = host_url + '/v1/' + self.vcap_app.get('space_name') + '/workspaces/' + self.vcap_app.get(
+                    'space_id') + '/env?auth_code=' + self.afs_auth_code
+            else:
+                str_url = host_url + '/v1/' + self._instance_id + '/workspaces/' + self._workspace_id + \
+                          '/env?auth_code=' + self.afs_auth_code
+
         except Exception as err:
             print('Request AFS api get required param error occur: ' + str(err))
             return None
@@ -143,6 +171,24 @@ class app_env(object):
     @vcap_app.setter
     def vcap_app(self, obj):
         self._app = json.loads(str(obj))
+
+    # instance id
+    @property
+    def instance_id(self):
+        return self._instance_id
+
+    @instance_id.setter
+    def instance_id(self, value):
+        self._instance_id = value
+
+    # workspace_id
+    @property
+    def workspace_id(self):
+        return self._workspace_id
+
+    @workspace_id.setter
+    def workspace_id(self, value):
+        self._workspace_id = value
 
     @property
     def afs_host_url(self):

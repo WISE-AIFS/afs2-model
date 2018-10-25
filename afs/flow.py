@@ -46,8 +46,8 @@ class flow(object):
         else:
             self.env_obj = env_obj
 
-        self.afs_instance_id = self.env_obj.vcap_app.get('space_name')  # afs instance id
-        self.afs_workspace_id = self.env_obj.vcap_app.get('space_id')  # afs workspace id
+        self.afs_instance_id = self.env_obj.instance_id # afs instance id
+        self.afs_workspace_id = self.env_obj.workspace_id  # afs workspace id
         self.afs_host_url = self.env_obj.afs_host_url  # host url for afs
         self.sso_host_url = self.env_obj.sso_host_url  # host url for sso
         self.node_host_url = self.env_obj.node_host_url  # host url for Node-RED
