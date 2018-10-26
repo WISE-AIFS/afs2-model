@@ -117,13 +117,10 @@ How to get the subscribed influxdb credential.
 from afs import services
 
 myservice =  services()
-credential = myservice.get_service_info()
+credential = myservice.get_service_info('influxdb')
 
 # Show all the subscribed services.
 print(credential)
-
-# Select one of the influxdb service, check which influxdb you want.  
-myinfluxdb =  credential['influxdb'][0]
 
 # Influxdb credential
 username = myinfluxdb['username']
@@ -131,6 +128,5 @@ password = myinfluxdb['password']
 host = myinfluxdb['host']
 port = myinfluxdb['port']
 database = myinfluxdb['database']
-key = myinfluxdb['key']
 
 ```
