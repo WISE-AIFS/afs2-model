@@ -1,4 +1,4 @@
-1.2.26 (unreleased)
+1.2.26 (2018-10-26)
 -------------------
 
 - Fix bug - update services module method
