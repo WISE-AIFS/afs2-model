@@ -3,6 +3,8 @@ import urllib3
 from afs.get_env import AfsEnv
 import afs.utils as utils
 import requests
+import traceback
+import warnings
 
 _logger = logging.getLogger(__name__)
 
@@ -22,62 +24,60 @@ class services(object):
         self.auth_code = envir.auth_code
         self.entity_uri = 'services'
 
-    # def get_service_info(self, service=None, specific_key=None):
-    def get_service_info(self, specific_key=None):
+
+    def get_service_info(self, service_name, service_key=None):
+        """
+        Get the subscribed service one of key.
+
+        :param str service_name:  (required) service name
+        """
+        try:
+            resp = self._get().json()
+        except Exception as e:
+            raise AssertionError('Failed to connect API server.')
+            traceback.print_exc()
+
+        service_list = [service for service in resp
+                        if service['name'] == service_name]
+
+        if len(service_list) == 0:
+            warnings.warn('The service whose name is {} and type is {} is not exist.'.format(service_name, service_type))
+            return {}
+
+        key_list = [key for key in service_list[0]['service_keys']]
+        if len(service_list) == 0:
+            warnings.warn('The key in your service is empty.'.format(service_name, service_type))
+            return {}
+
+        if service_key is None:
+            credential = [list(cre.values())[0] for cre in key_list]
+            if len(credential) == 0:
+                warnings.warn('There is no key exist.'.format(service_key))
+                return {}
+        else:
+            credential = [list(cre.values())[0] for cre in key_list if list(cre.keys())[0] == service_key]
+            if len(credential) == 0:
+                warnings.warn('Key {} is not exist.'.format(service_key))
+                return {}
+
+        return credential[0]
+
+
+    def get_service_list(self):
         """
         List all credentials which the services you subscribed.
 
-        :return: dict. The credential info.
+        :return: list. credential info
         """
 
         try:
             resp = self._get().json()
         except Exception as e:
-            print(e)
+            raise AssertionError('Failed to connect API server.')
+            traceback.print_exc()
 
+        return resp
 
-        if specific_key != None:
-            for service_inst in resp:
-                service_keys = service_inst['service_keys']
-                for key_pair in service_keys:
-                    if specific_key in key_pair:
-                        return key_pair[specific_key]
-                AssertionError('Key {0} is not existed in any the subscribed service'.format(specific_key))
-
-        try:
-            service_info = {}
-            for service_inst in resp:
-                service_name = service_inst['name']
-                service_type = service_inst['service']
-                service_keys = service_inst['service_keys']
-                service_keys_info_list = []
-                if service_keys:
-                    for service_key in service_keys:
-                        info = {}
-                        key = list(service_key.keys())[0]
-                        if 'username' in service_key[key]:
-                            username = service_key[key]['username']
-                        if 'password' in service_key[key]:
-                            password = service_key[key]['password']
-                        if 'host' in service_key[key]:
-                            host = service_key[key]['host']
-                        if 'database' in service_key[key]:
-                            database = service_key[key]['database']
-                        if 'port' in service_key[key]:
-                            port = service_key[key]['port']
-                        if 'uri' in service_key[key]:
-                            uri = service_key[key]['uri']
-                        info = dict(key=key, username=username, password=password, host=host, database=database,
-                                    port=port,
-                                    uri=uri, service_name=service_name, service_type=service_type)
-                        service_keys_info_list.append(info)
-                else:
-                    pass
-                service_info[service_type] = service_keys_info_list
-            return service_info
-        except Exception as e:
-            print(e.with_traceback())
-            return {}
 
     def _get(self, params={}, extra_paths=[]):
         if len(extra_paths) == 0:

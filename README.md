@@ -16,7 +16,7 @@ Support python version 3.5 or later
  
 ### On public cloud (RELEASE)
 ```
-pip install https://github.com/benchuang11046/afs/releases/download/1.2.18/afs-1.2.18-py3-none-any.whl
+pip install https://github.com/benchuang11046/afs/releases/download/1.2.26/afs-1.2.26-py3-none-any.whl
 ```
 
 
@@ -28,7 +28,7 @@ pip install https://github.com/benchuang11046/afs/releases/download/1.2.18/afs-1
 
 *The latest develop version*
 ```
-$ pip install https://github.com/benchuang11046/afs.git
+$ pip install git+https://github.com/benchuang11046/afs.git
 ```
 
 ### (For SDK developer) From sources

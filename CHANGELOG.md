@@ -1,6 +1,8 @@
 1.2.26 (unreleased)
 -------------------
 
+- Fix bug - update services module method
+
 - Add Feature - Integrate AFS hidden space
 
 - Nothing changed yet.
