@@ -27,9 +27,10 @@ class services(object):
 
     def get_service_info(self, service_name, service_key=None):
         """
-        Get the subscribed service one of key.
+        Get the subscribed service one of key.  
 
-        :param str service_name:  (required) service name
+        :param str service_name: (required) the service on EI-PaaS was subscribed
+        :param str service_key: (optional) specific service key. Default is None, pick one of keys. 
         """
         try:
             resp = self._get().json()
@@ -41,18 +42,18 @@ class services(object):
                         if service['name'] == service_name]
 
         if len(service_list) == 0:
-            warnings.warn('The service whose name is {} and type is {} is not exist.'.format(service_name, service_type))
+            warnings.warn('The service whose name is {0} is not exist.'.format(service_name))
             return {}
 
         key_list = [key for key in service_list[0]['service_keys']]
-        if len(service_list) == 0:
-            warnings.warn('The key in your service is empty.'.format(service_name, service_type))
+        if len(key_list) == 0:
+            warnings.warn('The key in {0} is empty.'.format(service_name))
             return {}
 
         if service_key is None:
             credential = [list(cre.values())[0] for cre in key_list]
             if len(credential) == 0:
-                warnings.warn('There is no key exist.'.format(service_key))
+                warnings.warn('There is no key exist.')
                 return {}
         else:
             credential = [list(cre.values())[0] for cre in key_list if list(cre.keys())[0] == service_key]
@@ -93,11 +94,3 @@ class services(object):
             requests.get(url, params=get_params, verify=False))
         _logger.debug('GET - %s - %s', url, response.text)
         return response
-
-
-# if __name__=='__main__':
-#     services_resource = services("https://portal-afs-develop.iii-arfa.com/",  "70c2d65c-1f91-4607-843d-12b90a4faa7b", "CpSmlfe-J4RGZmoaF607fA")
-#     resp = services_resource.get_service_info()
-#     assert resp is not {}
-#     assert 'influxdb' in resp
-#     print('test finish')

@@ -108,7 +108,97 @@ How to write a AFS API to get data.  [[Example](https://github.com/benchuang1104
 
 ![Flow setting](_static/images/examples/get_data02.PNG)
 
-### Services
+
+### API Example using config_handler 
+
+
+**Code**
+```python
+manifest = {
+    'memory': 256,
+    'disk_quota': 256,
+    'buildpack': 'python_buildpack',
+    "requirements":[
+        "pandas",
+        "afs"
+    ],
+    'type': 'API'
+}
+```
+
+
+```python
+from afs import config_handler
+from pandas import DataFrame
+import json
+
+# Setting API parameters and column name
+cfg = config_handler()
+cfg.set_param('b', type='integer', required=True, default=10)
+cfg.set_column('a')
+cfg.summary()
+```
+
+
+```python
+# POST /
+
+# Set flow architecture, REQUEST is the request including body and headers from client
+cfg.set_kernel_gateway(REQUEST)
+
+# Get the parameter from node-red setting
+b = cfg.get_param('b')
+
+# Get the data from request, and transform to DataFrame Type
+a = cfg.get_data()
+result = a + b
+
+# Send the result to next node, and result is  DataFrame Type
+ret = cfg.next_node(result, debug=True)
+
+# The printing is the API response.
+print(json.dumps(ret))
+```
+
+
+**Request Example**
+
+```
+     "headers": {
+         "Host": "140.92.24.91:9091",
+         "Flow_id": "b896452e.73d968",
+         "Node_id": "fb3d279.613efd8"
+     },
+     "body": {
+         "data": {
+             "value": {
+                 "0": 21
+             }
+         }
+      }
+ }
+```
+
+**Response**
+```
+ {
+    "random": 25,
+    "result": {
+        "data": {
+            "value": {
+                "0": 1045
+            }
+        },
+        "node_id": "db4f28d6.59d7e8"
+    }
+}
+```
+
+
+
+
+
+## Services
 
 How to get the subscribed influxdb credential. 
 
@@ -119,14 +209,14 @@ from afs import services
 myservice =  services()
 credential = myservice.get_service_info('influxdb')
 
-# Show all the subscribed services.
+# Show one of the credential of the subscribed services.
 print(credential)
 
 # Influxdb credential
-username = myinfluxdb['username']
-password = myinfluxdb['password']
-host = myinfluxdb['host']
-port = myinfluxdb['port']
-database = myinfluxdb['database']
+username = credential['username']
+password = credential['password']
+host = credential['host']
+port = credential['port']
+database = credential['database']
 
 ```
