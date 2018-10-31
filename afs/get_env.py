@@ -129,7 +129,7 @@ class app_env(object):
 
         # request AFS api
         try:
-            result = requests.get(str_url, headers=headers_obj, timeout=5)
+            result = requests.get(str_url, headers=headers_obj, timeout=5, verify= False)
         except Exception as err:
             print('Request AFS api: ' + str(err))
             return None
