@@ -106,6 +106,10 @@ class config_handler(object):
 
         :return: DataFrame type. Data from REQUEST and rename column name.
         """
+
+        if self.REQUEST is None:
+            raise RuntimeError('set_kernel_gateway should be shown before this method.')
+
         try:
             data = json.loads(self.REQUEST)['body']['data']
             self.data = DataFrame.from_dict(data)
