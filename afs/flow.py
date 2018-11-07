@@ -114,7 +114,7 @@ class flow(object):
 
             # get flow list
             try:
-                result = requests.get(url, timeout=self.req_timeout['get_flow_list'])  # GET
+                result = requests.get(url, timeout=self.req_timeout['get_flow_list'], verify=False)  # GET
             except Exception as err:
                 self.flow_list = None
                 raise Exception(self.ERR_MSG_GET_FLOW + ' flow_id: ' + str(self.flow_id))
@@ -264,7 +264,7 @@ class flow(object):
                 # request next node to execute
                 try:
                     result = requests.post(next_node_obj['url'], headers=headers_obj, json=data,
-                                timeout=self.req_timeout['exe_next_node'])  # POST
+                                timeout=self.req_timeout['exe_next_node'], verify=False)  # POST
                     
                     if debug == True:
                         print(result.text)
@@ -334,7 +334,7 @@ class flow(object):
 
         try:
             result = requests.post(sso_url, headers=headers_obj, json=req_body,
-                        timeout=self.req_timeout['get_sso_token'])  # POST
+                        timeout=self.req_timeout['get_sso_token'], verify=False)  # POST
         except Exception as err:
             resp = str(err)
             status = 500
@@ -385,7 +385,7 @@ class flow(object):
         }
 
         try:
-            result = requests.get(afs_url, headers=headers_obj, timeout=self.req_timeout['get_afs_credentials'])  # GET
+            result = requests.get(afs_url, headers=headers_obj, timeout=self.req_timeout['get_afs_credentials'], verify=False)  # GET
         except Exception as err:
             resp = str(err)
             status = 500

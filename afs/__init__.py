@@ -28,7 +28,7 @@ def _check_version(__version__):
             target_endpoint = 'https://' + target_endpoint
 
         resp = requests.get(
-            urljoin(target_endpoint, 'info')
+            urljoin(target_endpoint, 'info'), verify=False
         )
 
         if not resp.ok:
