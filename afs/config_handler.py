@@ -17,6 +17,7 @@ class config_handler(object):
         self.features = False
         self.data = DataFrame.empty
         self.type_list = {'string': str, 'integer': int, 'float': float, 'list': list}
+        self.REQUEST = None
 
     def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj={}):
         """
@@ -26,6 +27,7 @@ class config_handler(object):
         :param dict env_obj: Key names are VCAP_APPLICATION, afs_host_url, node_host_url, afs_auth_code, sso_host_url, rmm_host_url(option).
         :param str flow_json_file: String of file path. For debug, developer can use file which contains the flow json as the flow json gotten from NodeRed.
         """
+        self.REQUEST = REQUEST
         self.flow_obj = flow(env_obj=env_obj)
 
         try:
@@ -51,12 +53,6 @@ class config_handler(object):
 
         # get the node information in current_node_obj
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
-
-        try:
-            data = json.loads(REQUEST)['body']['data']
-            self.data = DataFrame.from_dict(data)
-        except Exception as e:
-            raise AssertionError('Request contains no key named "data", or cannot transform to dataframe.')
 
     def get_param(self, key):
         """
@@ -98,6 +94,12 @@ class config_handler(object):
 
         :return: DataFrame type. Data from REQUEST and rename column name.
         """
+        try:
+            data = json.loads(self.REQUEST)['body']['data']
+            self.data = DataFrame.from_dict(data)
+        except Exception as e:
+            raise AssertionError('Request contains no key named "data", or cannot transform to dataframe.')
+
         if self.data is not DataFrame.empty:
             return self.data.rename(columns=self.get_column())
         else:
@@ -118,7 +120,7 @@ class config_handler(object):
         """
         Send data to next node according to flow.
 
-        :param data: DataFrame type.
+        :param data: DataFrame type. Data will be sent to next node.
         :param bool debug: If debug is True, method will return response message from the next node.
         :return: Response JSON
         :rtype: dict
@@ -131,6 +133,8 @@ class config_handler(object):
                 return self.flow_obj.exe_next_node(data, debug=debug)
             else:
                 raise AssertionError('Type error, data must be DataFrame type')
+        else:
+            raise AssertionError('Data cannot be none')
 
     def set_param(self, key, type='string', required=False ,default=None):
         """

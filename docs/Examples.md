@@ -161,11 +161,15 @@ print(json.dumps(ret))
 ```
 
 
+**Solution**
+
+![column](_static/images/examples/column.png)
+
+
 **Request Example**
 
 ```
      "headers": {
-         "Host": "140.92.24.91:9091",
          "Flow_id": "b896452e.73d968",
          "Node_id": "fb3d279.613efd8"
      },

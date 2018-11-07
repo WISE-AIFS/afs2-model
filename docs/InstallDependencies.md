@@ -19,7 +19,7 @@ If you want install AFS-SDK without external network, you should install depende
 ## AFS-SDK dependency tree
 Install dependency module first.
 
-### afs==1.2.19
+### afs==1.2.28
 ```
 afs
   click
@@ -55,9 +55,11 @@ There is a script for installing dependency quickly on AFS online code IDE. And 
 import os
 
 # check pkg config, instance id, workspace_id
-pkg = ['urllib3-1.23-py2.py3-none-any.whl', 'six-1.11.0-py2.py3-none-any.whl', 'python_dateutil-2.7.3-py2.py3-none-any.whl', 'chardet-3.0.4-py2.py3-none-any.whl', 'certifi-2018.4.16-py2.py3-none-any.whl', 'idna-2.7-py2.py3-none-any.whl', 'click-6.7-py2.py3-none-any.whl', 'requests-2.19.1-py2.py3-none-any.whl', 'influxdb-5.2.0-py2.py3-none-any.whl', 'afs-1.2.19.dev-py3-none-any.whl']
-instance_id = '****' 
-workspace_id = '****'
+pkg = ['urllib3-1.23-py2.py3-none-any.whl', 'six-1.11.0-py2.py3-none-any.whl', 'python_dateutil-2.7.3-py2.py3-none-any.whl',
+ 'chardet-3.0.4-py2.py3-none-any.whl', 'certifi-2018.8.24-py2.py3-none-any.whl', 'idna-2.7-py2.py3-none-any.whl', 
+ 'click-6.7-py2.py3-none-any.whl', 'requests-2.19.1-py2.py3-none-any.whl', 'influxdb-5.2.0-py2.py3-none-any.whl']
+instance_id = '779fd10d-24ee-4603-b18a-dcb279eac8b5'
+workspace_id = '0c581c22-e115-4397-b18e-a36a27002762'
 
 install_cmd = '$afs_url/v1/{0}/workspaces/{1}/vendor/'.format(instance_id, workspace_id)
 auth_cmd = '?auth_code=$auth_code'

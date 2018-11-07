@@ -1,6 +1,8 @@
 1.2.28 (unreleased)
 -------------------
 
+- Update config_hanelder init\n Update documents
+
 - Nothing changed yet.
 
 
@@ -16,8 +18,6 @@
 - Fix bug - update services module method
 
 - Add Feature - Integrate AFS hidden space
-
-- Nothing changed yet.
 
 
 1.2.25 (2018-10-19)
