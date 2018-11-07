@@ -1,9 +1,10 @@
 1.2.28 (unreleased)
 -------------------
 
-- Update config_hanelder init\n Update documents
+- Update config_hanelder init
 
-- Nothing changed yet.
+- Update documents
+
 
 
 1.2.27 (2018-10-30)

@@ -18,6 +18,7 @@ class config_handler(object):
         self.data = DataFrame.empty
         self.type_list = {'string': str, 'integer': int, 'float': float, 'list': list}
         self.REQUEST = None
+        self.headers = None
 
     def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj={}):
         """
@@ -27,29 +28,40 @@ class config_handler(object):
         :param dict env_obj: Key names are VCAP_APPLICATION, afs_host_url, node_host_url, afs_auth_code, sso_host_url, rmm_host_url(option).
         :param str flow_json_file: String of file path. For debug, developer can use file which contains the flow json as the flow json gotten from NodeRed.
         """
-        self.REQUEST = REQUEST
         self.flow_obj = flow(env_obj=env_obj)
 
+        if not isinstance(REQUEST, str):
+            raise TypeError("REQUEST must be the string of json format")
+
         try:
-            headers = json.loads(REQUEST)['headers']
-            flow_info = {}
-            flow_info['node_id'] = headers['Node_id']
-            flow_info['flow_id'] = headers['Flow_id']
-            self.flow_obj.set_flow_config(flow_info)
+            self.headers = json.loads(REQUEST)['headers']
         except Exception as e:
-            raise AssertionError('REQUEST must be json format, or headers contains not enough information(node_id, flow_id).')
+            raise TypeError('REQUEST must be json format.')
+
+        if 'Node_id' in self.headers:
+            node_id = self.headers['Node_id']
+        else:
+            raise KeyError('Node id not found.')
+
+        if 'Flow_id' in self.headers:
+            flow_id = self.headers['Flow_id']
+        else:
+            raise KeyError('Flow id not found.')
+
+        self.flow_obj.set_flow_config({'flow_id': flow_id, 'node_id': node_id})
+        self.REQUEST = REQUEST
 
         if flow_json_file:
             try:
                 flow_json = json.loads(flow_json_file)
                 self.flow_obj.get_flow_list_ab(flow_json)
             except Exception as e:
-                raise AssertionError('Type error, flow_json must be JSON(For nodered request type not UI type)')
+                raise TypeError('Type error, flow_json must be JSON(For nodered request type not UI type)')
         else:
             try:
                 self.flow_obj.get_flow_list()
             except Exception as e:
-                raise AssertionError('Request to NodeRed has porblem.')
+                raise RuntimeError('Request to NodeRed has porblem.')
 
         # get the node information in current_node_obj
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
@@ -81,7 +93,7 @@ class config_handler(object):
                 _logger.warning('Parameter has no specific type.')
                 obj_value = str(obj_value)
         except Exception as e:
-            raise AssertionError('The value has problem when transfrom type.')
+            raise ValueError('The value has problem when transfrom type.')
 
         if obj_value:
             return obj_value
@@ -98,7 +110,7 @@ class config_handler(object):
             data = json.loads(self.REQUEST)['body']['data']
             self.data = DataFrame.from_dict(data)
         except Exception as e:
-            raise AssertionError('Request contains no key named "data", or cannot transform to dataframe.')
+            raise KeyError('Request contains no key named "data", or cannot transform to dataframe.')
 
         if self.data is not DataFrame.empty:
             return self.data.rename(columns=self.get_column())
@@ -116,7 +128,7 @@ class config_handler(object):
                 for column_name in self.flow_obj.current_node_obj
                 if column_name in self.column}
 
-    def next_node(self, data=None, debug=False):
+    def next_node(self, data, debug=False):
         """
         Send data to next node according to flow.
 
@@ -125,16 +137,13 @@ class config_handler(object):
         :return: Response JSON
         :rtype: dict
         """
-        if data is not None:
-            if isinstance(data, DataFrame):
-                column_reverse_mapping = {v: k for k, v in self.get_column().items()}
-                data = data.rename(columns=column_reverse_mapping)
-                data = dict(data=data.to_dict())
-                return self.flow_obj.exe_next_node(data, debug=debug)
-            else:
-                raise AssertionError('Type error, data must be DataFrame type')
+        if isinstance(data, DataFrame):
+            column_reverse_mapping = {v: k for k, v in self.get_column().items()}
+            data = data.rename(columns=column_reverse_mapping)
+            data = dict(data=data.to_dict())
+            return self.flow_obj.exe_next_node(data, debug=debug)
         else:
-            raise AssertionError('Data cannot be none')
+            raise TypeError('Type error, data must be DataFrame type')
 
     def set_param(self, key, type='string', required=False ,default=None):
         """
@@ -147,20 +156,20 @@ class config_handler(object):
         """
         # check type in type list
         if type not in self.type_list:
-            raise AssertionError('Type not found.')
+            raise ValueError('Type not found.')
         else:
             # check default type
             if default:
                 if not isinstance(default, self.type_list[type]):
-                    raise AssertionError('Default value is not the specific type.')
+                    raise TypeError('Default value is not the specific type.')
 
         # check required value
         if not isinstance(required, bool):
-            raise AssertionError('required is true/false.')
+            raise TypeError('required is true/false.')
 
         # check if the name is the same, raise error
         if key in self.variable_name:
-            raise AssertionError('It has already the same name of the parameter.')
+            raise KeyError('It has already the same name of the parameter.')
         else:
             param = {}
             param['name'] = str(key)
@@ -178,7 +187,7 @@ class config_handler(object):
         """
         column_name = str(column_name)
         if column_name in self.variable_name:
-            raise AssertionError('It has already the same column name.')
+            raise ValueError('It has already the same column name.')
         else:
             self.variable_name.append(column_name)
             self.column.append(column_name)
@@ -192,7 +201,7 @@ class config_handler(object):
         if isinstance(enable, bool):
             self.features = enable
         else:
-            raise AssertionError('Type Error enable  is bool type')
+            raise TypeError('Type Error enable  is bool type')
 
     def get_features_target(self):
         """
