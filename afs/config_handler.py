@@ -34,22 +34,27 @@ class config_handler(object):
             raise TypeError("REQUEST must be the string of json format")
 
         try:
-            self.headers = json.loads(REQUEST)['headers']
+            self.REQUEST = json.loads(REQUEST)
         except Exception as e:
             raise TypeError('REQUEST must be json format.')
 
-        if 'Node_id' in self.headers:
-            node_id = self.headers['Node_id']
-        else:
-            raise KeyError('Node id not found.')
+        self.headers = self.REQUEST.get('headers')
+        if self.headers is None:
+            raise KeyError('header not found')
 
-        if 'Flow_id' in self.headers:
-            flow_id = self.headers['Flow_id']
-        else:
+        node_id = self.headers.get('Node_id')
+        if node_id is None:
+            raise KeyError('Node id not found.')
+        if not node_id:
+            raise ValueError('Node id can not be empty')
+
+        flow_id = self.headers.get('Flow_id')
+        if flow_id is None:
             raise KeyError('Flow id not found.')
+        if not flow_id:
+            raise ValueError('Flow id can not be empty')
 
         self.flow_obj.set_flow_config({'flow_id': flow_id, 'node_id': node_id})
-        self.REQUEST = REQUEST
 
         if flow_json_file:
             try:
@@ -93,7 +98,7 @@ class config_handler(object):
                 _logger.warning('Parameter has no specific type.')
                 obj_value = str(obj_value)
         except Exception as e:
-            raise ValueError('The value has problem when transfrom type.')
+            raise ValueError('The value has problem to change type.')
 
         if obj_value:
             return obj_value
@@ -110,16 +115,24 @@ class config_handler(object):
         if self.REQUEST is None:
             raise RuntimeError('set_kernel_gateway should be shown before this method.')
 
+        body = self.REQUEST.get('body')
+        if body is None:
+                raise KeyError('Request contains no key named "data"')
+        if not body:
+            raise ValueError
+
+        data = body.get('data')
+        if data is None:
+            raise KeyError
+        if not data:
+            raise ValueError
+
         try:
-            data = json.loads(self.REQUEST)['body']['data']
             self.data = DataFrame.from_dict(data)
         except Exception as e:
-            raise KeyError('Request contains no key named "data", or cannot transform to dataframe.')
+            raise ValueError('Request data cannot transform to dataframe type.')
 
-        if self.data is not DataFrame.empty:
-            return self.data.rename(columns=self.get_column())
-        else:
-            return DataFrame.empty
+        return self.data.rename(columns=self.get_column())
 
     def get_column(self):
         """
@@ -147,7 +160,7 @@ class config_handler(object):
             data = dict(data=data.to_dict())
             return self.flow_obj.exe_next_node(data, debug=debug)
         else:
-            raise TypeError('Type error, data must be DataFrame type')
+            raise TypeError('data must be DataFrame type')
 
     def set_param(self, key, type='string', required=False ,default=None):
         """
