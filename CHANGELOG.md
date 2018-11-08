@@ -1,4 +1,4 @@
-1.2.28 (unreleased)
+1.2.28 (2018-11-08)
 -------------------
 
 - Update config_hanelder init
