@@ -6,7 +6,7 @@ from afs import services
 from afs import config_handler
 from dotenv import load_dotenv
 
-env_path = os.path.join(os.path.dirname(__file__), ".env_779f")
+env_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path=env_path)
 
 @pytest.fixture()
