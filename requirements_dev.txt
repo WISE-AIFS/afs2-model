@@ -2,6 +2,7 @@
 python-dotenv
 pylint
 yapf
+gitpython
 
 # For docs
 sphinx

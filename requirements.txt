@@ -2,6 +2,8 @@ requests
 pandas
 influxdb
 urllib3
+ujson
+logger
 
 # For client
 pyyaml

@@ -2,6 +2,10 @@ import json
 from pandas import DataFrame
 from afs.flow import flow
 import logging
+import os
+from pathlib import Path
+import afs
+
 
 _logger = logging.getLogger(__name__)
 
@@ -19,6 +23,8 @@ class config_handler(object):
         self.type_list = {'string': str, 'integer': int, 'float': float, 'list': list}
         self.REQUEST = None
         self.headers = None
+        self.token = None
+        self.smry = None
 
     def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj={}):
         """
@@ -28,7 +34,6 @@ class config_handler(object):
         :param dict env_obj: Key names are VCAP_APPLICATION, afs_host_url, node_host_url, afs_auth_code, sso_host_url, rmm_host_url(option).
         :param str flow_json_file: String of file path. For debug, developer can use file which contains the flow json as the flow json gotten from NodeRed.
         """
-        self.flow_obj = flow(env_obj=env_obj)
 
         if not isinstance(REQUEST, str):
             raise TypeError("REQUEST must be the string of json format")
@@ -54,6 +59,26 @@ class config_handler(object):
         if not flow_id:
             raise ValueError('Flow id can not be empty')
 
+        instance_id = self.headers.get('instance_id')
+        if instance_id:
+            os.environ('instance_id')
+
+        auth_code = self.headers.get('auth_code')
+        if auth_code:
+            os.environ('auth_code')
+
+        workspace_id = self.headers.get('workspace_id')
+        if workspace_id:
+            os.environ('workspace_id')
+
+        nodered_url = self.headers.get('nodered_url')
+        if nodered_url:
+            os.environ('nodered_url')
+
+        version = afs._check_version()
+
+
+        self.flow_obj = flow(env_obj=env_obj)
         self.flow_obj.set_flow_config({'flow_id': flow_id, 'node_id': node_id})
 
         if flow_json_file:
@@ -251,8 +276,23 @@ class config_handler(object):
         """
         Summary what parameters and column the AFS API need.This method should be called by the last line in the 2nd cell.
         """
-        smry = {}
-        smry['features'] = self.features
-        smry['param'] = self.param
-        smry['column'] = self.column
-        print(json.dumps(smry))
+        self.smry = {}
+        self.smry['features'] = self.features
+        self.smry['param'] = self.param
+        self.smry['column'] = self.column
+        print(json.dumps(self.smry))
+
+
+    def _write_requirements(self):
+
+        file_path = os.path.join(Path().absolute(), 'afs', 'template', 'catalog_requirements.txt')
+
+        with open(file_path, 'r') as f:
+            contents = f.read()
+        with open('requirements.txt', 'w') as f:
+            f.write(contents)
+
+
+    def _write_runtime(self):
+
+        contents = """"""

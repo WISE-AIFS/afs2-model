@@ -43,7 +43,8 @@ setup(
     entry_points='''
         [console_scripts]
         eipaas-afs=afs.cli:cli
-    '''
+    ''',
+    include_package_data = True,
 )
 
 # build wheel pacakge

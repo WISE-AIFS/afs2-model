@@ -1,4 +1,5 @@
 recursive-include afs *
 recursive-include docs *
+include afs/template/*.txt
 include *
 global-exclude *.pyc

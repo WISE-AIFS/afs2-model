@@ -3,6 +3,7 @@ import json
 import click
 
 from ..client import EIPaaSAFSSession
+from ..parsers import manifest_parser
 
 
 @click.group()
@@ -45,3 +46,11 @@ def target(session, service_instance_id):
 @click.pass_obj
 def push(session, source_path, manifest, name):
     session.push(source_path=source_path, manifest_path=manifest, name=name)
+
+
+@cli.command()
+@click.argument('notebook_path')
+@click.option('-o', '--output_dir', default='./')
+@click.pass_obj
+def parse_notebook(session, notebook_path, output_dir):
+    manifest_parser(notebook_path, output_dir)
