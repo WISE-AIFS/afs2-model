@@ -59,24 +59,29 @@ class config_handler(object):
         if not flow_id:
             raise ValueError('Flow id can not be empty')
 
+        afs_url = self.headers.get('afs_url')
+        if afs_url:
+            os.environ['afs_url'] = afs_url
+
         instance_id = self.headers.get('instance_id')
         if instance_id:
-            os.environ('instance_id')
+            os.environ['instance_id'] = instance_id
 
         auth_code = self.headers.get('auth_code')
         if auth_code:
-            os.environ('auth_code')
+            os.environ['auth_code'] = auth_code
 
         workspace_id = self.headers.get('workspace_id')
         if workspace_id:
-            os.environ('workspace_id')
+            os.environ['workspace_id'] = workspace_id
 
-        nodered_url = self.headers.get('nodered_url')
+        nodered_url = self.headers.get('node_host_url')
         if nodered_url:
-            os.environ('nodered_url')
+            os.environ['node_host_url'] = nodered_url
 
-        version = afs._check_version()
-
+        afs_portal_version = afs._get_portal_version()
+        if afs_portal_version:
+            os.environ['version'] = afs_portal_version
 
         self.flow_obj = flow(env_obj=env_obj)
         self.flow_obj.set_flow_config({'flow_id': flow_id, 'node_id': node_id})
@@ -281,18 +286,3 @@ class config_handler(object):
         self.smry['param'] = self.param
         self.smry['column'] = self.column
         print(json.dumps(self.smry))
-
-
-    def _write_requirements(self):
-
-        file_path = os.path.join(Path().absolute(), 'afs', 'template', 'catalog_requirements.txt')
-
-        with open(file_path, 'r') as f:
-            contents = f.read()
-        with open('requirements.txt', 'w') as f:
-            f.write(contents)
-
-
-    def _write_runtime(self):
-
-        contents = """"""

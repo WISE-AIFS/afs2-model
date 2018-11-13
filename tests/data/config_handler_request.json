@@ -1,7 +1,12 @@
 {
     "headers": {
         "Flow_id": "2c3e36f5.79745a",
-        "Node_id": "7d3b635a.f0a75c"
+        "Node_id": "7d3b635a.f0a75c",
+        "afs_url": "https://portal-afs-develop.iii-cflab.com/",
+        "instance_id": "456",
+        "auth_code": "789",
+        "workspace_id": "abc",
+        "node_host_url": "def"
     },
     "body": {
         "data": {

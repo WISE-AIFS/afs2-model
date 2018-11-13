@@ -17,7 +17,7 @@ def test_manifest_parser_API():
                             if filename.endswith('.ipynb')]), None)
 
     ipynb_path = os.path.join('test_workspace', 'src', ipynb_name)
-    manifest_parser(ipynb_path, output_dir='test_workspace/src')
+    manifest_parser(ipynb_path, output_dir='test_workspace/src', pypi_endpoint=None, manifest_yaml=False)
 
     assert 'manifest.json' in os.listdir(os.path.join('test_workspace/src'))
     assert 'requirements.txt' in os.listdir(os.path.join('test_workspace/src'))

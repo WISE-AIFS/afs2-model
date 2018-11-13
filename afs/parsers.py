@@ -42,9 +42,18 @@ jupyter-kernelgateway
 """
 
 
-def manifest_parser(notebook_path, output_dir=None):
+def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest_yaml=False):
+    """
+    The method parses the manifest in notebook, including  manifest.json, requirements.txt, runtime.txt, startup.sh.
+    :param str notebook_path: the path of notebook (.ipynb) will be parsed.
+    :param str output_dir: the files 
+    :rtype: object
+    """
     if not os.path.exists(notebook_path):
         raise FileNotFoundError
+
+    if not notebook_path.endswith('.ipynb'):
+        raise ValueError('The file name extension is not ipynb.')
 
     if output_dir is None:
         output_dir = '.'
@@ -100,6 +109,10 @@ def manifest_parser(notebook_path, output_dir=None):
     buildpack = 'python_buildpack_offline'
     requirements = JUPYTER_APP_DEFAULT_REQUIREMENTS if analytic_app_type == 'APP' else JUPYTER_API_DEFAULT_REQUIREMENTS
 
+    if pypi_endpoint:
+        pypi_host = pypi_endpoint.replace('https://', '').replace('http://', '').split(':')[0]
+        requirements = '--index-url {0}\n--trusted-host {1}\n'.format(pypi_endpoint, pypi_host) + requirements
+
     if 'requirements' in manifest:
         requirements = requirements + '\n'.join(manifest['requirements'])
 
@@ -115,27 +128,28 @@ def manifest_parser(notebook_path, output_dir=None):
         data['health_check_type'] = 'process'
     else:
         data['type'] = 'API'
+        data['health_check_type'] = 'port'
         startup_mapping = {
             'notebook_name': notebook_name,
         }
         with open(os.path.join(output_dir, 'startup.sh'), 'w') as f:
             f.write(JUPYTER_API_STARTUP.format_map(startup_mapping))
 
-    manifest_yml={
-        'application':[
-            {'name': data['name'],
-             'command': data['command'],
-             'memory': data['memory'],
-             'disk_quota': data['disk_quota'],
-             'buildpack': data['buildpack'],
-             'type': data['type'],
-             # 'env': data['environment_json']
-             }
-        ]
-    }
-
-    with open(os.path.join(output_dir, 'manifest.yml'), 'w') as f:
-        yaml.dump(manifest_yml, f, default_flow_style=False)
+    if manifest_yaml:
+        manifest_yml={
+            'application':[
+                {'name': data['name'],
+                 'command': data['command'],
+                 'memory': data['memory'],
+                 'disk_quota': data['disk_quota'],
+                 'buildpack': data['buildpack'],
+                 'type': data['type'],
+                 # 'env': data['environment_json']
+                 }
+            ]
+        }
+        with open(os.path.join(output_dir, 'manifest.yml'), 'w') as f:
+            yaml.dump(manifest_yml, f, default_flow_style=False)
 
     with open(os.path.join(output_dir, 'requirements.txt'), 'w') as f:
         f.write(requirements)

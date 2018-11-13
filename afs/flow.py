@@ -51,6 +51,8 @@ class flow(object):
         self.afs_host_url = self.env_obj.afs_host_url  # host url for afs
         self.sso_host_url = self.env_obj.sso_host_url  # host url for sso
         self.node_host_url = self.env_obj.node_host_url  # host url for Node-RED
+        self.auth_code = os.getenv('auth_code', '')
+        self.sso_token = os.getenv('sso_token', '')
 
         # print("_flow instance_id: " + str(self.afs_instance_id))
         # print("_flow workspace_id: " + str(self.afs_workspace_id))
@@ -215,7 +217,11 @@ class flow(object):
             'flow_id': self.flow_id,
             'node_id': '',  # need to set
             'node_host_url': self.node_host_url + '/',
-            'host_url': self.node_host_url + '/'
+            'host_url': self.node_host_url + '/',
+            'afs_url': self.afs_host_url,
+            'instance_id': self.afs_instance_id,
+            'workspace_id': self.afs_workspace_id,
+            'auth_code': self.auth_code,
         }
 
         return obj

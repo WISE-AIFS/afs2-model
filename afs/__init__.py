@@ -20,7 +20,7 @@ else:
 __version__ = pkg_resources.get_distribution('afs').version
 
 
-def _check_version(__version__):
+def _get_portal_version():
     target_endpoint = os.getenv('afs_url', None)
 
     if target_endpoint is not None:
@@ -40,11 +40,13 @@ def _check_version(__version__):
             raise Exception(message)
 
         resp = resp.json()
-        afs_version = resp['AFS_version']
-        if afs_version != __version__:
-            warnings.warn('SDK version is {0}, and AFS platform version is {1}. It will cause some compatibility issues.'
-                          .format(__version__, afs_version))
+        return resp['AFS_version']
     else:
         warnings.warn('Environment is not on AFS workspace.')
+        return None
 
-_check_version(__version__)
+afs_portal_version = _get_portal_version()
+
+if afs_portal_version != __version__:
+    warnings.warn('SDK version is {0}, and AFS portal version is {1}. It will cause some compatibility issues.'
+                  .format(__version__, afs_portal_version))

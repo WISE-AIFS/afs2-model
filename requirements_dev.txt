@@ -17,6 +17,7 @@ pytest-cov
 pytest-html
 pytest-pylint
 configparser
+pytest-mock
 
 # For release
 zest.releaser
