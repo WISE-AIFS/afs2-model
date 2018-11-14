@@ -1,5 +1,6 @@
 import json
 import os
+from afs import config_handler
 
 def test_config_handler_para_feature_data(mocker, config_handler_resource, data_dir, capsys):
     config_handler_resource.set_param('myinteger', type='integer', required=True, default=2)
@@ -51,7 +52,7 @@ def test_config_handler_para_feature_data(mocker, config_handler_resource, data_
     assert os.getenv("instance_id", None) == "456"
     assert os.getenv("auth_code", None) == "789"
     assert os.getenv("workspace_id", None) == "abc"
-    assert os.getenv("node_host_url", None) == "def"
+    assert os.getenv("node_red_url", None) == "def"
 
     mi = config_handler_resource.get_param('myinteger')
     mf = config_handler_resource.get_param('myfloat')
@@ -68,7 +69,7 @@ def test_config_handler_para_feature_data(mocker, config_handler_resource, data_
     assert isinstance(ml, list)
     assert ml == ["abc", "def", "ghi"]
     assert data['mycolumn'][0] == 21
-    result = data*2
+    # result = data*2
     assert column == {'mc': 'mycolumn'}
 
     ft = config_handler_resource.get_features_target()
@@ -80,10 +81,12 @@ def test_config_handler_para_feature_data(mocker, config_handler_resource, data_
     fn = config_handler_resource.get_features_numerical()
     assert isinstance(list(fn), list)
 
-    mock_method = mocker.patch.object(config_handler_resource, 'get_column')
+    # mock_method = mocker.patch.object(config_handler_resource, 'get_column')
+    # exe_next_node = mocker.patch('config_handler_resource.flow_obj.exe_next_node', return_value=['0',''])
 
-    ret = config_handler_resource.next_node(result, debug=False)
-    assert mock_method.called
+    # ret = config_handler_resource.next_node(result, debug=False)
+    # assert mock_method.called
+    # assert exe_next_node.called
 
     # print(json.dumps(ret))
     #

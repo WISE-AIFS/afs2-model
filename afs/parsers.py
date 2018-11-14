@@ -42,12 +42,15 @@ jupyter-kernelgateway
 """
 
 
-def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest_yaml=False):
+def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest_yaml=False, afs_sdk_version=None):
     """
     The method parses the manifest in notebook, including  manifest.json, requirements.txt, runtime.txt, startup.sh.
     :param str notebook_path: the path of notebook (.ipynb) will be parsed.
-    :param str output_dir: the files 
-    :rtype: object
+    :param str output_dir: the files would be output in specific path
+    :param str pypi_endpoint: the requirement would be specific pypi server
+    :param bool manifest_yaml: write manifest.yml or not
+    :param str afs_sdk_version: parse manifest to specific afs sdk version requirement
+    :rtype: True or logger message
     """
     if not os.path.exists(notebook_path):
         raise FileNotFoundError
@@ -108,13 +111,21 @@ def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest
 
     buildpack = 'python_buildpack_offline'
     requirements = JUPYTER_APP_DEFAULT_REQUIREMENTS if analytic_app_type == 'APP' else JUPYTER_API_DEFAULT_REQUIREMENTS
+    req_list = [ req.split('==')[0] for req in requirements.split('\n')]
 
     if pypi_endpoint:
         pypi_host = pypi_endpoint.replace('https://', '').replace('http://', '').split(':')[0]
         requirements = '--index-url {0}\n--trusted-host {1}\n'.format(pypi_endpoint, pypi_host) + requirements
 
     if 'requirements' in manifest:
-        requirements = requirements + '\n'.join(manifest['requirements'])
+        requirements_append = [req for req in manifest['requirements'] if req not in req_list]
+
+        if afs_sdk_version: # and (True if True in [True if req.startswith('afs') else False for req in requirements_append ] else False):
+            for afs_req in [req for req in requirements_append if req.startswith('afs')]:
+                requirements_append.remove(afs_req)
+            requirements_append.append('afs=={}'.format(afs_sdk_version))
+
+        requirements = requirements + '\n'.join(requirements_append)
 
     data = {}
     data['name'] = notebook_name.split('.')[0]
@@ -137,11 +148,11 @@ def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest
 
     if manifest_yaml:
         manifest_yml={
-            'application':[
+            'applications':[
                 {'name': data['name'],
                  'command': data['command'],
-                 'memory': data['memory'],
-                 'disk_quota': data['disk_quota'],
+                 'memory': str(data['memory'])+'MB',
+                 'disk_quota': str(data['disk_quota'])+'MB',
                  'buildpack': data['buildpack'],
                  'type': data['type'],
                  # 'env': data['environment_json']
@@ -159,6 +170,8 @@ def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest
 
     with open(os.path.join(output_dir, 'runtime.txt'), 'w') as f:
         f.write(JUPYTER_RUNTIME)
+
+    return True
 
 
 

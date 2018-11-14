@@ -59,25 +59,25 @@ class config_handler(object):
         if not flow_id:
             raise ValueError('Flow id can not be empty')
 
-        afs_url = self.headers.get('afs_url')
+        afs_url = self.headers.get('Afs_url')
         if afs_url:
             os.environ['afs_url'] = afs_url
 
-        instance_id = self.headers.get('instance_id')
+        instance_id = self.headers.get('Instance_id')
         if instance_id:
             os.environ['instance_id'] = instance_id
 
-        auth_code = self.headers.get('auth_code')
+        auth_code = self.headers.get('Auth_code')
         if auth_code:
             os.environ['auth_code'] = auth_code
 
-        workspace_id = self.headers.get('workspace_id')
+        workspace_id = self.headers.get('Workspace_id')
         if workspace_id:
             os.environ['workspace_id'] = workspace_id
 
-        nodered_url = self.headers.get('node_host_url')
+        nodered_url = self.headers.get('Node_host_url')
         if nodered_url:
-            os.environ['node_host_url'] = nodered_url
+            os.environ['node_red_url'] = nodered_url
 
         afs_portal_version = afs._get_portal_version()
         if afs_portal_version:
@@ -192,7 +192,7 @@ class config_handler(object):
         else:
             raise TypeError('data must be DataFrame type')
 
-    def set_param(self, key, type='string', required=False ,default=None):
+    def set_param(self, key, type='string', required=False, default=None):
         """
         Set API parameter will be used in the AFS API.
 

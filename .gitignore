@@ -113,3 +113,5 @@ venv.bak/
 # test reports
 test_reports/
 limit_model
+test_workspace/
+tests/data/

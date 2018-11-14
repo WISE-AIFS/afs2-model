@@ -49,9 +49,15 @@ setup(
 
 # build wheel pacakge
 # command: python setup.py bdist_wheel
+
 # build tgz
 # command: python setup.py sdist
+
 # clone afs-docs
 # git clone --recursive  https://github.com/chenjr0719/AFS-docs.git
+
 # pull docs from afs-sdk
 # git submodule foreach git pull origin master
+
+# upload to pypyi
+# twine upload --repository-url [url] [.whl]
