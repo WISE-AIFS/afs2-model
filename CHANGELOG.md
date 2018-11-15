@@ -1,3 +1,9 @@
+1.3.0 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
 1.2.29 (unreleased)
 -------------------
 
