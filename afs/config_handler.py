@@ -69,7 +69,7 @@ class config_handler(object):
         elif all((True for value in required_headers.values() if value is None)):
             pass
         else:
-            raise ValueError()
+            raise ValueError('Catalog usage, the headers should have Afs_url, Instance_id, Auth_code, Workspace_id')
 
         nodered_url = self.headers.get('Node_host_url')
         if nodered_url:
