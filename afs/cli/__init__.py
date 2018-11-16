@@ -3,6 +3,7 @@ import json
 import click
 
 from ..client import EIPaaSAFSSession
+from ..parsers import manifest_parser
 
 
 @click.group()
@@ -45,3 +46,14 @@ def target(session, service_instance_id):
 @click.pass_obj
 def push(session, source_path, manifest, name):
     session.push(source_path=source_path, manifest_path=manifest, name=name)
+
+
+@cli.command()
+@click.argument('notebook_path')
+@click.argument('pypi_endpoint')
+@click.option('-o', '--output_dir', default='./')
+@click.option('-m', '--manifest_yaml', default=False)
+@click.option('-s', '--afs_sdk_version', default=None)
+@click.pass_obj
+def parse_notebook(session, notebook_path, pypi_endpoint, output_dir, manifest_yaml, afs_sdk_version):
+    manifest_parser(notebook_path, pypi_endpoint, output_dir, manifest_yaml, afs_sdk_version)

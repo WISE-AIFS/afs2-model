@@ -169,6 +169,7 @@ print(json.dumps(ret))
 **Request Example**
 
 ```
+{
      "headers": {
          "Flow_id": "b896452e.73d968",
          "Node_id": "fb3d279.613efd8"
@@ -223,4 +224,16 @@ host = credential['host']
 port = credential['port']
 database = credential['database']
 
+```
+
+**Output**
+```
+{
+	'database': '7cdd5039-59a4-4d78-b911-4ee984183227',
+	'password': 'KggwuFtuNQxbxvQQAdJl2WGqw',
+	'port': 8086,
+	'host': '10.100.20.1',
+	'uri': 'http://10.100.20.1:8086',
+	'username': 'e821d27d-401e-4db1-8827-20270dfb73e7'
+}
 ```

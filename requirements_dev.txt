@@ -2,6 +2,7 @@
 python-dotenv
 pylint
 yapf
+gitpython
 
 # For docs
 sphinx
@@ -16,6 +17,7 @@ pytest-cov
 pytest-html
 pytest-pylint
 configparser
+pytest-mock
 
 # For release
 zest.releaser

@@ -2,6 +2,10 @@ import json
 from pandas import DataFrame
 from afs.flow import flow
 import logging
+import os
+from pathlib import Path
+import afs
+
 
 _logger = logging.getLogger(__name__)
 
@@ -19,6 +23,8 @@ class config_handler(object):
         self.type_list = {'string': str, 'integer': int, 'float': float, 'list': list}
         self.REQUEST = None
         self.headers = None
+        self.token = None
+        self.summary_message = None
 
     def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj={}):
         """
@@ -28,7 +34,6 @@ class config_handler(object):
         :param dict env_obj: Key names are VCAP_APPLICATION, afs_host_url, node_host_url, afs_auth_code, sso_host_url, rmm_host_url(option).
         :param str flow_json_file: String of file path. For debug, developer can use file which contains the flow json as the flow json gotten from NodeRed.
         """
-        self.flow_obj = flow(env_obj=env_obj)
 
         if not isinstance(REQUEST, str):
             raise TypeError("REQUEST must be the string of json format")
@@ -54,6 +59,27 @@ class config_handler(object):
         if not flow_id:
             raise ValueError('Flow id can not be empty')
 
+
+        required_headers = ['Afs_url', 'Instance_id', 'Auth_code', 'Workspace_id']
+        required_headers = {key.lower(): self.headers.get(key) for key in required_headers}
+        # All variables are available
+        if all(required_headers.values()):
+            os.environ.update(required_headers)
+        # All variables are None
+        elif all((True for value in required_headers.values() if value is None)):
+            pass
+        else:
+            raise ValueError('Catalog usage, the headers should have Afs_url, Instance_id, Auth_code, Workspace_id')
+
+        nodered_url = self.headers.get('Node_host_url')
+        if nodered_url:
+            os.environ['node_red_url'] = nodered_url
+
+        afs_portal_version = afs._get_portal_version()
+        if afs_portal_version:
+            os.environ['version'] = afs_portal_version
+
+        self.flow_obj = flow(env_obj=env_obj)
         self.flow_obj.set_flow_config({'flow_id': flow_id, 'node_id': node_id})
 
         if flow_json_file:
@@ -162,7 +188,7 @@ class config_handler(object):
         else:
             raise TypeError('data must be DataFrame type')
 
-    def set_param(self, key, type='string', required=False ,default=None):
+    def set_param(self, key, type='string', required=False, default=None):
         """
         Set API parameter will be used in the AFS API.
 
@@ -251,8 +277,8 @@ class config_handler(object):
         """
         Summary what parameters and column the AFS API need.This method should be called by the last line in the 2nd cell.
         """
-        smry = {}
-        smry['features'] = self.features
-        smry['param'] = self.param
-        smry['column'] = self.column
-        print(json.dumps(smry))
+        self.summary_message = {}
+        self.summary_message['features'] = self.features
+        self.summary_message['param'] = self.param
+        self.summary_message['column'] = self.column
+        print(json.dumps(self.summary_message))

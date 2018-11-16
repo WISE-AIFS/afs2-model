@@ -1,3 +1,16 @@
+1.3.0 (unreleased)
+------------------
+
+- add parsers module to parse ipynb manifest.
+
+- add parsers module unit test
+
+- Add parsers in cli.
+
+- Update config_handler set env from headers changed yet.
+
+
+
 1.2.28 (2018-11-08)
 -------------------
 
