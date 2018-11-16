@@ -1,4 +1,4 @@
-1.3.0 (unreleased)
+1.3.0 (2018-11-16)
 ------------------
 
 - add parsers module to parse ipynb manifest.
