@@ -24,7 +24,6 @@ def _get_portal_version():
     target_endpoint = os.getenv('afs_url', None)
 
     if target_endpoint is not None:
-
         if not target_endpoint.startswith(('http://', 'https://')):
             target_endpoint = 'https://' + target_endpoint
 

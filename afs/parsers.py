@@ -42,12 +42,12 @@ jupyter-kernelgateway
 """
 
 
-def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest_yaml=False, afs_sdk_version=None):
+def manifest_parser(notebook_path, pypi_endpoint, output_dir=None, manifest_yaml=False, afs_sdk_version=None):
     """
     The method parses the manifest in notebook, including  manifest.json, requirements.txt, runtime.txt, startup.sh.
     :param str notebook_path: the path of notebook (.ipynb) will be parsed.
-    :param str output_dir: the files would be output in specific path
     :param str pypi_endpoint: the requirement would be specific pypi server
+    :param str output_dir: the files would be output in specific path. Default is current directory
     :param bool manifest_yaml: write manifest.yml or not
     :param str afs_sdk_version: parse manifest to specific afs sdk version requirement
     :rtype: True or logger message
@@ -60,6 +60,9 @@ def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest
 
     if output_dir is None:
         output_dir = '.'
+    else:
+        if not os.path.isdir(output_dir):
+            raise NotADirectoryError('{} is not a directory'.format(output_dir))
 
     with open(notebook_path, 'r') as f:
         notebook_content = json.loads(f.read())
@@ -70,19 +73,6 @@ def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest
          if index == 0 and ''.join(cell['source']).replace('\n', '').startswith('manifest')), '')
     manifest = ''.join(manifest).replace('\n', '')
     manifest = config_to_dict(manifest, 'manifest') if manifest else {}
-    if 'error' in manifest:
-        message = {
-            'error': 'Save notebook {0} failed'.format(notebook_path),
-            'description': 'Parse manifest failed, Invalid format of manifest',
-            'status': 400
-        }
-        logger.error(message)
-        return message
-
-    message = {
-        'message': 'Save notebook {0} in progress'.format(notebook_path),
-        'description': 'Manifest: {0}'.format(ujson.dumps(manifest))
-    }
 
     disk_quota = manifest.get('disk_quota', 0)
     if isinstance(disk_quota, str):
@@ -102,7 +92,6 @@ def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest
         analytic_app_type = 'APP'
 
     command = manifest.get('command', JUPYTER_API_DEFAULT_COMMAND if analytic_app_type == 'API' else JUPYTER_APP_DEFAULT_COMMAND)
-
     notebook_name = notebook_path.split(os.path.sep)[-1]
 
     # Generate auto run command
@@ -113,14 +102,14 @@ def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest
     requirements = JUPYTER_APP_DEFAULT_REQUIREMENTS if analytic_app_type == 'APP' else JUPYTER_API_DEFAULT_REQUIREMENTS
     req_list = [ req.split('==')[0] for req in requirements.split('\n')]
 
-    if pypi_endpoint:
-        pypi_host = pypi_endpoint.replace('https://', '').replace('http://', '').split(':')[0]
-        requirements = '--index-url {0}\n--trusted-host {1}\n'.format(pypi_endpoint, pypi_host) + requirements
+    # Generate requirements.txt
+    pypi_host = pypi_endpoint.replace('https://', '').replace('http://', '').split(':')[0]
+    requirements = '--index-url {0}\n--trusted-host {1}\n'.format(pypi_endpoint, pypi_host) + requirements
 
     if 'requirements' in manifest:
         requirements_append = [req for req in manifest['requirements'] if req not in req_list]
 
-        if afs_sdk_version: # and (True if True in [True if req.startswith('afs') else False for req in requirements_append ] else False):
+        if afs_sdk_version:
             for afs_req in [req for req in requirements_append if req.startswith('afs')]:
                 requirements_append.remove(afs_req)
             requirements_append.append('afs=={}'.format(afs_sdk_version))
@@ -155,7 +144,6 @@ def manifest_parser(notebook_path, output_dir=None, pypi_endpoint=None, manifest
                  'disk_quota': str(data['disk_quota'])+'MB',
                  'buildpack': data['buildpack'],
                  'type': data['type'],
-                 # 'env': data['environment_json']
                  }
             ]
         }
@@ -198,14 +186,7 @@ def config_to_dict(source, startswith='node_config'):
     except ValueError:
         try:
             config = ast.literal_eval(config)
-
         except SyntaxError as e:
-            message = {
-                'error': 'Config parse error',
-                'description': str(e),
-                'status': 400
-            }
-            logger.error(message)
-            return message
+            raise RuntimeError('Failed to parse notebook.')
 
     return config

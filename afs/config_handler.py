@@ -24,7 +24,7 @@ class config_handler(object):
         self.REQUEST = None
         self.headers = None
         self.token = None
-        self.smry = None
+        self.summary_message = None
 
     def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj={}):
         """
@@ -59,21 +59,17 @@ class config_handler(object):
         if not flow_id:
             raise ValueError('Flow id can not be empty')
 
-        afs_url = self.headers.get('Afs_url')
-        if afs_url:
-            os.environ['afs_url'] = afs_url
 
-        instance_id = self.headers.get('Instance_id')
-        if instance_id:
-            os.environ['instance_id'] = instance_id
-
-        auth_code = self.headers.get('Auth_code')
-        if auth_code:
-            os.environ['auth_code'] = auth_code
-
-        workspace_id = self.headers.get('Workspace_id')
-        if workspace_id:
-            os.environ['workspace_id'] = workspace_id
+        if self.headers.get('Afs_url') and self.headers.get('Instance_id') and self.headers.get('Auth_code') and self.headers.get('Workspace_id'):
+            os.environ['afs_url'] = self.headers.get('Afs_url')
+            os.environ['instance_id'] = self.headers.get('Instance_id')
+            os.environ['auth_code'] = self.headers.get('Auth_code')
+            os.environ['workspace_id'] = self.headers.get('Workspace_id')
+        if not (self.headers.get('Afs_url') and self.headers.get('Instance_id') and self.headers.get(
+                'Auth_code') and self.headers.get('Workspace_id')):
+            pass
+        else:
+            raise ValueError('Catalog usage, the headers should have Afs_url, Instance_id, Auth_code, Workspace_id')
 
         nodered_url = self.headers.get('Node_host_url')
         if nodered_url:
@@ -281,8 +277,8 @@ class config_handler(object):
         """
         Summary what parameters and column the AFS API need.This method should be called by the last line in the 2nd cell.
         """
-        self.smry = {}
-        self.smry['features'] = self.features
-        self.smry['param'] = self.param
-        self.smry['column'] = self.column
-        print(json.dumps(self.smry))
+        self.summary_message = {}
+        self.summary_message['features'] = self.features
+        self.summary_message['param'] = self.param
+        self.summary_message['column'] = self.column
+        print(json.dumps(self.summary_message))

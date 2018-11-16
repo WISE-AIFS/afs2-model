@@ -50,11 +50,10 @@ def push(session, source_path, manifest, name):
 
 @cli.command()
 @click.argument('notebook_path')
+@click.argument('pypi_endpoint')
 @click.option('-o', '--output_dir', default='./')
-@click.option('-p', '--pypi', default=None)
 @click.option('-m', '--manifest_yaml', default=False)
 @click.option('-s', '--afs_sdk_version', default=None)
-
 @click.pass_obj
-def parse_notebook(session, notebook_path, output_dir, pypi, manifest_yaml, afs_sdk_version):
-    manifest_parser(notebook_path, output_dir, pypi, manifest_yaml, afs_sdk_version)
+def parse_notebook(session, notebook_path, pypi_endpoint, output_dir, manifest_yaml, afs_sdk_version):
+    manifest_parser(notebook_path, pypi_endpoint, output_dir, manifest_yaml, afs_sdk_version)
