@@ -60,16 +60,16 @@ class config_handler(object):
             raise ValueError('Flow id can not be empty')
 
 
-        if self.headers.get('Afs_url') and self.headers.get('Instance_id') and self.headers.get('Auth_code') and self.headers.get('Workspace_id'):
-            os.environ['afs_url'] = self.headers.get('Afs_url')
-            os.environ['instance_id'] = self.headers.get('Instance_id')
-            os.environ['auth_code'] = self.headers.get('Auth_code')
-            os.environ['workspace_id'] = self.headers.get('Workspace_id')
-        if not (self.headers.get('Afs_url') and self.headers.get('Instance_id') and self.headers.get(
-                'Auth_code') and self.headers.get('Workspace_id')):
+        required_headers = ['Afs_url', 'Instance_id', 'Auth_code', 'Workspace_id']
+        required_headers = {key.lower(): self.headers.get(key) for key in required_headers}
+        # All variables are available
+        if all(required_headers.values()):
+            os.environ.update(required_headers)
+        # All variables are None
+        elif all((True for value in required_headers.values() if value is None)):
             pass
         else:
-            raise ValueError('Catalog usage, the headers should have Afs_url, Instance_id, Auth_code, Workspace_id')
+            raise ValueError()
 
         nodered_url = self.headers.get('Node_host_url')
         if nodered_url:
