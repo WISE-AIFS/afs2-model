@@ -1,9 +1,14 @@
-from afs.parsers import manifest_parser, node_config_parser
-import git
+import json
 import os
 import shutil
-import json
 
+import pytest
+
+import git
+from afs.parsers import manifest_parser, node_config_parser
+
+
+@pytest.mark.skip(reason='Can not access GitLab')
 def test_manifest_parser_API():
     git_username = os.getenv('git_username', '')
     git_password = os.getenv('git_password', '')
