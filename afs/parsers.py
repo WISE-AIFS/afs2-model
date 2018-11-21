@@ -1,7 +1,6 @@
 import os
 import ujson
 import ast
-import logger
 import json
 from pathlib import Path
 import yaml
