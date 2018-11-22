@@ -1,6 +1,8 @@
 1.3.1 (unreleased)
 ------------------
 
+- Update parsers requirements afs-sdk specific version
+
 - Nothing changed yet.
 
 

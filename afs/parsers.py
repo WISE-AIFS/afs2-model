@@ -65,6 +65,8 @@ def manifest_parser(notebook_path, pypi_endpoint, output_dir=None, manifest_yaml
 
     with open(notebook_path, 'r') as f:
         notebook_content = json.loads(f.read())
+    print(notebook_content)
+
 
     manifest = next(
         (notebook_content['cells'][0]['source']
@@ -109,9 +111,12 @@ def manifest_parser(notebook_path, pypi_endpoint, output_dir=None, manifest_yaml
         requirements_append = [req for req in manifest['requirements'] if req not in req_list]
 
         if afs_sdk_version:
-            for afs_req in [req for req in requirements_append if req.startswith('afs')]:
+            add_new_version = False
+            for afs_req in [req for req in requirements_append if req=='afs']:
+                add_new_version = True
                 requirements_append.remove(afs_req)
-            requirements_append.append('afs=={}'.format(afs_sdk_version))
+            if add_new_version:
+                requirements_append.append('afs=={}'.format(afs_sdk_version))
 
         requirements = requirements + '\n'.join(requirements_append)
 
