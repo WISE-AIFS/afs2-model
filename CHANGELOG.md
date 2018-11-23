@@ -3,8 +3,6 @@
 
 - Update parsers requirements afs-sdk specific version
 
-- Nothing changed yet.
-
 
 1.3.0 (2018-11-16)
 ------------------
