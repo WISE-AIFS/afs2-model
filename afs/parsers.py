@@ -1,5 +1,4 @@
 import os
-import ujson
 import ast
 import json
 from pathlib import Path
@@ -65,8 +64,6 @@ def manifest_parser(notebook_path, pypi_endpoint, output_dir=None, manifest_yaml
 
     with open(notebook_path, 'r') as f:
         notebook_content = json.loads(f.read())
-    print(notebook_content)
-
 
     manifest = next(
         (notebook_content['cells'][0]['source']
@@ -186,7 +183,7 @@ def config_to_dict(source, startswith='node_config'):
         config = source
 
     try:
-        config = ujson.loads(config)
+        config = json.loads(config)
     except ValueError:
         try:
             config = ast.literal_eval(config)
