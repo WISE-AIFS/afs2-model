@@ -45,3 +45,11 @@ afs.GetJointTable module
     :undoc-members:
     :show-inheritance:
 
+
+afs.parsers module
+-------------------------
+
+.. automodule:: afs.parsers
+    :members:
+    :undoc-members:
+    :show-inheritance:
