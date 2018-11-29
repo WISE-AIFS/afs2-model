@@ -105,14 +105,11 @@ def manifest_parser(notebook_path, pypi_endpoint, output_dir=None, manifest_yaml
     requirements = '--index-url {0}\n--trusted-host {1}\n'.format(pypi_endpoint, pypi_host) + requirements
 
     if 'requirements' in manifest:
-        requirements_append = [req for req in manifest['requirements'] if req not in req_list]
+        requirements_append = list(set([req for req in manifest['requirements'] if req not in req_list]))
 
         if afs_sdk_version:
-            add_new_version = False
-            for afs_req in [req for req in requirements_append if req=='afs']:
-                add_new_version = True
-                requirements_append.remove(afs_req)
-            if add_new_version:
+            if 'afs' in requirements_append:
+                requirements_append.remove('afs')
                 requirements_append.append('afs=={}'.format(afs_sdk_version))
 
         requirements = requirements + '\n'.join(requirements_append)
