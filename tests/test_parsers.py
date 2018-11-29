@@ -18,8 +18,6 @@ def test_manifest_parser_API():
     if not os.path.exists('test_workspace'):
         os.mkdir('test_workspace')
 
-    print(Path(__file__).parent)
-
     # ipynb_name = next(iter([filename for filename in os.listdir(os.path.join('test_workspace', 'src'))
     #                         if filename.endswith('.ipynb')]), None)
     ipynb_path = os.path.join(Path(__file__).parent, 'data', 'iii_Dt.ipynb')
