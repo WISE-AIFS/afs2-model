@@ -47,5 +47,6 @@ def _get_portal_version():
 afs_portal_version = _get_portal_version()
 
 if afs_portal_version != __version__:
-    warnings.warn('SDK version is {0}, and AFS portal version is {1}. It will cause some compatibility issues.'
+    warnings.warn('SDK version is {0}, and AFS portal version is {1}. It will cause some compatibility issues. Readthedocs: https://afs-docs.readthedocs.io/en/latest/index.html'
                   .format(__version__, afs_portal_version))
+

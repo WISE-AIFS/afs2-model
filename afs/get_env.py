@@ -1,6 +1,10 @@
 import os, json
 import requests
 import warnings
+import logging
+import afs.utils as utils
+_logger = logging.getLogger(__name__)
+
 
 class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
@@ -20,7 +24,8 @@ class AfsEnv():
                 self.instance_id = os.getenv('instance_id', None)
 
             if self.target_endpoint == None or self.instance_id == None or self.auth_code == None:
-                raise AssertionError('Environment parameters need afs_url, instance_id, auth_code')
+                raise AssertionError('Environment parameters need afs_url={0}, instance_id={1}, auth_code={2}'.format(
+                    self.target_endpoint, self.instance_id, self.auth_code))
         else:
             self.target_endpoint = target_endpoint
             self.auth_code = auth_code
@@ -28,7 +33,20 @@ class AfsEnv():
 
         if not self.target_endpoint.endswith('/'):
             self.target_endpoint = self.target_endpoint + '/'
-        self.target_endpoint = self.target_endpoint + 'v1/'
+
+        self.api_version = self._get_api_version()
+        self.target_endpoint = self.target_endpoint + self.api_version + '/'
+
+
+    def _get_api_version(self):
+        if self.target_endpoint:
+            print(self.target_endpoint)
+        url = '%sinfo' % (self.target_endpoint)
+        response = utils._check_response(
+            requests.get(url, verify=False))
+        _logger.debug('GET - %s - %s', url, response.text)
+        return response.json()['API_version']
+
 
 class app_env(object):
     def __init__(self):
