@@ -62,7 +62,8 @@ print(model_info)
 		'machine': 'machine01'
 	},
 	'created_at': '2018-12-06 08:41:39'
-}```
+}
+```
 
 
 
