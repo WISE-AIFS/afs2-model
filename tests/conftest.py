@@ -39,3 +39,27 @@ def conf_resource():
 def client_session():
     from afs.client import EIPaaSAFSSession
     yield EIPaaSAFSSession()
+
+@pytest.fixture(scope='function')
+def mock_api_v2_resource(mocker):
+    from afs.get_env import AfsEnv
+    mocker.patch.object(AfsEnv, '_get_api_version', return_value='v2')
+    yield AfsEnv()
+
+@pytest.fixture(scope='function')
+def mock_models(mocker):
+    from afs import models
+    yield models()
+
+@pytest.fixture()
+def model_name(test):
+    test_model = 'test_model.h5'
+    if os.path.exists(test_model):
+        os.remove(test_model)
+
+    with open(test_model, 'w') as f:
+        f.write(str(test))
+
+    yield test_model
+
+    os.remove(test_model)

@@ -137,13 +137,16 @@ class models(object):
         else:
             raise AssertionError('Repo name must be string')
 
+
         request = dict(name=repo_name)
         resp = self._create(request)
         return resp.json()['uuid']
 
+
     def _get_model_list(self, repo_name=None):
         params = dict(name=repo_name)
         return self._get(params=params)
+
 
     def switch_repo(self, repo_name=None):
         """
@@ -162,6 +165,7 @@ class models(object):
         else:
             raise ValueError('There are multi model repositories from server response')
 
+
     def get_latest_model_info(self, repo_name=None):
         """
         Get the latest model info, including created_at, tags, evaluation_result.
@@ -172,8 +176,12 @@ class models(object):
         if repo_name:
             self.switch_repo(repo_name)
 
-        resp = self._get(extra_paths=[self.repo_id, 'info'])
+        if self.api_version == 'v1':
+            resp = self._get(extra_paths=[self.repo_id, 'info'])
+        elif self.api_version == 'v2':
+            resp = self._get(extra_paths=[self.repo_id, 'last'])
         return resp.json()
+
 
     def _create(self, data, files=None, extra_paths=[]):
         if self.api_version == 'v1':
@@ -184,7 +192,7 @@ class models(object):
                 url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
                                       self.entity_uri, '/'.join(extra_paths))
         elif self.api_version == 'v2':
-            url = utils._urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
+            url = utils.urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
                                  extra_paths=extra_paths)
 
         if not files:
@@ -216,7 +224,7 @@ class models(object):
                 url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
                                       self.entity_uri, '/'.join(extra_paths))
         elif self.api_version == 'v2':
-            url = utils._urljoin(self.target_endpoint, 'instances' ,self.instance_id, self.entity_uri, extra_paths=extra_paths)
+            url = utils.urljoin(self.target_endpoint, 'instances' ,self.instance_id, self.entity_uri, extra_paths=extra_paths)
 
         if not files:
             response = utils._check_response(
@@ -246,7 +254,7 @@ class models(object):
                     url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
                                           self.entity_uri, '/'.join(extra_paths))
         elif self.api_version == 'v2':
-            url = utils._urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
+            url = utils.urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
                                  extra_paths=extra_paths)
 
         get_params = {}
