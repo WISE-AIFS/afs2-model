@@ -1,5 +1,5 @@
 import pytest
-from tests.fake_requests import MockResponse
+from tests.mock_requests import MockResponse
 import os
 
 @pytest.fixture(scope='function')
@@ -14,8 +14,17 @@ def mock_models(mocker):
     yield models()
 
 @pytest.fixture(scope='function')
-def model_name():
-    return 'test_model.h5'
+def model_name(test):
+    test_model = 'test_model.h5'
+    if os.path.exists(test_model):
+        os.remove(test_model)
+
+    with open(test_model, 'w') as f:
+        f.write(str(test))
+
+    yield test_model
+
+    os.remove(test_model)
 
 # v2 API unit_test
 def test_upload_model_v2(mocker, test, mock_api_v2_resource, mock_models, model_name):
@@ -33,7 +42,6 @@ def test_upload_model_v2(mocker, test, mock_api_v2_resource, mock_models, model_
       ]
     }"""))
     assert mock_models.upload_model(model_name, accuracy=.123, loss=.123) == True
-    os.remove(model_name)
 
 
 # v2 API unit_test
@@ -57,8 +65,21 @@ def test_switch_repo_v2(mocker, mock_api_v2_resource, mock_models, model_name):
       "models": [
         "b5e8399d-3a95-42a5-88f5-79b8cdeb4045"
       ]
-      }]
+    }]
       """, status_code=200)
     )
     assert mock_models.switch_repo(model_name) == "c2714f44-fab9-4bde-afc9-7b3ab40cd431"
 
+
+@pytest.fixture(scope='function')
+def utils_resource():
+    from afs import utils
+    yield utils
+
+def test_urljoin(mock_api_v2_resource, utils_resource):
+    url = utils_resource._urljoin(mock_api_v2_resource.target_endpoint, 'instance_id', mock_api_v2_resource.instance_id, 'model_respositories', '123', extra_paths={})
+    assert url == '{0}instance_id/{1}/model_respositories/123'.format(mock_api_v2_resource.target_endpoint, mock_api_v2_resource.instance_id)
+
+def test_urljoin_extra_paths(mock_api_v2_resource, utils_resource):
+    url = utils_resource._urljoin(mock_api_v2_resource.target_endpoint, 'instance_id', mock_api_v2_resource.instance_id, 'model_respositories', extra_paths=['123', 'upload'])
+    assert url == '{0}instance_id/{1}/model_respositories/123/upload'.format(mock_api_v2_resource.target_endpoint, mock_api_v2_resource.instance_id)
