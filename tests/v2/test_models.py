@@ -2,29 +2,6 @@ import pytest
 from tests.mock_requests import MockResponse
 import os
 
-@pytest.fixture(scope='function')
-def mock_api_v2_resource(mocker):
-    from afs.get_env import AfsEnv
-    mocker.patch.object(AfsEnv, '_get_api_version', return_value='v2')
-    yield AfsEnv()
-
-@pytest.fixture(scope='function')
-def mock_models(mocker):
-    from afs import models
-    yield models()
-
-@pytest.fixture(scope='function')
-def model_name(test):
-    test_model = 'test_model.h5'
-    if os.path.exists(test_model):
-        os.remove(test_model)
-
-    with open(test_model, 'w') as f:
-        f.write(str(test))
-
-    yield test_model
-
-    os.remove(test_model)
 
 # v2 API unit_test
 def test_upload_model_v2(mocker, test, mock_api_v2_resource, mock_models, model_name):
@@ -71,15 +48,22 @@ def test_switch_repo_v2(mocker, mock_api_v2_resource, mock_models, model_name):
     assert mock_models.switch_repo(model_name) == "c2714f44-fab9-4bde-afc9-7b3ab40cd431"
 
 
-@pytest.fixture(scope='function')
-def utils_resource():
-    from afs import utils
-    yield utils
-
-def test_urljoin(mock_api_v2_resource, utils_resource):
-    url = utils_resource._urljoin(mock_api_v2_resource.target_endpoint, 'instance_id', mock_api_v2_resource.instance_id, 'model_respositories', '123', extra_paths={})
-    assert url == '{0}instance_id/{1}/model_respositories/123'.format(mock_api_v2_resource.target_endpoint, mock_api_v2_resource.instance_id)
-
-def test_urljoin_extra_paths(mock_api_v2_resource, utils_resource):
-    url = utils_resource._urljoin(mock_api_v2_resource.target_endpoint, 'instance_id', mock_api_v2_resource.instance_id, 'model_respositories', extra_paths=['123', 'upload'])
-    assert url == '{0}instance_id/{1}/model_respositories/123/upload'.format(mock_api_v2_resource.target_endpoint, mock_api_v2_resource.instance_id)
+def test_get_latest_model_info_v2(mocker, mock_api_v2_resource, mock_models, model_name):
+    mocker.patch.object(mock_models, '_get', return_value=MockResponse(text="""
+        {
+            "evaluation_result": {
+                "accuracy": 0.4,
+                "loss": 0.3
+            },
+            "tags": {
+                "adder": "71"
+            },
+            "created_at": "2018-11-29 09:40:08"
+        }
+        """, status_code=200)
+    )
+    mocker.patch.object(mock_models, 'switch_repo', return_value='c2714f44-fab9-4bde-afc9-7b3ab40cd431')
+    model_info = mock_models.get_latest_model_info(model_name)
+    assert 'evaluation_result' in model_info
+    assert 'tags' in model_info
+    assert 'created_at' in model_info

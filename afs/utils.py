@@ -27,7 +27,7 @@ def _check_response(response):
                 body = response.text
             raise InvalidStatusCode(response.status_code, body)
 
-def _urljoin(*args, extra_paths):
+def urljoin(*args, extra_paths):
     url = '/'.join(v[:-1] if v.endswith('/') else v for v in args )
     if len(extra_paths) > 0:
         url = url + '/' + '/'.join(extra_paths)

@@ -35,12 +35,7 @@ def conf_resource():
     conf={ "model_name":"test_model.h5"}
     return conf
 
-# @pytest.fixture(scope="function")
-# def models_path(tmpdir):
-#    yield tmpdir.mkdir('data').join("test_model.h5")
-
 @pytest.fixture(scope='session')
 def client_session():
     from afs.client import EIPaaSAFSSession
-
     yield EIPaaSAFSSession()

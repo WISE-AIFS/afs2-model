@@ -39,13 +39,14 @@ class AfsEnv():
 
 
     def _get_api_version(self):
-        if self.target_endpoint:
-            print(self.target_endpoint)
-        url = '%sinfo' % (self.target_endpoint)
+        url = utils._urljoin(self.target_endpoint, 'info', extra_paths={})
         response = utils._check_response(
             requests.get(url, verify=False))
         _logger.debug('GET - %s - %s', url, response.text)
-        return response.json()['API_version']
+        if response.json().get('API_version', None):
+            return response.json()['API_version']
+        else:
+            raise ConnectionError('Cannot fetch AFS server info')
 
 
 class app_env(object):
