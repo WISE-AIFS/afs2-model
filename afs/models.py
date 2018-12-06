@@ -57,13 +57,14 @@ class models(object):
                      tags={},
                      extra_evaluation={}):
         """
-        Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.
+        Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.(Support v2 API)
 
         :param str model_name:  (required) model path or name
         :param float accuracy: (required) model accuracy value, between 0-1
         :param float loss: (required) model loss value
         :param dict tags: (optional) tag from model
         :param dict extra_evaluation: (optional) other evaluation from model
+        :return: bool or exception
         """
 
         if not isinstance(accuracy, float) or \
@@ -122,7 +123,7 @@ class models(object):
 
     def create_model_repo(self, repo_name):
         """
-        Create a new model repository.
+        Create a new model repository. (Support v2 API)
         
         :param str repo_name: (optional)The name of model repository.
         :return: the new uuid of the repository
@@ -137,7 +138,6 @@ class models(object):
         else:
             raise AssertionError('Repo name must be string')
 
-
         request = dict(name=repo_name)
         resp = self._create(request)
         return resp.json()['uuid']
@@ -150,10 +150,10 @@ class models(object):
 
     def switch_repo(self, repo_name=None):
         """
-        Switch current repository. If the model is not exist, return none.
+        Switch current repository. If the model is not exist, return none. (Support v2 API)
 
         :param str repo_name: (optional)The name of model repository.
-        :return: None or repo_id
+        :return: None, repo_id, exception
         """
         params = dict(name=repo_name)
         resp = self._get(params=params)
@@ -168,10 +168,10 @@ class models(object):
 
     def get_latest_model_info(self, repo_name=None):
         """
-        Get the latest model info, including created_at, tags, evaluation_result.
+        Get the latest model info, including created_at, tags, evaluation_result. (Support v2 API)
         
         :param repo_name: (optional)The name of model repository.
-        :return: dict type. model info
+        :return: dict. the latest of model info in model repository.
         """
         if repo_name:
             self.switch_repo(repo_name)
