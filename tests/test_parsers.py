@@ -1,25 +1,16 @@
 import json
 import os
-import shutil
-import pytest
 from afs.parsers import manifest_parser, node_config_parser
 from pathlib import Path
 
 
-# @pytest.mark.skip(reason='Can not access GitLab')
 def test_manifest_parser_API():
-    git_username = os.getenv('git_username', '')
-    git_password = os.getenv('git_password', '')
-    git_url = os.getenv('git_url', '')
     pypi_endpoint = os.getenv('pypi_endpoint', '')
     afs_sdk_version='1.3.0'
-    # afs_sdk_version=None
 
     if not os.path.exists('test_workspace'):
         os.mkdir('test_workspace')
 
-    # ipynb_name = next(iter([filename for filename in os.listdir(os.path.join('test_workspace', 'src'))
-    #                         if filename.endswith('.ipynb')]), None)
     ipynb_path = os.path.join(Path(__file__).parent, 'data', 'iii_Dt.ipynb')
 
     manifest_parser(ipynb_path, output_dir='test_workspace',

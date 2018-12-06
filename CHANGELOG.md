@@ -1,6 +1,8 @@
 1.3.1 (unreleased)
 ------------------
 
+- implement v2 models upload_model
+
 - Update parsers requirements afs-sdk specific version
 
 

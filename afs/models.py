@@ -5,7 +5,6 @@ from io import BytesIO
 import requests
 import afs.utils as utils
 from afs.get_env import AfsEnv
-import urllib3
 import re
 
 _logger = logging.getLogger(__name__)
@@ -22,7 +21,11 @@ class models(object):
         self.target_endpoint = envir.target_endpoint
         self.instance_id = envir.instance_id
         self.auth_code = envir.auth_code
-        self.entity_uri = 'models'
+        self.api_version = envir.api_version
+        if self.api_version == 'v1':
+            self.entity_uri = 'models'
+        elif self.api_version == 'v2':
+            self.entity_uri = 'model_repositories'
         self.repo_id = None
 
     def _download_model(self, save_path):
@@ -54,13 +57,14 @@ class models(object):
                      tags={},
                      extra_evaluation={}):
         """
-        Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.
+        Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.(Support v2 API)
 
         :param str model_name:  (required) model path or name
         :param float accuracy: (required) model accuracy value, between 0-1
         :param float loss: (required) model loss value
         :param dict tags: (optional) tag from model
         :param dict extra_evaluation: (optional) other evaluation from model
+        :return: bool or exception
         """
 
         if not isinstance(accuracy, float) or \
@@ -112,9 +116,14 @@ class models(object):
         extra_paths = [self.repo_id, 'upload']
         resp = self._put(data=data, files=files, extra_paths=extra_paths)
 
+        if int(resp.status_code / 100) == 2:
+            return True
+        else:
+            return False
+
     def create_model_repo(self, repo_name):
         """
-        Create a new model repository.
+        Create a new model repository. (Support v2 API)
         
         :param str repo_name: (optional)The name of model repository.
         :return: the new uuid of the repository
@@ -133,100 +142,125 @@ class models(object):
         resp = self._create(request)
         return resp.json()['uuid']
 
+
     def _get_model_list(self, repo_name=None):
         params = dict(name=repo_name)
         return self._get(params=params)
 
+
     def switch_repo(self, repo_name=None):
         """
-        Switch current repository. If the model is not exist, return none.
+        Switch current repository. If the model is not exist, return none. (Support v2 API)
 
         :param str repo_name: (optional)The name of model repository.
-        :return: None or repo_id
+        :return: None, repo_id, exception
         """
         params = dict(name=repo_name)
         resp = self._get(params=params)
         if len(resp.json()) == 0:
             return None
-        else:
+        elif len(resp.json()) == 1:
             self.repo_id = resp.json()[0]['uuid']
             return self.repo_id
+        else:
+            raise ValueError('There are multi model repositories from server response')
+
 
     def get_latest_model_info(self, repo_name=None):
         """
-        Get the latest model info, including created_at, tags, evaluation_result.
+        Get the latest model info, including created_at, tags, evaluation_result. (Support v2 API)
         
         :param repo_name: (optional)The name of model repository.
-        :return: dict type. model info
+        :return: dict. the latest of model info in model repository.
         """
         if repo_name:
             self.switch_repo(repo_name)
 
-        resp = self._get(extra_paths=[self.repo_id, 'info'])
+        if self.api_version == 'v1':
+            resp = self._get(extra_paths=[self.repo_id, 'info'])
+        elif self.api_version == 'v2':
+            resp = self._get(extra_paths=[self.repo_id, 'last'])
         return resp.json()
 
+
     def _create(self, data, files=None, extra_paths=[]):
-        if len(extra_paths) == 0:
-            url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
-                               self.entity_uri)
-        else:
-            url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
-                                  self.entity_uri, '/'.join(extra_paths))
+        if self.api_version == 'v1':
+            if len(extra_paths) == 0:
+                url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
+                                   self.entity_uri)
+            else:
+                url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
+                                      self.entity_uri, '/'.join(extra_paths))
+        elif self.api_version == 'v2':
+            url = utils.urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
+                                 extra_paths=extra_paths)
+
         if not files:
             response = utils._check_response(
                 requests.post(
-                    url,
-                    params=dict(auth_code=self.auth_code),
-                    json=data,
-                    verify=False))
+                        url,
+                        params=dict(auth_code=self.auth_code),
+                        json=data,
+                        verify=False))
         else:
             response = utils._check_response(
-                requests.post(
-                    url,
-                    params=dict(auth_code=self.auth_code),
-                    json=data,
-                    files=files,
-                    verify=False))
+                    requests.post(
+                        url,
+                        params=dict(auth_code=self.auth_code),
+                        json=data,
+                        files=files,
+                        verify=False))
         _logger.debug('POST - %s - %s', url, response.text)
         return response
 
+
+
     def _put(self, data, files=None, extra_paths=[]):
-        if len(extra_paths) == 0:
-            url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
-                               self.entity_uri)
-        else:
-            url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
-                                  self.entity_uri, '/'.join(extra_paths))
+        if self.api_version == 'v1':
+            if len(extra_paths) == 0:
+                url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
+                                   self.entity_uri)
+            else:
+                url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
+                                      self.entity_uri, '/'.join(extra_paths))
+        elif self.api_version == 'v2':
+            url = utils.urljoin(self.target_endpoint, 'instances' ,self.instance_id, self.entity_uri, extra_paths=extra_paths)
+
         if not files:
             response = utils._check_response(
                 requests.put(
-                    url,
-                    params=dict(auth_code=self.auth_code),
-                    data=data,
-                    verify=False))
+                        url,
+                        params=dict(auth_code=self.auth_code),
+                        data=data,
+                        verify=False))
         else:
             response = utils._check_response(
                 requests.put(
-                    url,
-                    params=dict(auth_code=self.auth_code),
-                    files=files,
-                    data=data,
-                    verify=False))
+                        url,
+                        params=dict(auth_code=self.auth_code),
+                        files=files,
+                        data=data,
+                        verify=False))
         _logger.debug('PUT - %s - %s', url, response.text)
         return response
 
+
     def _get(self, params={}, extra_paths=[]):
-        if len(extra_paths) == 0:
-            url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
-                               self.entity_uri)
-        else:
-            url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
-                                  self.entity_uri, '/'.join(extra_paths))
+        if self.api_version == 'v1':
+                if len(extra_paths) == 0:
+                    url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
+                                       self.entity_uri)
+                else:
+                    url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
+                                          self.entity_uri, '/'.join(extra_paths))
+        elif self.api_version == 'v2':
+            url = utils.urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
+                                 extra_paths=extra_paths)
+
         get_params = {}
         get_params.update(dict(auth_code=self.auth_code))
         get_params.update(params)
         response = utils._check_response(
-            requests.get(url, params=get_params, verify=False))
+        requests.get(url, params=get_params, verify=False))
         _logger.debug('GET - %s - %s', url, response.text)
         return response
-
