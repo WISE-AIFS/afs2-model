@@ -1,7 +1,7 @@
-2.0.0 (unreleased)
+2.0.0 (2018-12-24)
 ------------------
 
-- Nothing changed yet.
+- Nothing changed.
 
 
 1.3.1 (2018-12-07)
