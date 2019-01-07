@@ -28,7 +28,7 @@ def _get_portal_version():
             target_endpoint = 'https://' + target_endpoint
 
         resp = requests.get(
-            urljoin(target_endpoint, 'info'), verify=False
+            target_endpoint, verify=False
         )
 
         if not resp.ok:
