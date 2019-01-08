@@ -39,7 +39,7 @@ class AfsEnv():
 
 
     def _get_api_version(self):
-        url = utils.urljoin(self.target_endpoint, 'info', extra_paths={})
+        url = utils.urljoin(self.target_endpoint, extra_paths={})
         response = utils._check_response(
             requests.get(url, verify=False))
         _logger.debug('GET - %s - %s', url, response.text)
