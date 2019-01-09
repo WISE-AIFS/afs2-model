@@ -1,9 +1,7 @@
 2.0.2 (unreleased)
 ------------------
 
-- Update version API info
-
-- Nothing changed yet.
+- Update version API info.
 
 
 2.0.1 (unreleased)
