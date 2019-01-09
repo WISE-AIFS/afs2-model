@@ -1,6 +1,4 @@
-import pytest
 from tests.mock_requests import MockResponse
-import os
 
 
 # v2 API unit_test
