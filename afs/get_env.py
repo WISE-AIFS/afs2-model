@@ -3,11 +3,14 @@ import requests
 import warnings
 import logging
 import afs.utils as utils
+import pkg_resources
 _logger = logging.getLogger(__name__)
 
 
 class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
+        self.__version__ = pkg_resources.get_distribution('afs').version
+
         self.version = os.getenv('version', None)
         if self.version is None:
             warnings.warn('To solve hidden space problem, environment variable has change. RECOMMEND upgrading AFS instance')
@@ -34,7 +37,7 @@ class AfsEnv():
         if not self.target_endpoint.endswith('/'):
             self.target_endpoint = self.target_endpoint + '/'
 
-        self.api_version = self._get_api_version()
+        self.api_version, self.afs_portal_version = self._get_api_version()
         self.target_endpoint = self.target_endpoint + self.api_version + '/'
 
 
@@ -44,12 +47,20 @@ class AfsEnv():
         else:
             url = utils.urljoin(self.target_endpoint, extra_paths={})
         response = utils._check_response(
-            requests.get(url, verify=False))
+            requests.get(url, verify=False)
+        )
         _logger.debug('GET - %s - %s', url, response.text)
-        if response.json().get('API_version', None):
-            return response.json()['API_version']
+
+        afs_portal_version = response.json().get('AFS_version', None)
+        if afs_portal_version != self.__version__:
+            warnings.warn('SDK version is {0}, and AFS portal version is {1}. It will cause some compatibility issues. Readthedocs: https://afs-docs.readthedocs.io/en/latest/index.html'
+                          .format(self.__version__, afs_portal_version))
+
+        if response.json().get('AFS_version', None):
+            return response.json()['API_version'], afs_portal_version
         else:
             raise ConnectionError('Cannot fetch AFS server info')
+
 
 
 class app_env(object):

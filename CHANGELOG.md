@@ -1,6 +1,8 @@
 2.0.2 (unreleased)
 ------------------
 
+- Remove duplicate get portal info
+
 - Update version API info.
 
 

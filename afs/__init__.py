@@ -1,8 +1,5 @@
 import pkg_resources
 import requests
-import warnings
-from urllib.parse import urljoin
-import os
 
 # afs-sdk module
 from .config_handler import config_handler
@@ -18,40 +15,3 @@ else:
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 __version__ = pkg_resources.get_distribution('afs').version
-
-
-def _get_portal_version():
-    target_endpoint = os.getenv('afs_url', None)
-
-    if target_endpoint is not None:
-        if not target_endpoint.startswith(('http://', 'https://')):
-            target_endpoint = 'https://' + target_endpoint
-
-        if os.getenv('version', '') <= '2.0.1':
-            resp = requests.get(
-                urljoin(target_endpoint, 'info'), verify=False
-            )
-        else:
-            resp = requests.get(
-                target_endpoint, verify=False
-            )
-
-        if not resp.ok:
-            message = {
-                'error': 'Get info from {0} failed'.format(target_endpoint),
-                'response': resp.text
-            }
-            raise Exception(message)
-
-        resp = resp.json()
-        return resp['AFS_version']
-    else:
-        warnings.warn('Environment is not on AFS workspace.')
-        return None
-
-afs_portal_version = _get_portal_version()
-
-if afs_portal_version != __version__:
-    warnings.warn('SDK version is {0}, and AFS portal version is {1}. It will cause some compatibility issues. Readthedocs: https://afs-docs.readthedocs.io/en/latest/index.html'
-                  .format(__version__, afs_portal_version))
-
