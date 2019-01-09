@@ -5,8 +5,6 @@ import os
 
 # v2 API unit_test
 def test_upload_model_v2(mocker, test, mock_api_v2_resource, mock_models, model_name):
-    with open(model_name, 'w') as f:
-        f.write(str(test))
     mocker.patch.object(mock_models, 'switch_repo', return_value=None)
     mocker.patch.object(mock_models, 'create_model_repo', return_value='123')
     mocker.patch.object(mock_models, '_put', return_value=MockResponse(status_code=200, text="""
@@ -19,7 +17,6 @@ def test_upload_model_v2(mocker, test, mock_api_v2_resource, mock_models, model_
       ]
     }"""))
     assert mock_models.upload_model(model_name, accuracy=.123, loss=.123) == True
-
 
 # v2 API unit_test
 def test_create_model_repo_v2(mocker, mock_api_v2_resource, mock_models, model_name):

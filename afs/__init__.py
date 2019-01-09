@@ -27,9 +27,14 @@ def _get_portal_version():
         if not target_endpoint.startswith(('http://', 'https://')):
             target_endpoint = 'https://' + target_endpoint
 
-        resp = requests.get(
-            target_endpoint, verify=False
-        )
+        if os.getenv('version', '') <= '2.0.1':
+            resp = requests.get(
+                urljoin(target_endpoint, 'info'), verify=False
+            )
+        else:
+            resp = requests.get(
+                target_endpoint, verify=False
+            )
 
         if not resp.ok:
             message = {
