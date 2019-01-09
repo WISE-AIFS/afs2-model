@@ -1,3 +1,11 @@
+2.0.2 (unreleased)
+------------------
+
+- Remove duplicate get portal info
+
+- Update version API info.
+
+
 2.0.0 (2018-12-24)
 ------------------
 

@@ -6,7 +6,7 @@ import json
 
 
 # Positive test
-def test_upload_model(models_resource, test):
+def test_upload_model(models_resource, test, v1_env):
     name = 'test_model.h5'
     with open(name, 'w') as f:
         f.write(str(test))
@@ -16,7 +16,7 @@ def test_upload_model(models_resource, test):
 
 
 # Positive test
-def test_download_model(models_resource, test):
+def test_download_model(models_resource, test, v1_env):
     name = 'test_model.h5'
     try:
         models_resource.download_model(name, model_name=name)
@@ -34,7 +34,7 @@ def test_download_model(models_resource, test):
 
 
 # Positive test
-def test_get_latest_model_info(models_resource):
+def test_get_latest_model_info(models_resource, v1_env):
     name = 'test_model.h5'
     model_info = models_resource.get_latest_model_info(name)
     assert model_info['evaluation_result']['accuracy'] == .123
@@ -54,7 +54,7 @@ def test_model_accuracy(models_resource, test):
 
 
 # Negative test
-def test_model_naming_length(models_resource, test):
+def test_model_naming_length(models_resource, test, v1_env):
     a = ['a' for i in range(100)]
     name = '.'.join(a)
     with open(name, 'w') as f:
@@ -67,7 +67,7 @@ def test_model_naming_length(models_resource, test):
 
 
 # Negative test
-def test_model_naming_rule(models_resource, test):
+def test_model_naming_rule(models_resource, test, v1_env):
     name = "adsfsf,s=.h5"
     with open(name, 'w') as f:
         f.write(str(test))

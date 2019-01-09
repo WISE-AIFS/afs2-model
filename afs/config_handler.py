@@ -3,6 +3,7 @@ from pandas import DataFrame
 from afs.flow import flow
 import logging
 import os
+from afs.get_env import AfsEnv
 from pathlib import Path
 import afs
 
@@ -75,7 +76,7 @@ class config_handler(object):
         if nodered_url:
             os.environ['node_red_url'] = nodered_url
 
-        afs_portal_version = afs._get_portal_version()
+        afs_portal_version = AfsEnv().afs_portal_version
         if afs_portal_version:
             os.environ['version'] = afs_portal_version
 

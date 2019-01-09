@@ -213,7 +213,7 @@ def kernel_gateway_request_catalog():
 
 
 def test_config_handler_workspace(mocker, config_handler_resource, data_dir,
-                                  capsys, envs, flow_json, kernel_gateway_request_workspace):
+                                  capsys, envs, flow_json, kernel_gateway_request_workspace, v1_env):
     config_handler_resource.set_param(
         'myinteger', type='integer', required=True, default=2)
     config_handler_resource.set_param(
