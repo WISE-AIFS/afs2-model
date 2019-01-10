@@ -1,4 +1,4 @@
-2.0.2 (unreleased)
+2.0.2 (2019-01-10)
 ------------------
 
 - Remove duplicate get portal info
