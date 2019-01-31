@@ -3,6 +3,8 @@
 
 - Add v2 models API
 
+- Update v2 models API unit tests
+
 
 2.0.2 (2019-01-10)
 ------------------
