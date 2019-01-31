@@ -1,7 +1,7 @@
 2.1.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add v2 models API
 
 
 2.0.2 (2019-01-10)
