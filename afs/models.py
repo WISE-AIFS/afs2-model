@@ -261,7 +261,7 @@ class models(object):
         :param str repo_name: (optional)The name of model repository.
         :return: None, repo_id, exception
         """
-        if self.api_version == 'v2':
+        if self.api_version == 'v1':
             params = dict(name=repo_name)
             resp = self._get(params=params)
             if len(resp.json()) == 0:
@@ -271,6 +271,7 @@ class models(object):
                 return self.repo_id
             else:
                 raise ValueError('There are multi model repositories from server response')
+                return None
         else:
             raise NotImplementedError('v2 API is not support this method.')
             return None
@@ -286,7 +287,7 @@ class models(object):
             if model_repository_name:
                 self.switch_repo(model_repository_name)
             resp = self._get(extra_paths=[self.repo_id, 'info'])
-
+            return resp.json()
         elif self.api_version == 'v2':
             model_id = self.get_model_id(model_repository_name=model_repository_name, last_one=True)
 

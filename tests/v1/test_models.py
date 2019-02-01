@@ -37,8 +37,8 @@ def test_download_model(models_resource, test, v1_env):
 def test_get_latest_model_info(models_resource, v1_env):
     name = 'test_model.h5'
     model_info = models_resource.get_latest_model_info(name)
-    assert model_info['evaluation_result']['accuracy'] == .123
-    assert model_info['evaluation_result']['loss'] == .123
+    assert 'evaluation_result' in model_info
+    assert 'tags' in model_info
 
 
 # Negative test
@@ -76,8 +76,6 @@ def test_model_naming_rule(models_resource, test, v1_env):
             models_resource.upload_model(name, accuracy=.123, loss=.123))
     if os.path.exists(name):
         os.remove(name)
-
-
 
 
 # # Negative test
