@@ -51,7 +51,6 @@ class models(object):
                 self.repo_id = repo_id
         else:
             raise NotImplementedError('v1 API is not support this method.')
-            return None
 
         return self.repo_id
 
@@ -65,25 +64,21 @@ class models(object):
         :return: str model id
         """
         if self.api_version == 'v2':
-
             if not model_repository_name:
                 if not self.repo_id:
                     raise ValueError('Please enter model_repository_name.')
             else:
-                self.repo_id = self.get_model_repo_id(model_repository_name)
+                self.get_model_repo_id(model_repository_name=model_repository_name)
                 if not self.repo_id:
-                    raise ValueError('Model_repository_name {} not found.'.format(model_repository_name))
+                    raise ValueError('Model repository with name {} not found.'.format(model_repository_name))
 
-            if last_one:
-                extra_paths = [self.repo_id, self.sub_entity_uri]
-                resp = self._get(extra_paths=extra_paths).json()
-            elif model_name:
+            if model_name:
                 params = dict(name=model_name)
                 extra_paths = [self.repo_id, self.sub_entity_uri]
                 resp = self._get(extra_paths=extra_paths, params=params).json()
             else:
-                raise ValueError('It must be one of model_name or last_one')
-                return None
+                extra_paths = [self.repo_id, self.sub_entity_uri]
+                resp = self._get(extra_paths=extra_paths).json()
 
             if resp['resources']:
                 model_id = resp['resources'][0]['uuid']
@@ -92,7 +87,6 @@ class models(object):
             return model_id
         else:
             raise NotImplementedError('v1 API is not support this method.')
-            return None
 
 
     def download_model(self, save_path, model_repository_name=None, model_name=None, last_one=False):
@@ -102,7 +96,7 @@ class models(object):
         :param str save_path: The path exist in file system
         """
         if model_repository_name:
-            self.repo_id = self.get_model_repo_id(model_repository_name)
+            self.get_model_repo_id(model_repository_name)
 
         if not self.repo_id:
             raise ValueError('There is no specific repo_id to download.')
@@ -118,22 +112,21 @@ class models(object):
                 params = {'alt': 'media'}
                 resp = self._get(params=params, extra_paths=extra_paths)
             else:
-                raise ValueError('Model_name {} not found.'.format(model_name))
+                raise ValueError('Model with name {} not found.'.format(model_name))
 
         try:
             with open(save_path, 'wb') as f:
                 f.write(resp.content)
         except Exception as e:
             raise RuntimeError('Write download file error.')
-            return False
 
         return True
 
 
     def upload_model(self,
                      model_path,
-                     accuracy,
-                     loss,
+                     accuracy=None,
+                     loss=None,
                      tags={},
                      extra_evaluation={},
                      model_repository_name=None,
@@ -141,23 +134,36 @@ class models(object):
         """
         Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.(Support v2 API)
 
-        :param str model_path:  (required) model path 
-        :param float accuracy: (required) model accuracy value, between 0-1
-        :param float loss: (required) model loss value
+        :param str model_path:  (required) model filepath 
+        :param float accuracy: (optional) model accuracy value, between 0-1
+        :param float loss: (optional) model loss value
         :param dict tags: (optional) tag from model
         :param dict extra_evaluation: (optional) other evaluation from model
-        :param str model_path:  (optional) Give model a name or default auto a uuid4 name 
-
+        :param str model_name:  (optional) Give model a name or default auto a uuid4 name 
         :return: bool
         """
 
-        if not isinstance(accuracy, float) or \
-                not isinstance(loss, float) or \
-                not isinstance(tags, dict) or \
-                not isinstance(extra_evaluation, dict):
+        if not isinstance(tags, dict) or \
+           not isinstance(extra_evaluation, dict):
             raise AssertionError(
                 'Type error, accuracy and loss are float, and tags and extra_evaluation are dict.'
             )
+
+        # evaluation_result info
+        evaluation_result = {}
+        if accuracy:
+            if not isinstance(accuracy, float):
+                raise AssertionError('Type error, accuracy is float.')
+            if accuracy >= 1.0 or accuracy < 0:
+                raise AssertionError('Accuracy value should be between 0-1')
+            evaluation_result.update({'accuracy': accuracy})
+
+        if loss:
+            if not isinstance(loss, float):
+                raise AssertionError(
+                    'Type error, loss is float.'
+                )
+            evaluation_result.update({'loss': loss})
 
         if not isinstance(model_path, str):
             raise AssertionError('Type error, model_name  cannot convert to string')
@@ -194,18 +200,12 @@ class models(object):
             if not self.repo_id:
                 # Find model_repo_id from name
                 if model_repository_name:
-                    self.repo_id = self.get_model_repo_id(model_repository_name)
+                    self.get_model_repo_id(model_repository_name)
                     # If not found, create one
                     if not self.repo_id:
                         self.repo_id = self.create_model_repo(model_repository_name)
                 else:
                     raise ValueError('Please enter model_repository_name')
-
-        if accuracy >= 1.0 or accuracy < 0:
-            raise AssertionError('Accuracy value should be between 0-1')
-
-        # tag info
-        evaluation_result = {'accuracy': accuracy, 'loss': loss}
 
         # evaluation result
         evaluation_result.update(extra_evaluation)
@@ -254,7 +254,7 @@ class models(object):
         return self.repo_id
 
 
-    def switch_repo(self, repo_name=None):
+    def switch_repo(self, model_repository_name=None):
         """
         Switch current repository. If the model is not exist, return none. (Support v2 API)
 
@@ -262,7 +262,7 @@ class models(object):
         :return: None, repo_id, exception
         """
         if self.api_version == 'v1':
-            params = dict(name=repo_name)
+            params = dict(name=model_repository_name)
             resp = self._get(params=params)
             if len(resp.json()) == 0:
                 return None
@@ -271,10 +271,9 @@ class models(object):
                 return self.repo_id
             else:
                 raise ValueError('There are multi model repositories from server response')
-                return None
         else:
             raise NotImplementedError('v2 API is not support this method.')
-            return None
+
 
     def get_latest_model_info(self, model_repository_name=None):
         """
@@ -298,7 +297,7 @@ class models(object):
                 return resource
             else:
                 raise ValueError('Model not found.')
-                return None
+
 
     def get_model_info(self, model_name, model_repository_name=None):
         """Get model info, including created_at, tags, evaluation_result. (V2 API)
@@ -320,7 +319,7 @@ class models(object):
                 raise ValueError('Model not found.')
         else:
             raise NotImplementedError('v1 API is not support this method.')
-            return None
+
         return resp.json()
 
 
@@ -333,13 +332,12 @@ class models(object):
         if self.api_version == 'v2':
             if not self.get_model_repo_id(model_repository_name):
                 raise ValueError('Model_repository not found.')
-                return False
+
             extra_paths = [self.repo_id]
             resp = self._del(extra_paths=extra_paths)
 
         else:
             raise NotImplementedError('v1 API is not support this method.')
-            return None
 
         if int(resp.status_code / 100) == 2:
             return True
@@ -357,7 +355,7 @@ class models(object):
         if self.api_version == 'v2':
             if not self.get_model_repo_id(model_repository_name=model_repository_name):
                 raise ValueError('Model_repository not found.')
-                return False
+
             model_id = self.get_model_id(model_name, model_repository_name=model_repository_name, last_one=False)
             if not model_id:
                 raise ValueError('Model not found.')
@@ -365,7 +363,6 @@ class models(object):
             resp = self._del(extra_paths=extra_paths)
         else:
             raise NotImplementedError('v1 API is not support this method.')
-            return None
 
         if int(resp.status_code / 100) == 2:
             return True

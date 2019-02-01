@@ -28,6 +28,7 @@ def model_name(test):
 @pytest.fixture()
 def model_repository_name(mocker, mocker_models):
     mocker.patch.object(mocker_models, 'get_model_repo_id', return_value='1a3a9596-8ee8-44b6-94f8-56ba70169300')
+    mocker.patch.object(mocker_models, 'repo_id', return_value='1a3a9596-8ee8-44b6-94f8-56ba70169300')
     return 'test_model_repo'
 
 

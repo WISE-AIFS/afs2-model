@@ -7,7 +7,6 @@ def test_get_model_repo_id(mocker, mocker_models, mock_api_v2_resource, model_re
 
 
 def test_get_model_id(mocker, mocker_models, model_repository_name, model_name, model_list_response):
-    # mocker.patch.object(mocker_models, 'get_model_repo_id', return_value='123')
     mocker.patch.object(mocker_models, '_get', return_value=model_list_response)
     model_id = mocker_models.get_model_id(model_repository_name=model_repository_name, last_one=True)
     assert model_id == "b8ed105e-c0b8-4b39-a453-0efd3259aafe"
