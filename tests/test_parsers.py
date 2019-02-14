@@ -1,6 +1,6 @@
 import json
 import os
-from afs.parsers import manifest_parser, node_config_parser
+from afs.parsers import manifest_parser
 from pathlib import Path
 
 

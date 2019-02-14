@@ -1,64 +1,44 @@
-from tests.mock_requests import MockResponse
 
 
-# v2 API unit_test
-def test_upload_model_v2(mocker, test, mock_api_v2_resource, mock_models, model_name):
-    mocker.patch.object(mock_models, 'switch_repo', return_value=None)
-    mocker.patch.object(mock_models, 'create_model_repo', return_value='123')
-    mocker.patch.object(mock_models, '_put', return_value=MockResponse(status_code=200, text="""
-    {
-      "uuid": "c2714f44-fab9-4bde-afc9-7b3ab40cd431",
-      "name": "test_model.h5",
-      "created_at": "2018-08-20 09:16:18",
-      "models": [
-        "b5e8399d-3a95-42a5-88f5-79b8cdeb4045"
-      ]
-    }"""))
-    assert mock_models.upload_model(model_name, accuracy=.123, loss=.123) == True
-
-# v2 API unit_test
-def test_create_model_repo_v2(mocker, mock_api_v2_resource, mock_models, model_name):
-    mocker.patch.object(mock_models, '_create', return_value=MockResponse(text="""
-    {
-        "uuid": "c2714f44-fab9-4bde-afc9-7b3ab40cd431",
-        "name": "test_model.h5",
-        "created_at": "2018-08-20 09:16:18",
-        "models": []
-    }""", status_code=200))
-    assert mock_models.create_model_repo(model_name) == "c2714f44-fab9-4bde-afc9-7b3ab40cd431"
-
-# v2 API unit_test
-def test_switch_repo_v2(mocker, mock_api_v2_resource, mock_models, model_name):
-    mocker.patch.object(mock_models, '_get', return_value=MockResponse(text="""
-    [{
-      "uuid": "c2714f44-fab9-4bde-afc9-7b3ab40cd431",
-      "name": "test_model.h5",
-      "created_at": "2018-08-20 09:16:18",
-      "models": [
-        "b5e8399d-3a95-42a5-88f5-79b8cdeb4045"
-      ]
-    }]
-      """, status_code=200)
-    )
-    assert mock_models.switch_repo(model_name) == "c2714f44-fab9-4bde-afc9-7b3ab40cd431"
+def test_get_model_repo_id(mocker, mocker_models, mock_api_v2_resource, model_repository_name, model_name, model_repository_list_response):
+    mocker.patch.object(mocker_models, '_get', return_value=model_repository_list_response)
+    model_reop_id = mocker_models.get_model_repo_id(model_repository_name=model_repository_name)
+    assert model_reop_id == "1a3a9596-8ee8-44b6-94f8-56ba70169300"
 
 
-def test_get_latest_model_info_v2(mocker, mock_api_v2_resource, mock_models, model_name):
-    mocker.patch.object(mock_models, '_get', return_value=MockResponse(text="""
-        {
-            "evaluation_result": {
-                "accuracy": 0.4,
-                "loss": 0.3
-            },
-            "tags": {
-                "adder": "71"
-            },
-            "created_at": "2018-11-29 09:40:08"
-        }
-        """, status_code=200)
-    )
-    mocker.patch.object(mock_models, 'switch_repo', return_value='c2714f44-fab9-4bde-afc9-7b3ab40cd431')
-    model_info = mock_models.get_latest_model_info(model_name)
-    assert 'evaluation_result' in model_info
-    assert 'tags' in model_info
-    assert 'created_at' in model_info
+def test_get_model_id(mocker, mocker_models, model_repository_name, model_name, model_list_response):
+    mocker.patch.object(mocker_models, '_get', return_value=model_list_response)
+    model_id = mocker_models.get_model_id(model_repository_name=model_repository_name, last_one=True)
+    assert model_id == "b8ed105e-c0b8-4b39-a453-0efd3259aafe"
+
+
+def test_upload_model(mocker, mocker_models, mock_api_v2_resource, model_repository_name, model_name, model_response):
+    mocker.patch.object(mocker_models, '_create', return_value=model_response)
+    assert mocker_models.upload_model(
+        model_path=model_name,
+        accuracy=0.1,
+        loss=0.2,
+        tags={"machine": "01"},
+        extra_evaluation={"metric": 1},
+        model_repository_name=model_repository_name,
+        model_name=model_name) == True
+
+
+def test_create_model_repo(mocker, mock_api_v2_resource, model_repository_name, mocker_models, model_name, model_repository_response):
+    mocker.patch.object(mocker_models, '_create', return_value=model_repository_response)
+    assert mocker_models.create_model_repo(model_name) == "11cc3faf-cd24-4d93-8f9a-09dd731f5397"
+
+
+def test_get_latest_model_info(mocker, mock_api_v2_resource, model_repository_name, mocker_models, model_name, model_list_response, model_response):
+    mocker.patch.object(mocker_models, 'get_model_id', return_value="b8ed105e-c0b8-4b39-a453-0efd3259aafe")
+    mocker.patch.object(mocker_models, '_get', return_value=model_response)
+    resp = mocker_models.get_latest_model_info(model_repository_name)
+
+    assert isinstance(resp, dict)
+    assert 'uuid' in resp
+    assert 'name' in resp
+    assert 'owner' in resp
+    assert 'created_at' in resp
+    assert 'parameters' in resp
+    assert 'tags' in resp
+    assert 'evaluation_result' in resp
