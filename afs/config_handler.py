@@ -4,8 +4,8 @@ from afs.flow import flow
 import logging
 import os
 from afs.get_env import AfsEnv
-from pathlib import Path
-import afs
+from deprecated import deprecated
+
 
 
 _logger = logging.getLogger(__name__)
@@ -27,6 +27,7 @@ class config_handler(object):
         self.token = None
         self.summary_message = None
 
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def set_kernel_gateway(self, REQUEST, flow_json_file=None, env_obj={}):
         """
         For Jupyter kernel gateway API, REQUEST is the request given by kernel gateway. Reference REQUEST: http://jupyter-kernel-gateway.readthedocs.io/en/latest/http-mode.html
@@ -98,6 +99,8 @@ class config_handler(object):
         # get the node information in current_node_obj
         self.flow_obj.get_node_item(self.flow_obj.current_node_id)
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_param(self, key):
         """
         Get parameter from the key name, and it should be set from set_param.
@@ -132,6 +135,8 @@ class config_handler(object):
         else:
             return None
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_data(self):
         """
         Transform REQUEST data to DataFrame type.
@@ -161,6 +166,8 @@ class config_handler(object):
 
         return self.data.rename(columns=self.get_column())
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_column(self):
         """
         Get the column mapping list.
@@ -172,6 +179,8 @@ class config_handler(object):
                 for column_name in self.flow_obj.current_node_obj
                 if column_name in self.column}
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def next_node(self, data, debug=False):
         """
         Send data to next node according to flow.
@@ -189,6 +198,8 @@ class config_handler(object):
         else:
             raise TypeError('data must be DataFrame type')
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def set_param(self, key, type='string', required=False, default=None):
         """
         Set API parameter will be used in the AFS API.
@@ -223,6 +234,8 @@ class config_handler(object):
             self.variable_name.append(key)
             self.param.append(param)
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def set_column(self, column_name):
         """
         The column name will be used in the AFS API.
@@ -236,6 +249,8 @@ class config_handler(object):
             self.variable_name.append(column_name)
             self.column.append(column_name)
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def set_features(self, enable=False):
         """
         The feature name will be used in the AFS API.
@@ -247,6 +262,8 @@ class config_handler(object):
         else:
             raise TypeError('Type Error enable  is bool type')
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_features_target(self):
         """
         Get feature target from flow json.
@@ -265,6 +282,8 @@ class config_handler(object):
         """
         return self.flow_obj.current_node_obj['select_feature']
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_features_numerical(self):
         """
         Get feature numerical from flow json.
@@ -274,6 +293,8 @@ class config_handler(object):
         """
         return self.flow_obj.current_node_obj['numerical']
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def summary(self):
         """
         Summary what parameters and column the AFS API need.This method should be called by the last line in the 2nd cell.

@@ -1,11 +1,8 @@
-import datetime
-import time
 import json
-import traceback
 import requests
-import os, sys
-import pandas as pd
+import os
 from .get_env import app_env
+from deprecated import deprecated
 
 
 class flow(object):
@@ -68,7 +65,7 @@ class flow(object):
             'get_afs_credentials': 40
         }
 
-
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def set_flow_config(self, obj):
         """
         Set config(class properties value) of flow.
@@ -99,6 +96,7 @@ class flow(object):
 
         return True
 
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_flow_list(self):
         """
         Call Node-RED api to get flow list.
@@ -142,6 +140,7 @@ class flow(object):
             raise Exception(self.ERR_MSG_GET_FLOW + ' flow_id: ' + str(self.flow_id))
             # return None
 
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_node_item(self, select_node_id, is_current_node=True):
         """
         Get Node-RED item from flow_list.
@@ -167,6 +166,8 @@ class flow(object):
         raise Exception(self.ERR_MSG_GET_NODE + ' node_id: ' + str(select_node_id))
         # return None
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_firehose_node_id(self):
         """
         Find node id of firehose type in flow.
@@ -186,6 +187,8 @@ class flow(object):
 
         return node_id
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_sso_node_id(self):
         """
         Find node id of sso_setting type in flow.
@@ -226,6 +229,8 @@ class flow(object):
 
         return obj
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def exe_next_node(self, data={}, next_list=None, debug=False):
         """
         Request next node api to execute.
@@ -317,6 +322,8 @@ class flow(object):
                 
         return error_node, error_msg
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_sso_token(self, req_body):
         """
         Get SSO token.
@@ -364,6 +371,8 @@ class flow(object):
             status = 500
             return resp, status
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_afs_credentials(self, sso_token):
         """
         Get AFS credentials about service name, service key.
@@ -410,6 +419,8 @@ class flow(object):
         status = 200
         return resp, status
 
+
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_flow_list_ab(self, result):
         # set flow_list
         if 'nodes' in result:

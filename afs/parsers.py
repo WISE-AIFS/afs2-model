@@ -161,12 +161,6 @@ def manifest_parser(notebook_path, pypi_endpoint, output_dir=None, manifest_yaml
     return True
 
 
-
-def node_config_parser():
-    pass
-
-
-
 def config_to_dict(source, startswith='node_config'):
     """
     Transform config(manifest or node_config) from jupyter source code to python dict.

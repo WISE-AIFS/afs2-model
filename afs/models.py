@@ -7,7 +7,7 @@ import afs.utils as utils
 from afs.get_env import AfsEnv
 import re
 from uuid import uuid4
-
+from deprecated import deprecated
 
 _logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class models(object):
             self.sub_entity_uri = 'models'
         self.repo_id = None
 
-
+    @deprecated(version='2.2', reason="v2 API will be re-implement in version 2.2.")
     def get_model_repo_id(self, model_repository_name=None):
         """Get model repository by name.
         
@@ -54,7 +54,7 @@ class models(object):
 
         return self.repo_id
 
-
+    @deprecated(version='2.2', reason="v2 API will be re-implement in version 2.2.")
     def get_model_id(self, model_name=None, model_repository_name=None, last_one=True):
         """Get model id by model name.
         
@@ -88,7 +88,7 @@ class models(object):
         else:
             raise NotImplementedError('v1 API is not support this method.')
 
-
+    @deprecated(version='2.2', reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.")
     def download_model(self, save_path, model_repository_name=None, model_name=None, last_one=False):
         """Download model from model repository to a file.
 
@@ -122,7 +122,7 @@ class models(object):
 
         return True
 
-
+    @deprecated(version='2.2', reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.")
     def upload_model(self,
                      model_path,
                      accuracy=None,
@@ -230,7 +230,7 @@ class models(object):
         else:
             return False
 
-
+    @deprecated(version='2.2', reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.")
     def create_model_repo(self, model_repository_name):
         """
         Create a new model repository. (Support v2 API)
@@ -254,6 +254,7 @@ class models(object):
         return self.repo_id
 
 
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def switch_repo(self, model_repository_name=None):
         """
         Switch current repository. If the model is not exist, return none. (Support v2 API)
@@ -274,7 +275,7 @@ class models(object):
         else:
             raise NotImplementedError('v2 API is not support this method.')
 
-
+    @deprecated(version='2.2', reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.")
     def get_latest_model_info(self, model_repository_name=None):
         """
         Get the latest model info, including created_at, tags, evaluation_result. (Support v2 API)
@@ -293,12 +294,11 @@ class models(object):
             if model_id:
                 extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
                 resp = self._get(extra_paths=extra_paths)
-                resource = resp.json()['resources'][0]
-                return resource
+                return resp.json()
             else:
                 raise ValueError('Model not found.')
 
-
+    @deprecated(version='2.2', reason="v2 API will be re-implement in version 2.2.")
     def get_model_info(self, model_name, model_repository_name=None):
         """Get model info, including created_at, tags, evaluation_result. (V2 API)
         
@@ -322,7 +322,7 @@ class models(object):
 
         return resp.json()
 
-
+    @deprecated(version='2.2', reason="v2 API will be re-implement in version 2.2.")
     def delete_model_repository(self, model_repository_name):
         """Delete model repository.
         
@@ -344,7 +344,7 @@ class models(object):
         else:
             return False
 
-
+    @deprecated(version='2.2', reason="v2 API will be re-implement in version 2.2.")
     def delete_model(self, model_name, model_repository_name=None):
         """Delete model.
         

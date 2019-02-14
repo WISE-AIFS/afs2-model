@@ -5,6 +5,7 @@ import afs.utils as utils
 import requests
 import traceback
 import warnings
+from deprecated import deprecated
 
 _logger = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ class services(object):
         self.auth_code = envir.auth_code
         self.entity_uri = 'services'
 
-
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_service_info(self, service_name, service_key=None):
         """
         Get the subscribed service one of key.  
@@ -63,7 +64,7 @@ class services(object):
 
         return credential[0]
 
-
+    @deprecated(version='2.2', reason="v1 API will be removed.")
     def get_service_list(self):
         """
         List all credentials which the services you subscribed.
