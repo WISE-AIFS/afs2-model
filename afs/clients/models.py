@@ -11,6 +11,15 @@ class Model(BaseResourceModel):
         resource = 'model'
         super().__init__(resource_client=resource_client, resource=resource, *args, **kwargs)
 
+    @property
+    def binary(self):
+        return self._resource_client.get(self.uuid, alt='media', raw=True).content
+
+    def download(self, model_path):
+        with open(model_path, 'wb') as f:
+            f.write(self.binary)
+        return True
+
 
 class ModelsClient(BaseResourcesClient):
     """
@@ -38,8 +47,9 @@ class ModelsClient(BaseResourcesClient):
         Create a new model.
 
         :param str model_path: Path to the model file.
-        :param str name: The name of model
-        :return: 
+        :param str name: The name of model.
+        :return: The response of created model.
+        :rtype: Model
         """
         model_path = kwargs.pop('model_path', None)
         if not model_path:
