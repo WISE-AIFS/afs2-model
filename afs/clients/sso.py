@@ -26,4 +26,4 @@ class SSOClient:
         return token
 
     def refresh_sso_token(self, token):
-        return token
+        pass
