@@ -24,7 +24,7 @@ class APISession:
     def __getattr__(self, attr):
         return getattr(self._session, attr)
 
-    def request(self, *args, **kwargs):
+    def request(self, raw=False, *args, **kwargs):
         if 'timeout' not in kwargs:
             kwargs['timeout'] = self.timeout
 
@@ -39,7 +39,8 @@ class APISession:
             else:
                 break
 
-        resp = APIResponse(resp)
+        if not raw:
+            resp = APIResponse(resp)
         return resp
 
     def get(self, url, *args, **kwargs):
@@ -70,6 +71,8 @@ class APIResponse(dict, Response):
         try:
             response.raise_for_status()
         except Exception as e:
+            if response.status_code == 405:
+                raise NotImplementedError
             raise APIResponseError(response.text or e)
 
         self._raw_response = response
@@ -167,6 +170,8 @@ class BaseResourcesClient():
                 self.api_endpoint,
                 params=kwargs
             )
+        except NotImplementedError:
+            raise NotImplementedError('List not support for resource: {}'.format(self.api_resource))
         except Exception as e:
             raise self.exception(e)
 
@@ -185,20 +190,30 @@ class BaseResourcesClient():
         ]
         return resources
 
-    def get(self, uuid):
+    def get(self, uuid, **kwargs):
         """
         Get a resource by uuid.
         """
+
+        raw = kwargs.pop('raw', False)
 
         url = urljoin(
             self._afs_client.api_endpoint, '{}/{}'.format(self.api_path, uuid)
         )
 
         try:
-            resp = self._afs_client.session.get(url)
+            resp = self._afs_client.session.get(
+                url,
+                params=kwargs,
+                raw=raw
+            )
+        except NotImplementedError:
+            raise NotImplementedError('Get not support for resource {}'.format(self.api_resource))
         except Exception as e:
             raise self.exception(e)
 
+        if raw:
+            return resp
         return self.resource_model(resource_client=self, api_endpoint=url, **resp)
 
     def create(self, **kwargs):
@@ -210,6 +225,8 @@ class BaseResourcesClient():
                 self.api_endpoint,
                 json=kwargs
             )
+        except NotImplementedError:
+            raise NotImplementedError('Create not support for resource {}'.format(self.api_resource))
         except Exception as e:
             raise self.exception(e)
 
@@ -229,6 +246,8 @@ class BaseResourcesClient():
 
         try:
             resp = self._afs_client.session.put(url)
+        except NotImplementedError:
+            raise NotImplementedError('Update not support for resource {}'.format(self.api_resource))
         except Exception as e:
             raise self.exception(e)
 
@@ -245,7 +264,10 @@ class BaseResourcesClient():
 
         try:
             resp = self._afs_client.session.delete(url)
+        except NotImplementedError:
+            raise NotImplementedError('Delete not support for resource {}'.format(self.api_resource))
         except Exception as e:
             raise self.exception(e)
 
-        return self.resource_model(resource_client=self, api_endpoint=url, **resp)
+        return {}
+        # return self.resource_model(resource_client=self, api_endpoint=url, **resp)
