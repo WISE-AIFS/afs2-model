@@ -12,17 +12,21 @@ Reference documents [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/)
 Support python version 3.5 or later
 
 
-### pip install on AFS online code IDE
+### pip install on AFS notebook
+
+
+AFS provides the release version SDK on private pypi server. Run the following command on notebook cell to install SDK:
  
-### On public cloud (RELEASE)
 ```
-$ pip install git+https://github.com/benchuang11046/afs.git
+!pip install afs
 ```
 
+List the installed packages.
 
-#### On private cloud
+![](docs/_static/images/pip_install_on_notebook.png)
 
-[Install Documents](https://afs-docs.readthedocs.io/en/latest/sdk/docs/InstallDependencies.html)
+
+## Develop
 
 
 ### (For SDK developer) From sources

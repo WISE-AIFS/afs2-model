@@ -5,9 +5,10 @@
 
 ### upload_models
 
-How to upload a model file on workspace. 
+How to upload a model file on notebook. 
 
 **Code**
+
 ```
 from afs import models
 
@@ -35,10 +36,10 @@ afs_models = models()
 # Upload the model to repository and the repository name is the same as file name.
 # Accuracy and loss is necessary, but extra_evaluation and tags are optional.
 afs_models.upload_model(
-    'model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags)
+    model_path='model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5')
 
 # Get the latest model info 
-model_info = afs_models.get_latest_model_info('model.h5')
+model_info = afs_models.get_latest_model_info(model_repository_name='model.h5')
 
 # See the model info
 print(model_info)
@@ -66,20 +67,25 @@ print(model_info)
 ```
 
 
-
 ### get_latest_model_info
 
 **Code**
 ```
 from afs import models
 afs_models = models()
-afs_models.get_latest_model_info('test_model.h5')
+afs_models.get_latest_model_info(model_repository_name='model.h5')
 ```
+
 **Output**
 ```
-{'evaluation_result': {'accuracy': 0.123, 'loss': 0.123},
- 'tags': {},
- 'created_at': '2018-09-11 10:15:54'}
+{
+	'evaluation_result': {
+		'accuracy': 0.123,
+		'loss': 0.123
+	},
+	'tags': {},
+	'created_at': '2018-09-11 10:15:54'
+}
 ```
 
 
