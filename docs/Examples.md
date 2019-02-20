@@ -18,16 +18,14 @@ with open('model.h5', 'w') as f:
 
 # User-define evaluation result
 extra_evaluation = {
-    'confusion_matrix': {
-        'TP': 0.9,
-        'FP': 0.8,
-        'TN': 0.7,
-        'FN': 0.6
-    },
+    'confusion_matrix_TP': 0.9,
+    'confusion_matrix_FP': 0.8,
+    'confusion_matrix_TN': 0.7,
+    'confusion_matrix_FN': 0.6,
     'AUC': 1.0
 }
 
-# Tags means 
+# User-define Tags 
 tags = {'machine': 'machine01'}
 
 # Model object
