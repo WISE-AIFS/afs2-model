@@ -23,8 +23,7 @@ AFS provides the release version SDK on private pypi server. Run the following c
 
 List the installed packages.
 
-![](docs/_static/images/pip_install_on_notebook.png)
-
+![Imgur](https://i.imgur.com/BmMeqR1.png)
 
 ## Develop
 
