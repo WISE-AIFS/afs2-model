@@ -7,6 +7,15 @@ from .sso import SSOClient
 class AFSClient:
     """
     Client class for AFS.
+
+    :param str api_endpoint: The api endpoint of AFS server.
+    :param str api_version: The version of AFS API.
+    :param str sso_api_version: The SSO API version. Default is **v2.0**.
+    :param str token: The SSO token used to access resources on EI-PaaS platform.
+    :param str username: The SSO username used to sign in to EI-PaaS platform.
+    :param str password: The SSO password used to sign in to EI-PaaS platform.
+    :param bool ssl: Set to False can ignore SSL verify. Default is **True**.
+    :raises AFSClientError: If get api version from AFS server failed or no available token.
     """
 
     def __init__(
@@ -57,6 +66,13 @@ class AFSClient:
         self.instances = InstancesClient(self)
 
     def get_api_info(self):
+        """
+        Get api information from AFS server.
+
+        :return: The response from AFS server.
+        :rtype: APIResponse
+        :raises AFSClientError: Any error during request to or response from AFS Server.
+        """
         try:
             resp = self._session.get(self.api_endpoint)
         except Exception as e:
@@ -64,6 +80,13 @@ class AFSClient:
         return resp
 
     def get_api_version(self):
+        """
+        Get current API version from AFS server.
+
+        :return: The AFS API version.
+        :rtype: str
+        :raises AFSClientError: Can not get API_version from AFS Server.
+        """
         api_info = self.get_api_info()
         api_version = api_info.get('API_version')
         if not api_version:

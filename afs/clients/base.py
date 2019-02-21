@@ -10,7 +10,12 @@ from .exceptions import AFSClientError, APIRequestError, APIResponseError
 # TODO: Support aiohttp
 class APISession(Session):
     """
-    Default API session with timeout and retry
+    Default API session with timeout and retry.
+
+    :param int timeout: The seconds of timeout for all requests.
+    :param int retry: The numbers to retry when any error happened.
+    :param str token: The token used to authenticate with API Server.
+    :param bool ssl: Set to False can ignore SSL verify. Default is **True**.
     """
 
     def __init__(
@@ -76,6 +81,13 @@ class APISession(Session):
 
 
 class APIResponse(dict):
+    """
+    Default API response with status check and convert to python dictionary.
+
+    :param request.Response response: The response from API Server.
+    :return: The python dictionary of response.
+    :rtype: dict
+    """
     def __init__(self, response):
         try:
             response.raise_for_status()
@@ -91,6 +103,12 @@ class APIResponse(dict):
             super().__init__(**self.to_dict())
 
     def to_dict(self):
+        """
+        Convert response to python dictionary.
+
+        :return: The python dictionary of response.
+        :raises APIResponseError: Raised when response can not convert to python dictionary.
+        """
         try:
             resp = self._raw_response.json()
         except Exception:
@@ -103,7 +121,13 @@ class APIResponse(dict):
 
 class BaseResourceModel(dict):
     """
-    The base class for all resource model
+    The base class for all resource model.
+
+    :param BaseResourcesClient resource_client: The resource client of this resource model.
+    :param str api_endpoint: The full api endpoint of this resource model.
+    :param str resource: The name of this resource.
+    :param func json_loads: The load function used to load data from JSON string.
+    :param func json_dumps: The dump function used to dump data to JSON string.
     """
 
     def __init__(
@@ -135,26 +159,44 @@ class BaseResourceModel(dict):
     def loads(self, json_string):
         """
         Load json into attributes.
+
+        :param str json_string: The JSON string from API response.
         """
-        for key, value in self.json_loads(json_string).items():
-            self[key] = value
+        json_content = self.json_loads(json_string)
+        super().__init__(json_content)
+        for key, value in json_content.items():
+            setattr(self, key, value)
 
     def dumps(self):
         """
         Dump attributes to JSON string.
+
+        :return: The JSON string of resource model.
         """
         return self.json_dumps(self)
 
     def update(self, **kwargs):
+        """
+        The update function of this resource.
+        """
         return self._resource_client.update(uuid=self.uuid, **kwargs)
 
     def delete(self):
+        """
+        The delete function of this resource.
+        """
         return self._resource_client.delete(uuid=self.uuid)
 
 
 class BaseResourcesClient():
     """
     The base resource class for all clients.
+
+    :param afs.AFSClient afs_client: The AFSClient object.
+    :param str api_resource: The name of this resource.
+    :param str api_path: Full path of this resource.
+    :param BaseResourceModel resource_model: The resource model of this resource client.
+    :param exception exception: The exception class when any error happened in this resource client.
     """
 
     def __init__(
@@ -177,7 +219,15 @@ class BaseResourcesClient():
 
     def __call__(self, uuid=None, start=0, limit=10, **kwargs):
         """
-        List all resources.
+        List all resources or get a resource by provide a uuid.
+
+        :param str uuid: The uuid of one resource.
+        :param int start: The index number start to list.
+        :param int limit: The number to list in each request.
+        :return: A list of resources or a resouce with inouted uuid.
+        :rtype: list of self.resource_model or self.resource_model
+        :raises self.exception: Any error during request to or response from API Server.
+        :raises NotImplementedError: API Server does not support this operation.
         """
 
         if uuid:
@@ -221,6 +271,12 @@ class BaseResourcesClient():
     def get(self, uuid, **kwargs):
         """
         Get a resource by uuid.
+
+        :param str uuid: The uuid of resource.
+        :return: A resource.
+        :rtype: self.resource_model
+        :raises self.exception: Any error during request to or response from API Server.
+        :raises NotImplementedError: API Server does not support this operation.
         """
 
         raw = kwargs.pop('raw', False)
@@ -247,6 +303,11 @@ class BaseResourcesClient():
     def create(self, **kwargs):
         """
         Create a new resource.
+
+        :return: A resource.
+        :rtype: self.resource_model
+        :raises self.exception: Any error during request to or response from API Server.
+        :raises NotImplementedError: API Server does not support this operation.
         """
         try:
             resp = self._afs_client._session.post(
@@ -270,6 +331,13 @@ class BaseResourcesClient():
     def update(self, uuid, **kwargs):
         """
         Update a resource.
+
+        :param str uuid: The uuid of resource.
+        :return: A resource.
+        :rtype: self.resource_model
+        :raises self.exception: Any error during request to or response from API Server.
+        :raises NotImplementedError: API Server does not support this operation.
+        
         """
 
         url = '{}/{}'.format(self.api_endpoint, uuid)
@@ -292,6 +360,12 @@ class BaseResourcesClient():
     def delete(self, uuid):
         """
         Delete a resource.
+
+        :param str uuid: The uuid of resource.
+        :return: {}
+        :rtype: dict
+        :raises self.exception: Any error during request to or response from API Server.
+        :raises NotImplementedError: API Server does not support this operation.
         """
 
         url = '{}/{}'.format(self.api_endpoint, uuid)

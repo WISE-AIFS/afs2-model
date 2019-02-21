@@ -1,9 +1,12 @@
 from .base import BaseResourceModel, BaseResourcesClient
 from .exceptions import InstancesClientError
-from .mode_repositories import ModelRpositoriesClient
+from .model_repositories import ModelRpositoriesClient
 
 
 class Instance(BaseResourceModel):
+    """
+    Resource model for Instance resource of AFS v2 API.
+    """
     def __init__(self, resource_client, *args, **kwargs):
         resource = 'instance'
         super().__init__(
@@ -21,6 +24,9 @@ class Instance(BaseResourceModel):
 
 
 class InstancesClient(BaseResourcesClient):
+    """
+    Client for Instance resource of AFS v2 API.
+    """
     def __init__(self, afs_client, *args, **kwargs):
         api_resource = 'instances'
         api_path = '{}/{}'.format(afs_client.api_version, api_resource)

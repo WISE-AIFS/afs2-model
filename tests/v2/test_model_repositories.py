@@ -1,5 +1,5 @@
 import pytest
-from afs.clients.mode_repositories import ModelRepository
+from afs.clients.model_repositories import ModelRepository
 
 
 @pytest.fixture(scope='module')

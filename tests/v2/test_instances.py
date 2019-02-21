@@ -1,7 +1,7 @@
 import pytest
 
 from afs.clients.instances import Instance
-from afs.clients.mode_repositories import ModelRpositoriesClient
+from afs.clients.model_repositories import ModelRpositoriesClient
 
 
 def test_list_instances(afs_client):
