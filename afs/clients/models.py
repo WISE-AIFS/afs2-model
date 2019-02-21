@@ -27,16 +27,16 @@ class ModelsClient(BaseResourcesClient):
     """
 
     def __init__(self, afs_client, instance_id, model_repository_id, *args, **kwargs):
-        resource = 'models'
-        path = '{api_version}/instances/{instance_id}/model_repositories/{model_repository_id}/{resource}'.format(
+        api_resource = 'models'
+        api_path = '{api_version}/instances/{instance_id}/model_repositories/{model_repository_id}/{api_resource}'.format(
             api_version=afs_client.api_version,
             instance_id=instance_id,
             model_repository_id=model_repository_id,
-            resource=resource)
+            api_resource=api_resource)
         super().__init__(
             afs_client=afs_client,
-            resource=resource,
-            path=path,
+            api_resource=api_resource,
+            api_path=api_path,
             resource_model=Model,
             exception=ModelsClientError,
             *args,
@@ -68,7 +68,7 @@ class ModelsClient(BaseResourcesClient):
             kwargs['tags'] = json_dumps(kwargs['tags'])
 
         try:
-            resp = self._afs_client.session.post(
+            resp = self._afs_client._session.post(
                 self.api_endpoint,
                 files={'model': open(model_path, 'rb')},
                 data=kwargs

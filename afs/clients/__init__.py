@@ -15,10 +15,9 @@ class AFSClient:
                  sso_api_version: str = 'v2.0',
                  token: str = None,
                  username: str = None,
-                 password: str = None,
-                 session=None):
+                 password: str = None):
 
-        self.session = APISession(session=session)
+        self._session = APISession()
 
         # TODO: URL check
         self.api_endpoint = api_endpoint
@@ -26,26 +25,27 @@ class AFSClient:
 
         # Setup SSO client and token
         sso_endpoint = self.api_endpoint.replace('api-afs', 'portal-sso')
-        self.sso = SSOClient(api_endpoint=sso_endpoint, api_version=sso_api_version)
+        self.sso = SSOClient(api_endpoint=sso_endpoint, api_version=sso_api_version, session=self._session)
 
         if token:
-            self.token = token
+            pass
 
         elif username and password:
-            self.token = self.sso.get_sso_token(username=username, password=password)
+            token = self.sso.get_sso_token(username=username, password=password)
 
         else:
             raise AFSClientError('No available token or user for SSO')
 
-        self.session.headers.update({
-            'Authorization': 'Bearer {}'.format(self.token)
+        self._session.headers.update({
+            'Authorization': 'Bearer {}'.format(token)
         })
+        self._session.enable_auto_refresh_token(token, self.sso.refresh_sso_token)
 
         self.instances = InstancesClient(self)
 
     def get_api_info(self):
         try:
-            resp = self.session.get(self.api_endpoint)
+            resp = self._session.get(self.api_endpoint)
         except Exception as e:
             raise AFSClientError(e)
         return resp

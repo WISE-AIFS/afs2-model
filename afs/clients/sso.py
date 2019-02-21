@@ -10,7 +10,9 @@ class SSOClient:
     def __init__(self, api_endpoint, api_version: str = 'v2', session=None):
         self.api_endpoint = api_endpoint
         self.api_version = api_version
-        self._session = APISession(session=session)
+        if not session:
+            session = APISession()
+        self._session = session
 
     def get_sso_token(self, username: str, password: str):
         path = '{}/auth/native'.format(self.api_version)

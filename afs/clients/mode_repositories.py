@@ -20,12 +20,12 @@ class ModelRpositoriesClient(BaseResourcesClient):
     """
 
     def __init__(self, afs_client, instance_id, *args, **kwargs):
-        resource = 'model_repositories'
-        path = '{}/instances/{}/{}'.format(afs_client.api_version, instance_id, resource)
+        api_resource = 'model_repositories'
+        api_path = '{}/instances/{}/{}'.format(afs_client.api_version, instance_id, api_resource)
         super().__init__(
             afs_client=afs_client,
-            resource=resource,
-            path=path,
+            api_resource=api_resource,
+            api_path=api_path,
             resource_model=ModelRepository,
             exception=ModelRepositoriesClientError,
             *args,
