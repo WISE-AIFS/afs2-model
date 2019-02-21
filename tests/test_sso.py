@@ -16,3 +16,10 @@ def test_get_sso_token(sso_client):
     token = sso_client.get_sso_token(username=username, password=password)
 
     assert isinstance(token, str)
+
+
+def test_refresh_sso_token(sso_client):
+    token = sso_client._session.token
+    new_token = sso_client.refresh_sso_token(token)
+
+    assert token != new_token

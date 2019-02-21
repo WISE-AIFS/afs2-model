@@ -29,7 +29,7 @@ def test_afs_client():
         password=os.getenv('TEST_PASSWORD')
     )
 
-    session = getattr(afs_client, 'session')
+    session = getattr(afs_client, '_session')
     assert isinstance(session, APISession)
 
     api_endpoint = getattr(afs_client, 'api_endpoint')
@@ -41,7 +41,7 @@ def test_afs_client():
     assert isinstance(sso_client, SSOClient)
 
     # Check token and this token is set at session's headers
-    token = getattr(afs_client, 'token')
+    token = getattr(afs_client._session, 'token')
     assert isinstance(token, str)
     assert 'Bearer {}'.format(token) == session.headers.get('Authorization')
 
@@ -56,7 +56,7 @@ def test_afs_client_with_sso_token(sso_token):
         token=sso_token
     )
 
-    session = getattr(afs_client, 'session')
+    session = getattr(afs_client, '_session')
     assert isinstance(session, APISession)
 
     api_endpoint = getattr(afs_client, 'api_endpoint')
@@ -68,7 +68,7 @@ def test_afs_client_with_sso_token(sso_token):
     assert isinstance(sso_client, SSOClient)
 
     # Check token and this token is set at session's headers
-    token = getattr(afs_client, 'token')
+    token = getattr(afs_client._session, 'token')
     assert isinstance(token, str)
     assert 'Bearer {}'.format(token) == session.headers.get('Authorization')
 
