@@ -9,14 +9,16 @@ class AFSClient:
     Client class for AFS.
     """
 
-    def __init__(self,
-                 api_endpoint,
-                 api_version: str = None,
-                 sso_api_version: str = 'v2.0',
-                 token: str = None,
-                 username: str = None,
-                 password: str = None,
-                 ssl=True):
+    def __init__(
+            self,
+            api_endpoint,
+            api_version: str = None,
+            sso_api_version: str = 'v2.0',
+            token: str = None,
+            username: str = None,
+            password: str = None,
+            ssl=True
+    ):
 
         self._session = APISession(ssl=ssl)
 
@@ -26,21 +28,31 @@ class AFSClient:
 
         # Setup SSO client and token
         sso_endpoint = self.api_endpoint.replace('api-afs', 'portal-sso')
-        self.sso = SSOClient(api_endpoint=sso_endpoint, api_version=sso_api_version, session=self._session)
+        self.sso = SSOClient(
+            api_endpoint=sso_endpoint,
+            api_version=sso_api_version,
+            session=self._session
+        )
 
         if token:
             pass
 
         elif username and password:
-            token = self.sso.get_sso_token(username=username, password=password)
+            token = self.sso.get_sso_token(
+                username=username,
+                password=password
+            )
 
         else:
             raise AFSClientError('No available token or user for SSO')
 
-        self._session.headers.update({
-            'Authorization': 'Bearer {}'.format(token)
-        })
-        self._session.enable_auto_refresh_token(token, self.sso.refresh_sso_token)
+        self._session.headers.update(
+            {'Authorization': 'Bearer {}'.format(token)}
+        )
+        self._session.enable_auto_refresh_token(
+            token,
+            self.sso.refresh_sso_token
+        )
 
         self.instances = InstancesClient(self)
 

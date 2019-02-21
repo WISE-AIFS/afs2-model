@@ -12,7 +12,16 @@ class APISession(Session):
     """
     Default API session with timeout and retry
     """
-    def __init__(self, timeout: int = 7, retry: int = 3, token=None, ssl=True, *args, **kwargs):
+
+    def __init__(
+            self,
+            timeout: int = 7,
+            retry: int = 3,
+            token=None,
+            ssl=True,
+            *args,
+            **kwargs
+    ):
         self.timeout = timeout
         self.retry = retry
         self.token = token
@@ -41,9 +50,9 @@ class APISession(Session):
                 # Auto refresh token
                 if resp.status_code == 401 and self.auto_refresh_token:
                     self.token = self.refresh_token(self.token)
-                    self.headers.update({
-                        'Authorization': 'Bearer {}'.format(self.token)
-                    })
+                    self.headers.update(
+                        {'Authorization': 'Bearer {}'.format(self.token)}
+                    )
                     continue
 
                 else:
@@ -67,7 +76,6 @@ class APISession(Session):
 
 
 class APIResponse(dict):
-
     def __init__(self, response):
         try:
             response.raise_for_status()
@@ -86,7 +94,9 @@ class APIResponse(dict):
         try:
             resp = self._raw_response.json()
         except Exception:
-            raise APIResponseError('Invalid JSON response: {}'.format(self._raw_response.text))
+            raise APIResponseError(
+                'Invalid JSON response: {}'.format(self._raw_response.text)
+            )
 
         return resp
 
@@ -96,7 +106,16 @@ class BaseResourceModel(dict):
     The base class for all resource model
     """
 
-    def __init__(self, resource_client, api_endpoint, resource=None, json_loads=None, json_dumps=None, *args, **kwargs):
+    def __init__(
+            self,
+            resource_client,
+            api_endpoint,
+            resource=None,
+            json_loads=None,
+            json_dumps=None,
+            *args,
+            **kwargs
+    ):
         super().__init__(kwargs)
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -138,11 +157,21 @@ class BaseResourcesClient():
     The base resource class for all clients.
     """
 
-    def __init__(self, afs_client, api_resource, api_path, resource_model, exception=None):
+    def __init__(
+            self,
+            afs_client,
+            api_resource,
+            api_path,
+            resource_model,
+            exception=None
+    ):
         self._afs_client = afs_client
         self.api_resource = api_resource
         self.api_path = api_path
-        self.api_endpoint = urljoin(self._afs_client.api_endpoint, self.api_path)
+        self.api_endpoint = urljoin(
+            self._afs_client.api_endpoint,
+            self.api_path
+        )
         self.resource_model = resource_model or BaseResourceModel
         self.exception = exception or AFSClientError
 
@@ -154,10 +183,7 @@ class BaseResourcesClient():
         if uuid:
             return self.get(uuid=uuid)
 
-        kwargs.update({
-            'start': start,
-            'limit': limit
-        })
+        kwargs.update({'start': start, 'limit': limit})
 
         try:
             resp = self._afs_client._session.get(
@@ -165,13 +191,17 @@ class BaseResourcesClient():
                 params=kwargs
             )
         except NotImplementedError:
-            raise NotImplementedError('List not support for resource: {}'.format(self.api_resource))
+            raise NotImplementedError(
+                'List not support for resource: {}'.format(self.api_resource)
+            )
         except Exception as e:
             raise self.exception(e)
 
         resources = resp.get('resources')
         if resources is None:
-            raise self.exception('List all {} failed'.format(self.api_resource))
+            raise self.exception(
+                'List all {} failed'.format(self.api_resource)
+            )
 
         pagination = resp.get('pagination')
         self.total = pagination.get('total', len(resources))
@@ -179,8 +209,12 @@ class BaseResourcesClient():
         resources = [
             self.resource_model(
                 resource_client=self,
-                api_endpoint='{}/{}'.format(self.api_endpoint, resource['uuid']),
-                **resource) for resource in resources
+                api_endpoint='{}/{}'.format(
+                    self.api_endpoint,
+                    resource['uuid']
+                ),
+                **resource
+            ) for resource in resources
         ]
         return resources
 
@@ -194,19 +228,21 @@ class BaseResourcesClient():
         url = '{}/{}'.format(self.api_endpoint, uuid)
 
         try:
-            resp = self._afs_client._session.get(
-                url,
-                params=kwargs,
-                raw=raw
-            )
+            resp = self._afs_client._session.get(url, params=kwargs, raw=raw)
         except NotImplementedError:
-            raise NotImplementedError('Get not support for resource {}'.format(self.api_resource))
+            raise NotImplementedError(
+                'Get not support for resource {}'.format(self.api_resource)
+            )
         except Exception as e:
             raise self.exception(e)
 
         if raw:
             return resp
-        return self.resource_model(resource_client=self, api_endpoint=url, **resp.to_dict())
+        return self.resource_model(
+            resource_client=self,
+            api_endpoint=url,
+            **resp.to_dict()
+        )
 
     def create(self, **kwargs):
         """
@@ -218,14 +254,18 @@ class BaseResourcesClient():
                 json=kwargs
             )
         except NotImplementedError:
-            raise NotImplementedError('Create not support for resource {}'.format(self.api_resource))
+            raise NotImplementedError(
+                'Create not support for resource {}'.format(self.api_resource)
+            )
         except Exception as e:
             raise self.exception(e)
 
         return self.resource_model(
             resource_client=self,
-            api_endpoint='{}/{}'.format(self.api_endpoint, resp['uuid']),
-            **resp.to_dict())
+            api_endpoint='{}/{}'.format(self.api_endpoint,
+                                        resp['uuid']),
+            **resp.to_dict()
+        )
 
     def update(self, uuid, **kwargs):
         """
@@ -237,11 +277,17 @@ class BaseResourcesClient():
         try:
             resp = self._afs_client._session.put(url)
         except NotImplementedError:
-            raise NotImplementedError('Update not support for resource {}'.format(self.api_resource))
+            raise NotImplementedError(
+                'Update not support for resource {}'.format(self.api_resource)
+            )
         except Exception as e:
             raise self.exception(e)
 
-        return self.resource_model(resource_client=self, api_endpoint=url, **resp.to_dict())
+        return self.resource_model(
+            resource_client=self,
+            api_endpoint=url,
+            **resp.to_dict()
+        )
 
     def delete(self, uuid):
         """
@@ -253,7 +299,9 @@ class BaseResourcesClient():
         try:
             resp = self._afs_client._session.delete(url)
         except NotImplementedError:
-            raise NotImplementedError('Delete not support for resource {}'.format(self.api_resource))
+            raise NotImplementedError(
+                'Delete not support for resource {}'.format(self.api_resource)
+            )
         except Exception as e:
             raise self.exception(e)
 

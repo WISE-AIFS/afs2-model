@@ -10,11 +10,14 @@ class Instance(BaseResourceModel):
             resource_client=resource_client,
             resource=resource,
             *args,
-            **kwargs)
+            **kwargs
+        )
 
         # Add sub-resource client if needed
         self.model_repositories = ModelRpositoriesClient(
-            afs_client=resource_client._afs_client, instance_id=self.uuid)
+            afs_client=resource_client._afs_client,
+            instance_id=self.uuid
+        )
 
 
 class InstancesClient(BaseResourcesClient):
@@ -28,4 +31,5 @@ class InstancesClient(BaseResourcesClient):
             resource_model=Instance,
             exception=InstancesClientError,
             *args,
-            **kwargs)
+            **kwargs
+        )

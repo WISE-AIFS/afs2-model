@@ -20,7 +20,10 @@ class SSOClient:
 
         resp = self._session.post(
             url,
-            json={'username': username, 'password': password}
+            json={
+                'username': username,
+                'password': password
+            }
         )
 
         token = resp.get('accessToken')
@@ -30,10 +33,7 @@ class SSOClient:
         return token
 
     def get_refresh_token(self, token):
-        decoded_token = jwt_decode(
-            token,
-            verify=False
-        )
+        decoded_token = jwt_decode(token, verify=False)
         refresh_token = decoded_token.get('refreshToken')
         if not refresh_token:
             raise SSOException('No refreshToken in response')
@@ -44,10 +44,7 @@ class SSOClient:
         url = urljoin(self.api_endpoint, path)
 
         refresh_token = self.get_refresh_token(token)
-        resp = self._session.post(
-            url,
-            json={'token': refresh_token}
-        )
+        resp = self._session.post(url, json={'token': refresh_token})
 
         token = resp.get('accessToken')
         if not token:

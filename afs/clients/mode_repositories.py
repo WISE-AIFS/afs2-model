@@ -14,12 +14,14 @@ class ModelRepository(BaseResourceModel):
             resource_client=resource_client,
             resource=resource,
             *args,
-            **kwargs)
+            **kwargs
+        )
 
         self.models = ModelsClient(
             resource_client._afs_client,
             instance_id=self.owner,
-            model_repository_id=self.uuid)
+            model_repository_id=self.uuid
+        )
 
 
 class ModelRpositoriesClient(BaseResourcesClient):
@@ -29,7 +31,11 @@ class ModelRpositoriesClient(BaseResourcesClient):
 
     def __init__(self, afs_client, instance_id, *args, **kwargs):
         api_resource = 'model_repositories'
-        api_path = '{}/instances/{}/{}'.format(afs_client.api_version, instance_id, api_resource)
+        api_path = '{}/instances/{}/{}'.format(
+            afs_client.api_version,
+            instance_id,
+            api_resource
+        )
         super().__init__(
             afs_client=afs_client,
             api_resource=api_resource,
@@ -37,4 +43,5 @@ class ModelRpositoriesClient(BaseResourcesClient):
             resource_model=ModelRepository,
             exception=ModelRepositoriesClientError,
             *args,
-            **kwargs)
+            **kwargs
+        )

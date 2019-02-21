@@ -13,11 +13,16 @@ class Model(BaseResourceModel):
             resource_client=resource_client,
             resource=resource,
             *args,
-            **kwargs)
+            **kwargs
+        )
 
     @property
     def binary(self):
-        return self._resource_client.get(self.uuid, alt='media', raw=True).content
+        return self._resource_client.get(
+            self.uuid,
+            alt='media',
+            raw=True
+        ).content
 
     def download(self, model_path):
         with open(model_path, 'wb') as f:
@@ -30,13 +35,21 @@ class ModelsClient(BaseResourcesClient):
     Client for Models resource of AFS v2 API.
     """
 
-    def __init__(self, afs_client, instance_id, model_repository_id, *args, **kwargs):
+    def __init__(
+            self,
+            afs_client,
+            instance_id,
+            model_repository_id,
+            *args,
+            **kwargs
+    ):
         api_resource = 'models'
         api_path = '{api_version}/instances/{instance_id}/model_repositories/{model_repository_id}/{api_resource}'.format(
             api_version=afs_client.api_version,
             instance_id=instance_id,
             model_repository_id=model_repository_id,
-            api_resource=api_resource)
+            api_resource=api_resource
+        )
         super().__init__(
             afs_client=afs_client,
             api_resource=api_resource,
@@ -44,7 +57,8 @@ class ModelsClient(BaseResourcesClient):
             resource_model=Model,
             exception=ModelsClientError,
             *args,
-            **kwargs)
+            **kwargs
+        )
 
     def create(self, json_dumps=None, **kwargs):
         """
@@ -63,7 +77,9 @@ class ModelsClient(BaseResourcesClient):
             from json import dumps as json_dumps
 
         if 'evaluation_result' in kwargs:
-            kwargs['evaluation_result'] = json_dumps(kwargs['evaluation_result'])
+            kwargs['evaluation_result'] = json_dumps(
+                kwargs['evaluation_result']
+            )
 
         if 'parameters' in kwargs:
             kwargs['parameters'] = json_dumps(kwargs['parameters'])
@@ -74,7 +90,8 @@ class ModelsClient(BaseResourcesClient):
         try:
             resp = self._afs_client._session.post(
                 self.api_endpoint,
-                files={'model': open(model_path, 'rb')},
+                files={'model': open(model_path,
+                                     'rb')},
                 data=kwargs
             )
         except Exception as e:
@@ -82,5 +99,7 @@ class ModelsClient(BaseResourcesClient):
 
         return self.resource_model(
             resource_client=self,
-            api_endpoint='{}/{}'.format(self.api_endpoint, resp['uuid']),
-            **resp)
+            api_endpoint='{}/{}'.format(self.api_endpoint,
+                                        resp['uuid']),
+            **resp
+        )
