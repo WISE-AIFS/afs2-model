@@ -9,7 +9,11 @@ class Model(BaseResourceModel):
 
     def __init__(self, resource_client, *args, **kwargs):
         resource = 'model'
-        super().__init__(resource_client=resource_client, resource=resource, *args, **kwargs)
+        super().__init__(
+            resource_client=resource_client,
+            resource=resource,
+            *args,
+            **kwargs)
 
     @property
     def binary(self):

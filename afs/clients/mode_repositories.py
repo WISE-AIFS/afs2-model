@@ -10,8 +10,16 @@ class ModelRepository(BaseResourceModel):
 
     def __init__(self, resource_client, *args, **kwargs):
         resource = 'model_erpository'
-        super().__init__(resource_client=resource_client, resource=resource, *args, **kwargs)
-        self.models = ModelsClient(resource_client._afs_client, instance_id=self.owner, model_repository_id=self.uuid)
+        super().__init__(
+            resource_client=resource_client,
+            resource=resource,
+            *args,
+            **kwargs)
+
+        self.models = ModelsClient(
+            resource_client._afs_client,
+            instance_id=self.owner,
+            model_repository_id=self.uuid)
 
 
 class ModelRpositoriesClient(BaseResourcesClient):
