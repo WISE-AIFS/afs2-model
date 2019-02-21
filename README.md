@@ -1,21 +1,21 @@
 # AFS SDK
 
+[![Python version](https://img.shields.io/badge/python-3.5+-blue.svg)](https://www.python.org/download/releases/3.5.0/)
+![GitHub release](https://img.shields.io/github/release/benchuang11046/afs.svg)
 [![Documentation Status](https://readthedocs.org/projects/afs-docs/badge/?version=latest)](https://afs-docs.readthedocs.io/en/latest/?badge=latest)
-
+[![codecov](https://codecov.io/gh/benchuang11046/afs/branch/master/graph/badge.svg)](https://codecov.io/gh/benchuang11046/afs)
 
 ## Documents
-Reference documents [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/)
+
+Documents on [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/).
 
 
 ## Installation
 
-Support python version 3.5 or later
-
-
 ### pip install on AFS notebook
 
 
-AFS provides the release version SDK on private pypi server. Run the following command on notebook cell to install SDK:
+`AFS-SDK` provides the latest release on PyPI mirror at EI-PaaS platform. You can run the following command in notebook to install this SDK:
  
 ```
 !pip install afs
@@ -25,25 +25,7 @@ List the installed packages.
 
 ![Imgur](https://i.imgur.com/BmMeqR1.png)
 
-## Develop
 
+## Need any help?
 
-### (For SDK developer) From sources
-
-1. Clone the repository to local.
-
-2. To build the library run:
-```
-$ python setup.py install
-```
-
-### (For SDK developer) Build from source
-
-1. Clone the repository to local.
-
-2. To build the wheel package:
-```
-$ python setup.py bdist_wheel
-```
-
-3. .whl will be in dist/ 
+Feel free to open issue and we will get in touch ASAP.
