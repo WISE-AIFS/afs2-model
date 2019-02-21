@@ -12,7 +12,7 @@ class APISession(Session):
     """
     Default API session with timeout and retry
     """
-    def __init__(self, timeout: int = 7, retry: int = 3, token=None, *args, **kwargs):
+    def __init__(self, timeout: int = 7, retry: int = 3, token=None, ssl=True, *args, **kwargs):
         self.timeout = timeout
         self.retry = retry
         self.token = token
@@ -20,6 +20,7 @@ class APISession(Session):
 
         super().__init__(*args, **kwargs)
         self.mount(prefix='*', adapter=HTTPAdapter(max_retries=self.retry))
+        self.verify = ssl
 
     def request(self, *args, **kwargs):
         raw = kwargs.pop('raw', None)

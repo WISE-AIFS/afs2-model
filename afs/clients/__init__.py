@@ -15,9 +15,10 @@ class AFSClient:
                  sso_api_version: str = 'v2.0',
                  token: str = None,
                  username: str = None,
-                 password: str = None):
+                 password: str = None,
+                 ssl=True):
 
-        self._session = APISession()
+        self._session = APISession(ssl=ssl)
 
         # TODO: URL check
         self.api_endpoint = api_endpoint

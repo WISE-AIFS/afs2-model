@@ -8,6 +8,7 @@ from afs import AFSClient
 from afs.clients.base import APISession
 from afs.clients.instances import InstancesClient
 from afs.clients.sso import SSOClient
+from urllib3.exceptions import InsecureRequestWarning
 
 
 @pytest.fixture()
@@ -89,3 +90,13 @@ def test_get_api_version(afs_client):
     api_version = afs_client.get_api_version()
     assert isinstance(api_version, str)
     assert api_version == 'v2'
+
+
+def test_ssl_ignore():
+    with pytest.warns(InsecureRequestWarning):
+        afs_client = AFSClient(
+        api_endpoint=os.getenv('TEST_AFS_API_SERVER'),
+        username=os.getenv('TEST_USERNAME'),
+        password=os.getenv('TEST_PASSWORD'),
+        ssl=False
+    )
