@@ -1,22 +1,23 @@
+from datetime import datetime
+
 import pytest
+
 from afs.clients.model_repositories import ModelRepository
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def model_repositories_client(instance):
     yield instance.model_repositories
 
 
 @pytest.fixture()
 def model_repo_name():
-    yield 'sdk_model_repo_test_fixture'
+    yield "sdk_model_repo_test_fixture_{}".format(datetime.utcnow())
 
 
 @pytest.fixture()
 def model_repository(model_repositories_client, model_repo_name):
-    manifest = {
-        'name': model_repo_name
-    }
+    manifest = {"name": model_repo_name}
 
     model_repository = model_repositories_client.create(**manifest)
     yield model_repository
@@ -47,10 +48,12 @@ def test_list_model_repositories(model_repositories_client):
 
     model_repositories = model_repositories_client()
     assert isinstance(model_repositories, list)
-    assert len(model_repositories) == 0
+    assert len(model_repositories) >= 0
 
 
-def test_create_model_repository(model_repositories_client, model_repo_name, remove_model_repository):
+def test_create_model_repository(
+    model_repositories_client, model_repo_name, remove_model_repository
+):
 
     model_repository = model_repositories_client.create(name=model_repo_name)
     assert isinstance(model_repository, dict)

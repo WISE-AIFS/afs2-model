@@ -1,15 +1,16 @@
 import os
 
+from datetime import datetime
+
 import pytest
 
 from afs.clients.models import Model
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def model_repository(instance):
-    manifest = {
-        'name': 'sdk_models_test_fixture'
-    }
+    name = "sdk_models_test_fixture_{}".format(datetime.utcnow())
+    manifest = {"name": name}
 
     model_repository = instance.model_repositories.create(**manifest)
     yield model_repository
@@ -17,21 +18,21 @@ def model_repository(instance):
     model_repository.delete()
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def models_client(model_repository):
     yield model_repository.models
 
 
 @pytest.fixture()
 def model_name():
-    yield 'sdk_models_test_fixture'
+    yield "sdk_models_test_fixture_{}".format(datetime.utcnow())
 
 
 @pytest.fixture()
 def model_path():
-    model_path = os.path.join(os.path.dirname(__file__), 'model_fixture')
-    with open(model_path, 'w') as f:
-        f.write('model_fixture')
+    model_path = os.path.join(os.path.dirname(__file__), "model_fixture")
+    with open(model_path, "w") as f:
+        f.write("model_fixture")
 
     yield model_path
 
@@ -40,10 +41,7 @@ def model_path():
 
 @pytest.fixture()
 def model(models_client, model_name, model_path):
-    manifest = {
-        'name': model_name,
-        'model_path': model_path
-    }
+    manifest = {"name": model_name, "model_path": model_path}
 
     model = models_client.create(**manifest)
     yield model
@@ -73,16 +71,13 @@ def test_list_models(models_client):
 
     models = models_client()
     assert isinstance(models, list)
-    assert len(models) == 0
+    assert len(models) >= 0
 
 
 # Parametrized needed
 def test_create_model(models_client, model_name, model_path, remove_model):
 
-    manifest = {
-        'name': model_name,
-        'model_path': model_path
-    }
+    manifest = {"name": model_name, "model_path": model_path}
     model = models_client.create(**manifest)
     assert isinstance(model, dict)
     assert isinstance(model, Model)

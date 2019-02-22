@@ -8,24 +8,17 @@ class Model(BaseResourceModel):
     """
 
     def __init__(self, resource_client, *args, **kwargs):
-        resource = 'model'
+        resource = "model"
         super().__init__(
-            resource_client=resource_client,
-            resource=resource,
-            *args,
-            **kwargs
+            resource_client=resource_client, resource=resource, *args, **kwargs
         )
 
     @property
     def binary(self):
-        return self._resource_client.get(
-            self.uuid,
-            alt='media',
-            raw=True
-        ).content
+        return self._resource_client.get(self.uuid, alt="media", raw=True).content
 
     def download(self, model_path):
-        with open(model_path, 'wb') as f:
+        with open(model_path, "wb") as f:
             f.write(self.binary)
         return True
 
@@ -35,20 +28,13 @@ class ModelsClient(BaseResourcesClient):
     Client for Models resource of AFS v2 API.
     """
 
-    def __init__(
-            self,
-            afs_client,
-            instance_id,
-            model_repository_id,
-            *args,
-            **kwargs
-    ):
-        api_resource = 'models'
-        api_path = '{api_version}/instances/{instance_id}/model_repositories/{model_repository_id}/{api_resource}'.format(
+    def __init__(self, afs_client, instance_id, model_repository_id, *args, **kwargs):
+        api_resource = "models"
+        api_path = "{api_version}/instances/{instance_id}/model_repositories/{model_repository_id}/{api_resource}".format(
             api_version=afs_client.api_version,
             instance_id=instance_id,
             model_repository_id=model_repository_id,
-            api_resource=api_resource
+            api_resource=api_resource,
         )
         super().__init__(
             afs_client=afs_client,
@@ -69,37 +55,31 @@ class ModelsClient(BaseResourcesClient):
         :return: The response of created model.
         :rtype: Model
         """
-        model_path = kwargs.pop('model_path', None)
+        model_path = kwargs.pop("model_path", None)
         if not model_path:
-            raise ModelsClientError('Invalid model_path')
+            raise ModelsClientError("Invalid model_path")
 
         if not json_dumps:
             from json import dumps as json_dumps
 
-        if 'evaluation_result' in kwargs:
-            kwargs['evaluation_result'] = json_dumps(
-                kwargs['evaluation_result']
-            )
+        if "evaluation_result" in kwargs:
+            kwargs["evaluation_result"] = json_dumps(kwargs["evaluation_result"])
 
-        if 'parameters' in kwargs:
-            kwargs['parameters'] = json_dumps(kwargs['parameters'])
+        if "parameters" in kwargs:
+            kwargs["parameters"] = json_dumps(kwargs["parameters"])
 
-        if 'tags' in kwargs:
-            kwargs['tags'] = json_dumps(kwargs['tags'])
+        if "tags" in kwargs:
+            kwargs["tags"] = json_dumps(kwargs["tags"])
 
         try:
             resp = self._afs_client._session.post(
-                self.api_endpoint,
-                files={'model': open(model_path,
-                                     'rb')},
-                data=kwargs
+                self.api_endpoint, files={"model": open(model_path, "rb")}, data=kwargs
             )
         except Exception as e:
             raise self.exception(e)
 
         return self.resource_model(
             resource_client=self,
-            api_endpoint='{}/{}'.format(self.api_endpoint,
-                                        resp['uuid']),
+            api_endpoint="{}/{}".format(self.api_endpoint, resp["uuid"]),
             **resp
         )

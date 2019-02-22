@@ -1,7 +1,7 @@
 # For develop
 python-dotenv
 pylint
-yapf
+black
 
 # For docs
 sphinx

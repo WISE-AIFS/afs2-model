@@ -42,12 +42,12 @@ def test_get_instance(afs_client, instance_id):
     assert isinstance(instance.uuid, str)
 
     assert isinstance(instance.resource, str)
-    assert instance.resource == 'instance'
+    assert instance.resource == "instance"
 
     assert isinstance(instance.api_endpoint, str)
-    assert instance.api_endpoint.startswith('https://')
+    assert instance.api_endpoint.startswith("https://")
 
-    model_repositories_client = getattr(instance, 'model_repositories')
+    model_repositories_client = getattr(instance, "model_repositories")
     assert isinstance(model_repositories_client, ModelRpositoriesClient)
 
 
