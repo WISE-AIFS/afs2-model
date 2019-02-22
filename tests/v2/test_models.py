@@ -23,6 +23,11 @@ def models_client(model_repository):
 
 
 @pytest.fixture()
+def model_name():
+    yield 'sdk_models_test_fixture'
+
+
+@pytest.fixture()
 def model_path():
     model_path = os.path.join(os.path.dirname(__file__), 'model_fixture')
     with open(model_path, 'w') as f:
@@ -34,9 +39,9 @@ def model_path():
 
 
 @pytest.fixture()
-def model(models_client, model_path):
+def model(models_client, model_name, model_path):
     manifest = {
-        'name': 'sdk_models_test_fixture',
+        'name': model_name,
         'model_path': model_path
     }
 
@@ -55,12 +60,13 @@ def model_id(model):
 
 
 @pytest.fixture()
-def remove_all_models(models_client):
+def remove_model(models_client, model_name):
 
     yield
 
     for model in models_client():
-        model.delete()
+        if model.name == model_name:
+            model.delete()
 
 
 def test_list_models(models_client):
@@ -71,10 +77,10 @@ def test_list_models(models_client):
 
 
 # Parametrized needed
-def test_create_model(models_client, model_path, remove_all_models):
+def test_create_model(models_client, model_name, model_path, remove_model):
 
     manifest = {
-        'name': 'sdk_model_create_test',
+        'name': model_name,
         'model_path': model_path
     }
     model = models_client.create(**manifest)

@@ -8,9 +8,14 @@ def model_repositories_client(instance):
 
 
 @pytest.fixture()
-def model_repository(model_repositories_client):
+def model_repo_name():
+    yield 'sdk_model_repo_test_fixture'
+
+
+@pytest.fixture()
+def model_repository(model_repositories_client, model_repo_name):
     manifest = {
-        'name': 'sdk_model_repo_test_fixture'
+        'name': model_repo_name
     }
 
     model_repository = model_repositories_client.create(**manifest)
@@ -29,12 +34,13 @@ def model_repository_id(model_repository):
 
 
 @pytest.fixture()
-def remove_all_model_repositories(model_repositories_client):
+def remove_model_repository(model_repositories_client, model_repo_name):
 
     yield
 
     for model_repository in model_repositories_client():
-        model_repository.delete()
+        if model_repository.name == model_repo_name:
+            model_repository.delete()
 
 
 def test_list_model_repositories(model_repositories_client):
@@ -44,9 +50,9 @@ def test_list_model_repositories(model_repositories_client):
     assert len(model_repositories) == 0
 
 
-def test_create_model_repository(model_repositories_client, remove_all_model_repositories):
+def test_create_model_repository(model_repositories_client, model_repo_name, remove_model_repository):
 
-    model_repository = model_repositories_client.create(name='sdk_model_repo_create_test')
+    model_repository = model_repositories_client.create(name=model_repo_name)
     assert isinstance(model_repository, dict)
     assert isinstance(model_repository, ModelRepository)
 
