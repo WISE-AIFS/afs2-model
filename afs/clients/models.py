@@ -62,14 +62,19 @@ class ModelsClient(BaseResourcesClient):
         if not json_dumps:
             from json import dumps as json_dumps
 
-        if "evaluation_result" in kwargs:
-            kwargs["evaluation_result"] = json_dumps(kwargs["evaluation_result"])
+        attrs = [
+            'evaluation_result',
+            'parameters',
+            'tags'
+        ]
 
-        if "parameters" in kwargs:
-            kwargs["parameters"] = json_dumps(kwargs["parameters"])
-
-        if "tags" in kwargs:
-            kwargs["tags"] = json_dumps(kwargs["tags"])
+        for attr in attrs:
+            value = kwargs.pop(attr, None)
+            if value:
+                if isinstance(value, dict):
+                    kwargs[attr] = json_dumps(value)
+                elif isinstance(value, str):
+                    kwargs[attr] = value
 
         try:
             resp = self._afs_client._session.post(
