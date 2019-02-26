@@ -1,5 +1,2 @@
 requests
 PyJWT
-
-# For CLI
-click

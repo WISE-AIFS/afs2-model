@@ -37,13 +37,15 @@ setup(
     packages=find_packages(exclude=["tests", "test_reports"]),
     zip_safe=False,
     keywords=['afs', 'WISE-PaaS', 'EI-PaaS', 'analytics framework service', 'afs-sdk'],
-    entry_points={
-        'console_scripts': [
-            'eipaas-afs=afs.cli:cli'
-        ]
-    },
+    entry_points='''
+        [console_scripts]
+        eipaas-afs=afs.cli:cli
+    ''',
     extras_require={
-        'dev': dev_requires
+        'dev': dev_requires,
+        'cli': [
+            'click'
+        ]
     },
     include_package_data = True,
 )
