@@ -9,3 +9,9 @@ Basic Example
 Upload Model
 ------------
 .. literalinclude:: ../examples/upload_models.py
+
+
+CLI Example
+-----------
+.. literalinclude:: ../examples/cli_example.sh
+    :language: console
