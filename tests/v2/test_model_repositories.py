@@ -12,7 +12,7 @@ def model_repositories_client(instance):
 
 @pytest.fixture()
 def model_repo_name():
-    yield "sdk_model_repo_test_fixture_{}".format(datetime.utcnow())
+    yield "sdk_model_repo_test_fixture_{}".format(datetime.utcnow().timestamp())
 
 
 @pytest.fixture()

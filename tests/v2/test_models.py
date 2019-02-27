@@ -9,7 +9,7 @@ from afs.clients.models import Model
 
 @pytest.fixture(scope="module")
 def model_repository(instance):
-    name = "sdk_models_test_fixture_{}".format(datetime.utcnow())
+    name = "sdk_models_test_fixture_{}".format(datetime.utcnow().timestamp())
     manifest = {"name": name}
 
     model_repository = instance.model_repositories.create(**manifest)
@@ -25,7 +25,7 @@ def models_client(model_repository):
 
 @pytest.fixture()
 def model_name():
-    yield "sdk_models_test_fixture_{}".format(datetime.utcnow())
+    yield "sdk_models_test_fixture_{}".format(datetime.utcnow().timestamp())
 
 
 @pytest.fixture()
