@@ -11,7 +11,7 @@ def afs_client_setup(state=None):
         state = AFSClientSerializer().deserialization()
 
     attrs = ["api_endpoint", "api_version", "token"]
-    if not all((True for attr in attrs)):
+    if not all((attr in state for attr in attrs)):
         raise UsageError("Please login first")
 
     afs_client = AFSClient(
