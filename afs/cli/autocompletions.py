@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from .serializers import AFSClientSerializer
 from .utils import afs_client_setup, instance_setup, model_repo_setup
 
@@ -40,4 +42,16 @@ def autocompletion_list_models(ctx, args, incomplete):
 
 
 def autocompletion_lsit_files(ctx, args, incomplete):
-    return os.listdir()
+    path = Path(incomplete)
+    if path.is_file():
+        return [str(path)]
+
+    elif path.is_dir():
+        return [str(file_path) for file_path in path.iterdir()]
+
+    else:
+        return [
+            str(file_path)
+            for file_path in path.parent.iterdir()
+            if str(file_path).startswith(incomplete)
+        ]
