@@ -57,7 +57,7 @@ def test_cli_list_instances(loged_cli, cli_runner):
     result = cli_runner.invoke(loged_cli, shlex.split(cmd))
 
     assert result.exit_code == 0
-    assert result.output.count("\n") >= 2
+    assert result.output.count("\n") >= 1
 
 
 def test_cli_target(loged_cli, cli_runner, instance_id):
@@ -82,7 +82,7 @@ def test_cli_list_model_repos(loged_cli, target_instance, cli_runner, model_repo
     result = cli_runner.invoke(loged_cli, shlex.split(cmd))
 
     assert result.exit_code == 0
-    assert result.output.count("\n") == 1
+    assert result.output.count("\n") >= 1
 
 
 def test_cli_create_model_repo(
@@ -121,7 +121,7 @@ def test_cli_list_models(loged_cli, cli_runner, model_repository, model):
     result = cli_runner.invoke(loged_cli, shlex.split(cmd))
 
     assert result.exit_code == 0
-    assert result.output.count("\n") == 1
+    assert result.output.count("\n") >= 1
 
 
 def test_cli_create_model(
