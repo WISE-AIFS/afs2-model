@@ -1,14 +1,17 @@
 import os
 
 import click
+
 from click.exceptions import BadParameter, UsageError
 
 from afs import AFSClient, __version__
 
-from .autocompletions import (autocompletion_list_instances,
-                              autocompletion_list_model_repo,
-                              autocompletion_list_models,
-                              autocompletion_lsit_files)
+from .autocompletions import (
+    autocompletion_list_instances,
+    autocompletion_list_model_repo,
+    autocompletion_list_models,
+    autocompletion_lsit_files,
+)
 from .serializers import AFSClientSerializer
 from .utils import afs_client_setup, instance_setup, model_repo_setup
 

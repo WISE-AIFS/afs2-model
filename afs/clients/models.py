@@ -62,11 +62,7 @@ class ModelsClient(BaseResourcesClient):
         if not json_dumps:
             from json import dumps as json_dumps
 
-        attrs = [
-            'evaluation_result',
-            'parameters',
-            'tags'
-        ]
+        attrs = ["evaluation_result", "parameters", "tags"]
 
         for attr in attrs:
             value = kwargs.pop(attr, None)

@@ -48,7 +48,11 @@ class APISession(Session):
             else:
                 # Auto refresh token
                 if resp.status_code == 401 and self.auto_refresh_token:
-                    self.token = self.refresh_token(self.token)
+                    try:
+                        self.token = self.refresh_token(self.token)
+                    except Exception as e:
+                        raise APIRequestError(e)
+
                     self.headers.update(
                         {"Authorization": "Bearer {}".format(self.token)}
                     )

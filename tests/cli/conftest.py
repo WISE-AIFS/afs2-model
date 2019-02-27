@@ -98,8 +98,16 @@ def model_path():
 
 
 @pytest.fixture()
-def model(loged_cli, cli_runner, target_instance, model_repository, model_name, model_path, remove_model):
-    cmd = 'create-model {} {} {}'.format(model_repository, model_name, model_path)
+def model(
+    loged_cli,
+    cli_runner,
+    target_instance,
+    model_repository,
+    model_name,
+    model_path,
+    remove_model,
+):
+    cmd = "create-model {} {} {}".format(model_repository, model_name, model_path)
     result = cli_runner.invoke(loged_cli, shlex.split(cmd))
 
     yield model_name
@@ -109,5 +117,5 @@ def model(loged_cli, cli_runner, target_instance, model_repository, model_name, 
 def remove_model(loged_cli, cli_runner, target_instance, model_repository, model_name):
     yield
 
-    cmd = 'delete-modle {} {}'.format(model_repository, model_name)
+    cmd = "delete-modle {} {}".format(model_repository, model_name)
     result = cli_runner.invoke(loged_cli, shlex.split(cmd))
