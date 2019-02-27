@@ -74,7 +74,7 @@ def test_cli_target_autocompletion(loged_cli, cli_runner, instance_id):
     incomplete = instance_id[0:3]
     completions = get_choices(loged_cli, "dummy", args, incomplete)
 
-    assert completions[0][0] == instance_id
+    assert (instance_id, None) in completions
 
 
 def test_cli_list_model_repos(loged_cli, target_instance, cli_runner, model_repository):
@@ -113,7 +113,7 @@ def test_cli_delete_model_repos_autocompletion(loged_cli, cli_runner, model_repo
     incomplete = model_repository[0:3]
     completions = get_choices(loged_cli, "dummy", args, incomplete)
 
-    assert completions[0][0] == model_repository
+    assert (model_repository, None) in completions
 
 
 def test_cli_list_models(loged_cli, cli_runner, model_repository, model):
@@ -168,14 +168,14 @@ def test_cli_delete_model_autocompletion(
     incomplete = model_repository[0:3]
     completions = get_choices(loged_cli, "dummy", args, incomplete)
 
-    assert completions[0][0] == model_repository
+    assert (model_repository, None) in completions
 
     cmd = "delete-model {}".format(model_repository)
     args = shlex.split(cmd)
     incomplete = model[0:3]
     completions = get_choices(loged_cli, "dummy", args, incomplete)
 
-    assert completions[0][0] == model
+    assert (model, None) in completions
 
 
 def test_cli_download_model(loged_cli, cli_runner, model_repository, model):
