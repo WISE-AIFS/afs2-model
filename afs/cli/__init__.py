@@ -65,7 +65,7 @@ def target(obj, instance_id):
     instance = afs_client.instances(instance_id)
     AFSClientSerializer().serialization(afs_client, instance)
 
-    click.echo("Target to instance {} succeded".format(instance_id))
+    click.echo("Target to instance {} succeeded".format(instance_id))
 
 
 @cli.command()
