@@ -78,3 +78,8 @@ def mock_api_v2_AFS_API_VERSION_resource(mocker):
         return_value=MockResponse(text="""{"API_version":"v2", "AFS_version":"2.1.7"}""",
                                   status_code=200)
         )
+    from afs.get_env import AfsEnv
+    yield AfsEnv()
+
+
+

@@ -18,7 +18,4 @@ def test_info_v1_check(mocker, mock_api_v1_resource):
 def test_version_v2_check(mocker, mock_api_v2_AFS_API_VERSION_resource, utils_resource):
     import afs
     mocker.patch('afs.utils.urljoin')
-    from afs.get_env import AfsEnv
-    afs_env = AfsEnv()
-    assert afs_env.version == '2.1.7'
-    afs.utils.urljoin.assert_called_once_with('http://afs.org.tw/', extra_paths={})
+    assert mock_api_v2_AFS_API_VERSION_resource.version == '2.1.7'
