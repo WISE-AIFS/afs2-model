@@ -11,9 +11,9 @@ class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
         self.__version__ = pkg_resources.get_distribution('afs').version
 
-        self.version = os.getenv('version', '')
+        self.version = os.getenv('AFS_API_VERSION', '')
         if self.version is '':
-            self.version = os.getenv('AFS_API_VERSION', '')
+            self.version = os.getenv('version', '')
 
         if target_endpoint is None or instance_id is None or auth_code is None:
             self.target_endpoint = os.getenv('afs_url', None)
