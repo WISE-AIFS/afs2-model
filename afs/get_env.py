@@ -11,14 +11,14 @@ class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
         self.__version__ = pkg_resources.get_distribution('afs').version
 
-        self.version = os.getenv('version', None)
-        if self.version is None:
-            warnings.warn('To solve hidden space problem, environment variable has change. RECOMMEND upgrading AFS instance')
+        self.version = os.getenv('version', '')
+        if self.version is '':
+            self.version = os.getenv('AFS_API_VERSION', '')
 
         if target_endpoint is None or instance_id is None or auth_code is None:
             self.target_endpoint = os.getenv('afs_url', None)
             self.auth_code = os.getenv('auth_code', None)
-            if self.version is None:
+            if self.version is '':
                 vcap = json.loads(os.getenv('VCAP_APPLICATION', {}))
                 if not vcap:
                     raise AssertionError('Environment VCAP_APPLICATION is empty')
@@ -42,7 +42,7 @@ class AfsEnv():
 
 
     def _get_api_version(self):
-        if os.getenv('version', '') <= '2.0.1':
+        if self.version <= '2.0.1':
             url = utils.urljoin(self.target_endpoint, 'info', extra_paths={})
         else:
             url = utils.urljoin(self.target_endpoint, extra_paths={})
