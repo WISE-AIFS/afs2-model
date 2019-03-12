@@ -64,3 +64,22 @@ def mock_api_v1_resource(mocker):
                                   status_code=200)
         )
 
+
+@pytest.fixture()
+def mock_api_v2_AFS_API_VERSION_resource(mocker):
+    import requests
+    mocker.patch.dict(os.environ, {
+        'afs_url': 'http://afs.org.tw',
+        'instance_id': '1234-4567-7890',
+        'auth_code': '1234',
+        'AFS_API_VERSION': '2.1.7'}
+    )
+    mocker.patch.object(requests, 'get',
+        return_value=MockResponse(text="""{"API_version":"v2", "AFS_version":"2.1.7"}""",
+                                  status_code=200)
+        )
+    from afs.get_env import AfsEnv
+    yield AfsEnv()
+
+
+
