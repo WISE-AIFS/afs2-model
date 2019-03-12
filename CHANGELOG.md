@@ -1,4 +1,4 @@
-2.1.8 (unreleased)
+2.1.8 (2019-03-12)
 ------------------
 
 - Update env version to AFS_API_VERSION
