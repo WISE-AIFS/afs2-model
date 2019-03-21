@@ -7,7 +7,6 @@
    :maxdepth: 2
 
    overview
-   InstallDependencies
    Examples
    CLI
    api_reference
