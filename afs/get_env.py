@@ -3,12 +3,12 @@ import requests
 import warnings
 import logging
 import afs.utils as utils
-import pkg_resources
-
+import afs
 
 class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
-        self.__version__ = pkg_resources.get_distribution('afs').version
+        # self.__version__ = pkg_resources.get_distribution('afs').version
+        # self.__version__ = afs.__version__
         self.version = os.getenv('AFS_API_VERSION', os.getenv('version', ''))
 
         if target_endpoint is None or instance_id is None or auth_code is None:
@@ -38,9 +38,9 @@ class AfsEnv():
         )
 
         afs_portal_version = response.json().get('AFS_version', None)
-        if afs_portal_version != self.__version__:
+        if afs_portal_version != afs.__version__:
             warnings.warn('SDK version is {0}, and AFS portal version is {1}. It will cause some compatibility issues. Readthedocs: https://afs-sdk.readthedocs.io/en/latest/Examples.html#models'
-                          .format(self.__version__, afs_portal_version))
+                          .format(afs.__version__, afs_portal_version))
 
         if response.json().get('AFS_version', None):
             return response.json()['API_version'], afs_portal_version
