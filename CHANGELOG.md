@@ -1,7 +1,9 @@
 2.1.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Rename afs to advantech-afs
+
+- Remove v1 API and v1 unit tests
 
 
 2.1.8 (2019-03-12)
