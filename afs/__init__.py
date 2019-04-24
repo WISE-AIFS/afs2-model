@@ -11,4 +11,4 @@ else:
     import urllib3
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-__version__ = pkg_resources.get_distribution('afs').version
+__version__ = pkg_resources.get_distribution('advantech-afs').version
