@@ -1,5 +1,6 @@
 [run]
 source = afs
+branch = true
 
 [html]
 directory = test_reports/coverage

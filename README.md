@@ -1,46 +1,32 @@
 # AFS SDK
 
+[![Python version](https://img.shields.io/badge/python-3.5+-blue.svg)](https://www.python.org/download/releases/3.5.0/)
+[![GitHub release](https://img.shields.io/github/release/benchuang11046/afs.svg)](https://github.com/benchuang11046/afs/releases)
 [![Documentation Status](https://readthedocs.org/projects/afs-docs/badge/?version=latest)](https://afs-docs.readthedocs.io/en/latest/?badge=latest)
-
+[![codecov](https://codecov.io/gh/benchuang11046/afs/branch/master/graph/badge.svg)](https://codecov.io/gh/benchuang11046/afs)
+[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 ## Documents
-Reference documents [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/)
+
+Documents on [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/).
 
 
 ## Installation
 
-Support python version 3.5 or later
+### pip install on AFS notebook
 
 
-### pip install on AFS online code IDE
+`AFS-SDK` provides the latest release on PyPI mirror at EI-PaaS platform. You can run the following command in notebook to install this SDK:
  
-### On public cloud (RELEASE)
 ```
-$ pip install git+https://github.com/benchuang11046/afs.git
-```
-
-
-#### On private cloud
-
-[Install Documents](https://afs-docs.readthedocs.io/en/latest/sdk/docs/InstallDependencies.html)
-
-
-### (For SDK developer) From sources
-
-1. Clone the repository to local.
-
-2. To build the library run:
-```
-$ python setup.py install
+!pip install afs
 ```
 
-### (For SDK developer) Build from source
+List the installed packages.
 
-1. Clone the repository to local.
+![Imgur](https://i.imgur.com/BmMeqR1.png)
 
-2. To build the wheel package:
-```
-$ python setup.py bdist_wheel
-```
 
-3. .whl will be in dist/ 
+## Need any help?
+
+Feel free to open issue and we will get in touch ASAP.

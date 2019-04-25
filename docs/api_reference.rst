@@ -1,55 +1,65 @@
 API Reference
 =============
 
-afs.models module
------------------
 
+Base Classes
+------------
 
-.. automodule:: afs.models
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-afs.services module
--------------------------
-
-.. automodule:: afs.services
+.. automodule:: afs.clients.base
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-afs.config_handler module
--------------------------
+EI-PaaS AFS Client
+------------------
 
-.. automodule:: afs.config_handler
+.. automodule:: afs.clients
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-afs.flow module
--------------------------
+EI-PaaS SSO Client
+------------------
 
-.. automodule:: afs.flow
+.. automodule:: afs.clients.sso
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-afs.GetJointTable module
--------------------------
+Instances Resource
+------------------
 
-.. automodule:: afs.get_joint_table
+.. automodule:: afs.clients.instances
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-afs.parsers module
--------------------------
+Model Repositories Resource
+---------------------------
 
-.. automodule:: afs.parsers
+.. automodule:: afs.clients.model_repositories
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Models Resource
+---------------
+
+.. automodule:: afs.clients.models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Exceptions
+----------
+
+.. automodule:: afs.clients.exceptions
     :members:
     :undoc-members:
     :show-inheritance:

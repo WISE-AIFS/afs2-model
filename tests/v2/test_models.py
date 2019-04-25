@@ -1,44 +1,134 @@
+import os
+
+from datetime import datetime
+
+import pytest
+
+from afs.clients.models import Model
 
 
-def test_get_model_repo_id(mocker, mocker_models, mock_api_v2_resource, model_repository_name, model_name, model_repository_list_response):
-    mocker.patch.object(mocker_models, '_get', return_value=model_repository_list_response)
-    model_reop_id = mocker_models.get_model_repo_id(model_repository_name=model_repository_name)
-    assert model_reop_id == "1a3a9596-8ee8-44b6-94f8-56ba70169300"
+@pytest.fixture(scope="module")
+def model_repository(instance):
+    name = "sdk_models_test_fixture_{}".format(datetime.utcnow().timestamp())
+    manifest = {"name": name}
+
+    model_repository = instance.model_repositories.create(**manifest)
+    yield model_repository
+
+    model_repository.delete()
 
 
-def test_get_model_id(mocker, mocker_models, model_repository_name, model_name, model_list_response):
-    mocker.patch.object(mocker_models, '_get', return_value=model_list_response)
-    model_id = mocker_models.get_model_id(model_repository_name=model_repository_name, last_one=True)
-    assert model_id == "b8ed105e-c0b8-4b39-a453-0efd3259aafe"
+@pytest.fixture(scope="module")
+def models_client(model_repository):
+    yield model_repository.models
 
 
-def test_upload_model(mocker, mocker_models, mock_api_v2_resource, model_repository_name, model_name, model_response):
-    mocker.patch.object(mocker_models, '_create', return_value=model_response)
-    assert mocker_models.upload_model(
-        model_path=model_name,
-        accuracy=0.1,
-        loss=0.2,
-        tags={"machine": "01"},
-        extra_evaluation={"metric": 1},
-        model_repository_name=model_repository_name,
-        model_name=model_name) == True
+@pytest.fixture()
+def model_name():
+    yield "sdk_models_test_fixture_{}".format(datetime.utcnow().timestamp())
 
 
-def test_create_model_repo(mocker, mock_api_v2_resource, model_repository_name, mocker_models, model_name, model_repository_response):
-    mocker.patch.object(mocker_models, '_create', return_value=model_repository_response)
-    assert mocker_models.create_model_repo(model_name) == "11cc3faf-cd24-4d93-8f9a-09dd731f5397"
+@pytest.fixture()
+def model_path():
+    model_path = os.path.join(os.path.dirname(__file__), "model_fixture")
+    with open(model_path, "w") as f:
+        f.write("model_fixture")
+
+    yield model_path
+
+    os.remove(model_path)
 
 
-def test_get_latest_model_info(mocker, mock_api_v2_resource, model_repository_name, mocker_models, model_name, model_list_response, model_response):
-    mocker.patch.object(mocker_models, 'get_model_id', return_value="b8ed105e-c0b8-4b39-a453-0efd3259aafe")
-    mocker.patch.object(mocker_models, '_get', return_value=model_response)
-    resp = mocker_models.get_latest_model_info(model_repository_name)
+@pytest.fixture()
+def model(models_client, model_name, model_path):
+    manifest = {"name": model_name, "model_path": model_path}
 
-    assert isinstance(resp, dict)
-    assert 'uuid' in resp
-    assert 'name' in resp
-    assert 'owner' in resp
-    assert 'created_at' in resp
-    assert 'parameters' in resp
-    assert 'tags' in resp
-    assert 'evaluation_result' in resp
+    model = models_client.create(**manifest)
+    yield model
+
+    try:
+        model.delete()
+    except:
+        pass
+
+
+@pytest.fixture()
+def model_id(model):
+    yield model.uuid
+
+
+@pytest.fixture()
+def remove_model(models_client, model_name):
+
+    yield
+
+    for model in models_client():
+        if model.name == model_name:
+            model.delete()
+
+
+def test_list_models(models_client):
+
+    models = models_client()
+    assert isinstance(models, list)
+    assert len(models) >= 0
+
+
+# Parametrized needed
+def test_create_model(models_client, model_name, model_path, remove_model):
+
+    manifest = {"name": model_name, "model_path": model_path}
+    model = models_client.create(**manifest)
+    assert isinstance(model, dict)
+    assert isinstance(model, Model)
+
+
+def test_get_model(models_client, model_id):
+
+    model = models_client(model_id)
+    assert isinstance(model, dict)
+    assert isinstance(model, Model)
+
+    model = models_client(uuid=model_id)
+    assert isinstance(model, dict)
+    assert isinstance(model, Model)
+
+    model = models_client.get(model_id)
+    assert isinstance(model, dict)
+    assert isinstance(model, Model)
+
+    model = models_client.get(uuid=model_id)
+    assert isinstance(model, dict)
+    assert isinstance(model, Model)
+
+    assert isinstance(model.uuid, str)
+    assert model.uuid == model_id
+
+    assert isinstance(model.name, str)
+    assert isinstance(model.binary, bytes)
+
+
+def test_download_model(model, model_path):
+    os.remove(model_path)
+    download_result = model.download(model_path)
+    assert download_result
+
+
+def test_update_model_by_id(models_client, model_id):
+    with pytest.raises(NotImplementedError) as excinfo:
+        models_client.update(model_id)
+
+
+def test_update_model(model):
+    with pytest.raises(NotImplementedError) as excinfo:
+        model.update()
+
+
+def test_delete_model_by_id(models_client, model_id):
+    delete_result = models_client.delete(model_id)
+    assert delete_result == {}
+
+
+def test_delete_model(model):
+    delete_result = model.delete()
+    assert delete_result == {}

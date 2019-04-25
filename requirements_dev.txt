@@ -1,8 +1,7 @@
 # For develop
 python-dotenv
 pylint
-yapf
-gitpython
+black
 
 # For docs
 sphinx
@@ -11,13 +10,13 @@ recommonmark
 sphinx_rtd_theme
 
 # For test
+tox
 pytest
 pytest-runner
 pytest-cov
 pytest-html
 pytest-pylint
-configparser
-pytest-mock
+pytest-sugar
 
 # For release
 zest.releaser

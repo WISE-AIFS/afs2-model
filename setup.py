@@ -24,8 +24,6 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
     long_description = f.read()
 
 
-
-
 setup(
     name='afs',
     version=version,
@@ -37,13 +35,18 @@ setup(
     license='MIT',
     install_requires=install_requires,
     packages=find_packages(exclude=["tests", "test_reports"]),
-    tests_require=dev_requires,
     zip_safe=False,
     keywords=['afs', 'WISE-PaaS', 'EI-PaaS', 'analytics framework service', 'afs-sdk'],
     entry_points='''
         [console_scripts]
         eipaas-afs=afs.cli:cli
     ''',
+    extras_require={
+        'dev': dev_requires,
+        'cli': [
+            'click'
+        ]
+    },
     include_package_data = True,
 )
 
