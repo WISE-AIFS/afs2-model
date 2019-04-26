@@ -2,6 +2,7 @@ import os
 import shlex
 
 import pytest
+
 from click._bashcomplete import get_choices
 
 from afs2_model import __version__
