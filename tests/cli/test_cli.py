@@ -140,7 +140,7 @@ def test_cli_create_model(
     [
         (("README.md", None), "RE"),
         (("README.md", None), "README.md"),
-        (("afs2_model/__init__.py", None), "afs/"),
+        (("afs2_model/__init__.py", None), "afs2_model/"),
     ],
 )
 def test_cli_create_model_autocompletion(
