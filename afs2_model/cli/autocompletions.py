@@ -33,7 +33,11 @@ def autocompletion_list_model_repo(ctx, args, incomplete):
 def autocompletion_list_models(ctx, args, incomplete):
     model_repo_name = args[-1]
     model_repo = model_repo_setup(model_repo_name)
-    models = [model.name for model in model_repo.models(limit=1000) if incomplete in model.name]
+    models = [
+        model.name
+        for model in model_repo.models(limit=1000)
+        if incomplete in model.name
+    ]
     AFSClientSerializer().serialization(
         afs_client=model_repo._resource_client._afs_client
     )

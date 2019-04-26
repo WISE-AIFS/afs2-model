@@ -7,9 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from click.testing import CliRunner
-
 from afs2_model.cli.serializers import CONFIG_PATH, ROOT_PATH
+from click.testing import CliRunner
 
 
 @pytest.fixture(scope="session", autouse=True)

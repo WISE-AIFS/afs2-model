@@ -1,25 +1,22 @@
 import os
+
 from afs2_model import AFSClient
 
-api_endpoint = os.getenv('afs_url')
-instance_id = os.getenv('instance_id')
+api_endpoint = os.getenv("afs_url")
+instance_id = os.getenv("instance_id")
 username = "username"
 password = "password"
 
 # Initialize the AFSClient
-afs_client = AFSClient(
-    api_endpoint=api_endpoint,
-    username=username,
-    password=password,
-)
+afs_client = AFSClient(api_endpoint=api_endpoint, username=username, password=password)
 
 # Get your instance
 instance = afs_client.instances.get(instance_id)
 
 # Get your model repository
 model_repo_name = "TestModelRepo"
-find_repo = instance.model_repositories(uuid=None, q='name:{0}'.format(model_repo_name))
-model_repo_id = find_repo.pop()['uuid']
+find_repo = instance.model_repositories(uuid=None, q="name:{0}".format(model_repo_name))
+model_repo_id = find_repo.pop()["uuid"]
 model_repository = instance.model_repositories.get(model_repo_id)
 
 # Write a file as model file.

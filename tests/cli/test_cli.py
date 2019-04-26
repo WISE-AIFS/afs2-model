@@ -3,9 +3,8 @@ import shlex
 
 import pytest
 
-from click._bashcomplete import get_choices
-
 from afs2_model import __version__
+from click._bashcomplete import get_choices
 
 
 def test_cli_version(cli, cli_runner):

@@ -1,6 +1,5 @@
-from click.exceptions import BadParameter, UsageError
-
 from afs2_model import AFSClient
+from click.exceptions import BadParameter, UsageError
 
 from .serializers import AFSClientSerializer
 

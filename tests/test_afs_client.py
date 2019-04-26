@@ -5,12 +5,11 @@ from urllib.parse import urljoin
 import pytest
 import requests
 
-from urllib3.exceptions import InsecureRequestWarning
-
 from afs2_model import AFSClient
 from afs2_model.clients.base import APISession
 from afs2_model.clients.instances import InstancesClient
 from afs2_model.clients.sso import SSOClient
+from urllib3.exceptions import InsecureRequestWarning
 
 
 @pytest.fixture()

@@ -2,9 +2,8 @@ import os
 
 import click
 
-from click.exceptions import BadParameter, UsageError
-
 from afs2_model import AFSClient, __version__
+from click.exceptions import BadParameter, UsageError
 
 from .autocompletions import (
     autocompletion_list_instances,
