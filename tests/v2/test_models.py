@@ -4,7 +4,7 @@ from datetime import datetime
 
 import pytest
 
-from afs.clients.models import Model
+from afs2_model.clients.models import Model
 
 
 @pytest.fixture(scope="module")

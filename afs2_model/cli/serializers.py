@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from afs import AFSClient
+from afs2_model import AFSClient
 
 ROOT_PATH = Path.home().joinpath(".eipaas")
 ROOT_PATH.mkdir(exist_ok=True)

@@ -8,7 +8,7 @@
 
 ## Documents
 
-Documents on [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/).
+Documents on [Readthedocs](https://afs-sdk.readthedocs.io/en/latest/overview.html).
 
 
 ## Installation
@@ -16,15 +16,14 @@ Documents on [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/).
 ### pip install on AFS notebook
 
 
-`AFS-SDK` provides the latest release on PyPI mirror at EI-PaaS platform. You can run the following command in notebook to install this SDK:
+`afs2-model` provides the latest release on [PyPI.org](https://pypi.org/) and PyPI mirror at EI-PaaS platform. You can run the following command in notebook to install this SDK:
  
 ```
-!pip install afs
+!pip install afs2-model
 ```
 
 List the installed packages.
 
-![Imgur](https://i.imgur.com/BmMeqR1.png)
 
 
 ## Need any help?

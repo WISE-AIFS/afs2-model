@@ -4,7 +4,7 @@ import click
 
 from click.exceptions import BadParameter, UsageError
 
-from afs import AFSClient, __version__
+from afs2_model import AFSClient, __version__
 
 from .autocompletions import (
     autocompletion_list_instances,

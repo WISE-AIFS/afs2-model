@@ -1,4 +1,4 @@
-from afs import AFSClient
+from afs2_model import AFSClient
 
 # Initialize the AFSClient
 afs_client = AFSClient(

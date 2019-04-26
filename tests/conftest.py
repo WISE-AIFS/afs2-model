@@ -10,7 +10,7 @@ load_dotenv(dotenv_path=env_path)
 
 @pytest.fixture(scope="session")
 def afs_client():
-    from afs import AFSClient
+    from afs2_model import AFSClient
 
     afs_client = AFSClient(
         api_endpoint=os.getenv("TEST_AFS_API_SERVER"),

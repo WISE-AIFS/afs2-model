@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from afs.clients.model_repositories import ModelRepository
+from afs2_model.clients.model_repositories import ModelRepository
 
 
 @pytest.fixture(scope="module")

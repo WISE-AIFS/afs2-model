@@ -7,10 +7,10 @@ import requests
 
 from urllib3.exceptions import InsecureRequestWarning
 
-from afs import AFSClient
-from afs.clients.base import APISession
-from afs.clients.instances import InstancesClient
-from afs.clients.sso import SSOClient
+from afs2_model import AFSClient
+from afs2_model.clients.base import APISession
+from afs2_model.clients.instances import InstancesClient
+from afs2_model.clients.sso import SSOClient
 
 
 @pytest.fixture()

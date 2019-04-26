@@ -1,18 +1,25 @@
+import os
 from afs2_model import AFSClient
+
+api_endpoint = os.getenv('afs_url')
+instance_id = os.getenv('instance_id')
+username = "username"
+password = "password"
 
 # Initialize the AFSClient
 afs_client = AFSClient(
-    api_endpoint="Your AFS API endpoint",
-    username="Your EI-PaaS SSO username",
-    password="Your EI-PaaS SSO password",
+    api_endpoint=api_endpoint,
+    username=username,
+    password=password,
 )
 
 # Get your instance
-instance_id = "Your AFS instance_id"
 instance = afs_client.instances.get(instance_id)
 
 # Get your model repository
-model_repo_id = "Your model repository id"
+model_repo_name = "TestModelRepo"
+find_repo = instance.model_repositories(uuid=None, q='name:{0}'.format(model_repo_name))
+model_repo_id = find_repo.pop()['uuid']
 model_repository = instance.model_repositories.get(model_repo_id)
 
 # Write a file as model file.

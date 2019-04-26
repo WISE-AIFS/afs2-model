@@ -356,3 +356,4 @@ class BaseResourcesClient:
             raise self.exception(e)
 
         return {}
+

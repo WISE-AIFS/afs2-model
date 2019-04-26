@@ -9,7 +9,7 @@ import pytest
 
 from click.testing import CliRunner
 
-from afs.cli.serializers import CONFIG_PATH, ROOT_PATH
+from afs2_model.cli.serializers import CONFIG_PATH, ROOT_PATH
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -21,7 +21,7 @@ def remove_config():
 @pytest.fixture()
 def cli():
 
-    from afs.cli import cli
+    from afs2_model.cli import cli
 
     yield cli
 
@@ -38,7 +38,7 @@ def cli_runner():
 
 @pytest.fixture(scope="session")
 def loged_cli():
-    from afs.cli import cli
+    from afs2_model.cli import cli
 
     api_endpoint = os.getenv("TEST_AFS_API_SERVER", "")
     username = os.getenv("TEST_USERNAME")

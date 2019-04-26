@@ -4,7 +4,7 @@ import shlex
 import pytest
 from click._bashcomplete import get_choices
 
-from afs import __version__
+from afs2_model import __version__
 
 
 def test_cli_version(cli, cli_runner):
@@ -139,7 +139,7 @@ def test_cli_create_model(
     [
         (("README.md", None), "RE"),
         (("README.md", None), "README.md"),
-        (("afs/__init__.py", None), "afs/"),
+        (("afs2_model/__init__.py", None), "afs/"),
     ],
 )
 def test_cli_create_model_autocompletion(

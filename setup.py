@@ -25,21 +25,21 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 
 setup(
-    name='afs',
+    name='afs2-model',
     version=version,
-    description='For AFS developer to develop analytics',
+    description='For AFS developer to develop',
     long_description=long_description,
-    author='benchuang',
-    author_email='benchuang@iii.org.tw',
-    url='https://github.com/benchuang11046/afs',
+    author='benchuang, chenjr',
+    author_email='ben2019.chuang.advantech.com.tw, chenjr0719@gmail.com',
+    url='https://github.com/benchuang11046/afs2-model',
     license='MIT',
     install_requires=install_requires,
     packages=find_packages(exclude=["tests", "test_reports"]),
     zip_safe=False,
-    keywords=['afs', 'WISE-PaaS', 'EI-PaaS', 'analytics framework service', 'afs-sdk'],
+    keywords=['afs2', 'WISE-PaaS', 'EI-PaaS'],
     entry_points='''
         [console_scripts]
-        eipaas-afs=afs.cli:cli
+        eipaas-afs=afs2_model.cli:cli
     ''',
     extras_require={
         'dev': dev_requires,
