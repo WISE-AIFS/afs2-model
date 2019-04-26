@@ -8,7 +8,7 @@ def autocompletion_list_instances(ctx, args, incomplete):
     afs_client = afs_client_setup()
     instance_list = [
         instance.uuid
-        for instance in afs_client.instances()
+        for instance in afs_client.instances(limit=1000)
         if incomplete in instance.uuid
     ]
     AFSClientSerializer().serialization(afs_client)
@@ -20,7 +20,7 @@ def autocompletion_list_model_repo(ctx, args, incomplete):
     instance = instance_setup()
     model_repos = [
         model_repo.name
-        for model_repo in instance.model_repositories()
+        for model_repo in instance.model_repositories(limit=1000)
         if incomplete in model_repo.name
     ]
     AFSClientSerializer().serialization(
@@ -33,7 +33,7 @@ def autocompletion_list_model_repo(ctx, args, incomplete):
 def autocompletion_list_models(ctx, args, incomplete):
     model_repo_name = args[-1]
     model_repo = model_repo_setup(model_repo_name)
-    models = [model.name for model in model_repo.models() if incomplete in model.name]
+    models = [model.name for model in model_repo.models(limit=1000) if incomplete in model.name]
     AFSClientSerializer().serialization(
         afs_client=model_repo._resource_client._afs_client
     )

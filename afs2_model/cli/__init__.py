@@ -56,7 +56,7 @@ def login(obj, api_endpoint, username, password):
 @click.pass_obj
 def instances(obj):
     afs_client = afs_client_setup(obj)
-    for instance in afs_client.instances():
+    for instance in afs_client.instances(limit=1000):
         click.echo(instance.uuid)
 
 
@@ -78,7 +78,7 @@ def model_repos(obj):
     if not instance:
         raise UsageError("Please target a instance first.")
 
-    model_repos = instance.model_repositories()
+    model_repos = instance.model_repositories(limit=1000)
     AFSClientSerializer().serialization(
         afs_client=instance._resource_client._afs_client
     )
@@ -121,7 +121,7 @@ def delete_model_repo(obj, model_repo_name):
 @click.pass_obj
 def models(obj, model_repo_name):
     model_repo = model_repo_setup(model_repo_name, state=obj)
-    models = model_repo.models()
+    models = model_repo.models(limit=1000)
     AFSClientSerializer().serialization(
         afs_client=model_repo._resource_client._afs_client
     )
