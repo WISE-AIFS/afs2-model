@@ -1,7 +1,7 @@
 2.1.13 (unreleased)
 -------------------
 
-- Rename afs to advantech-afs
+- Rename afs to afs2-model
 
 - Remove v1 API and v1 unit tests
 
