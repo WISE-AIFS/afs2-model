@@ -24,7 +24,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
     long_description = f.read()
 
 setup(
-    name='advantech-afs',
+    name='afs2-model',
     version=version,
     description='For AFS developer to develop analytics',
     long_description=long_description,

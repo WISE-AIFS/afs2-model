@@ -1,14 +1,11 @@
 import os, json
 import requests
 import warnings
-import logging
 import afs.utils as utils
 import afs
 
 class AfsEnv():
     def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
-        # self.__version__ = pkg_resources.get_distribution('afs').version
-        # self.__version__ = afs.__version__
         self.version = os.getenv('AFS_API_VERSION', os.getenv('version', ''))
 
         if target_endpoint is None or instance_id is None or auth_code is None:
