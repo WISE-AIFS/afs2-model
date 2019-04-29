@@ -1,10 +1,10 @@
-# AFS SDK
+# AFS2-MODEL SDK
 
-[![Documentation Status](https://readthedocs.org/projects/afs-docs/badge/?version=latest)](https://afs-docs.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/afs-sdk/badge/?version=latest)](https://afs-sdk.readthedocs.io/en/latest/?badge=latest)
 
 
 ## Documents
-Reference documents [Readthedocs](http://afs-docs.readthedocs.io/en/latest/sdk/)
+Reference documents [Readthedocs](https://afs-sdk.readthedocs.io/en/latest/overview.html)
 
 
 ## Installation
@@ -18,12 +18,11 @@ Support python version 3.5 or later
 AFS provides the release version SDK on private pypi server. Run the following command on notebook cell to install SDK:
  
 ```
-!pip install afs
+!pip install afs2-model
 ```
 
 List the installed packages.
 
-![Imgur](https://i.imgur.com/BmMeqR1.png)
 
 ## Develop
 
