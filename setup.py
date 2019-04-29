@@ -23,23 +23,20 @@ with open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'r') as f:
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
     long_description = f.read()
 
-
-
-
 setup(
-    name='afs',
+    name='afs2-model',
     version=version,
     description='For AFS developer to develop analytics',
     long_description=long_description,
     author='benchuang',
-    author_email='benchuang@iii.org.tw',
+    author_email='ben2019.chuang@advantech.com.tw',
     url='https://github.com/benchuang11046/afs',
     license='MIT',
     install_requires=install_requires,
     packages=find_packages(exclude=["tests", "test_reports"]),
     tests_require=dev_requires,
     zip_safe=False,
-    keywords=['afs', 'WISE-PaaS', 'EI-PaaS', 'analytics framework service', 'afs-sdk'],
+    keywords=['AFS', 'WISE-PaaS', 'EI-PaaS', 'AI framework service', 'afs-sdk', 'ADVANTECH'],
     entry_points='''
         [console_scripts]
         eipaas-afs=afs.cli:cli

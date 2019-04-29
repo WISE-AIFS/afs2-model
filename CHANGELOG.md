@@ -1,3 +1,11 @@
+2.1.13 (unreleased)
+-------------------
+
+- Rename afs to afs2-model
+
+- Remove v1 API and v1 unit tests
+
+
 2.1.8 (2019-03-12)
 ------------------
 

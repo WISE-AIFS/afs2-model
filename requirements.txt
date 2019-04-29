@@ -1,6 +1,4 @@
 requests
-pandas
-influxdb
 urllib3
 Deprecated
 
