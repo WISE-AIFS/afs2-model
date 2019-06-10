@@ -9,7 +9,6 @@ import re
 from uuid import uuid4
 from deprecated import deprecated
 
-_logger = logging.getLogger(__name__)
 
 class models(object):
 
@@ -24,12 +23,10 @@ class models(object):
         self.instance_id = envir.instance_id
         self.auth_code = envir.auth_code
         self.api_version = envir.api_version
-        if self.api_version == 'v1':
-            self.entity_uri = 'models'
-        elif self.api_version == 'v2':
-            self.entity_uri = 'model_repositories'
-            self.sub_entity_uri = 'models'
+        self.entity_uri = 'model_repositories'
+        self.sub_entity_uri = 'models'
         self.repo_id = None
+
 
     @deprecated(version='2.2', reason="v2 API will be re-implement in version 2.2.")
     def get_model_repo_id(self, model_repository_name=None):
@@ -53,6 +50,7 @@ class models(object):
             raise NotImplementedError('v1 API is not support this method.')
 
         return self.repo_id
+
 
     @deprecated(version='2.2', reason="v2 API will be re-implement in version 2.2.")
     def get_model_id(self, model_name=None, model_repository_name=None, last_one=True):
@@ -88,6 +86,7 @@ class models(object):
         else:
             raise NotImplementedError('v1 API is not support this method.')
 
+
     @deprecated(version='2.2', reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.")
     def download_model(self, save_path, model_repository_name=None, model_name=None, last_one=False):
         """Download model from model repository to a file.
@@ -101,18 +100,13 @@ class models(object):
         if not self.repo_id:
             raise ValueError('There is no specific repo_id to download.')
 
-        if self.api_version in 'v1':
-            extra_paths = [self.repo_id, 'download']
-            resp = self._get(extra_paths=extra_paths)
-
-        elif self.api_version in 'v2':
-            model_id = self.get_model_id(model_name=model_name, model_repository_name=model_repository_name, last_one=last_one)
-            if model_id:
-                extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
-                params = {'alt': 'media'}
-                resp = self._get(params=params, extra_paths=extra_paths)
-            else:
-                raise ValueError('Model with name {} not found.'.format(model_name))
+        model_id = self.get_model_id(model_name=model_name, model_repository_name=model_repository_name, last_one=last_one)
+        if model_id:
+            extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
+            params = {'alt': 'media'}
+            resp = self._get(params=params, extra_paths=extra_paths)
+        else:
+            raise ValueError('Model with name {} not found.'.format(model_name))
 
         try:
             with open(save_path, 'wb') as f:
@@ -121,6 +115,7 @@ class models(object):
             raise RuntimeError('Write download file error.')
 
         return True
+
 
     @deprecated(version='2.2', reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.")
     def upload_model(self,
@@ -139,13 +134,14 @@ class models(object):
         :param float loss: (optional) model loss value
         :param dict tags: (optional) tag from model
         :param dict extra_evaluation: (optional) other evaluation from model
-        :param str model_name:  (optional) Give model a name or default auto a uuid4 name 
+        :param str model_name:  (optional) Give model a name or a default name 
+        :param str model_repository_name: (optional) model_repository_name
         :return: bool
         """
 
         if not isinstance(tags, dict) or \
            not isinstance(extra_evaluation, dict):
-            raise AssertionError(
+            raise ValueError(
                 'Type error, accuracy and loss are float, and tags and extra_evaluation are dict.'
             )
 
@@ -153,59 +149,49 @@ class models(object):
         evaluation_result = {}
         if accuracy:
             if not isinstance(accuracy, float):
-                raise AssertionError('Type error, accuracy is float.')
-            if accuracy >= 1.0 or accuracy < 0:
-                raise AssertionError('Accuracy value should be between 0-1')
+                raise TypeError('Type error, accuracy is float.')
+            if accuracy > 1.0 or accuracy < 0:
+                raise ValueError('Accuracy value should be between 0-1')
             evaluation_result.update({'accuracy': accuracy})
 
         if loss:
             if not isinstance(loss, float):
-                raise AssertionError(
+                raise TypeError(
                     'Type error, loss is float.'
                 )
             evaluation_result.update({'loss': loss})
 
         if not isinstance(model_path, str):
-            raise AssertionError('Type error, model_name  cannot convert to string')
+            raise TypeError('Type error, model_name  cannot convert to string')
 
         if not os.path.isfile(model_path):
-            raise AssertionError('File not found, model path is not exist.')
-        else:
-            model_path = model_path
-            if os.path.sep in model_path:
-                model_path = model_path.split(os.path.sep)[-1]
-
-            if len(model_path) > 42 or len(model_path) < 1:
-                raise AssertionError('Model name length  is upper limit 1-42 char')
-
-            pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,42}')
-            match = pattern.match(model_path)
-            if match is None:
-                raise AssertionError('Model naming rule is only a-z, A-Z, 0-9, - and _ allowed.')
-
-        # Check file size
-        if os.path.getsize(model_path) > 2*(1024*1024*1024):
-            raise AssertionError('Model size is upper limit 2 GB.')
+            raise IOError('File not found, model path is not exist.')
 
         with open(model_path, 'rb') as f:
             model_file = BytesIO(f.read())
         model_file.seek(0)
 
-        if self.api_version in 'v1':
-            self.repo_id = self.switch_repo(model_path)
-            if not self.repo_id:
-                self.repo_id = self.create_model_repo(model_path)
-        elif self.api_version == 'v2':
-            # Check default repo_id
-            if not self.repo_id:
-                # Find model_repo_id from name
-                if model_repository_name:
-                    self.get_model_repo_id(model_repository_name)
-                    # If not found, create one
-                    if not self.repo_id:
-                        self.repo_id = self.create_model_repo(model_repository_name)
-                else:
-                    raise ValueError('Please enter model_repository_name')
+        # Check default repo_id
+        if not self.repo_id:
+            # Find model_repo_id from name
+            if model_repository_name:
+                self.get_model_repo_id(model_repository_name)
+                # If not found, create one
+                if not self.repo_id:
+                    self.repo_id = self.create_model_repo(model_repository_name)
+            else:
+                raise ValueError('Please enter model_repository_name')
+    
+        # Fetch tags apm_node 
+        PAI_DATA_DIR = os.getenv('PAI_DATA_DIR', None)
+        if PAI_DATA_DIR:
+            PAI_DATA_DIR = json.loads(PAI_DATA_DIR)
+            if 'data' in PAI_DATA_DIR:
+                data = PAI_DATA_DIR['data']
+                if 'machineIdList' in data:
+                    machineIdList = data['machineIdList'].pop(0)
+                    if machineIdList:
+                        tags.update({'apm_node': str(machineIdList)})
 
         # evaluation result
         evaluation_result.update(extra_evaluation)
@@ -214,21 +200,17 @@ class models(object):
             evaluation_result=json.dumps(evaluation_result))
         files = {'model': model_file}
 
-        if self.api_version in 'v1':
-            extra_paths = [self.repo_id, 'upload']
-            resp = self._put(data=data, files=files, extra_paths=extra_paths)
+        if model_name:
+            self._naming_rule(model_name)
+            data.update({'name': model_name})
 
-        elif self.api_version == 'v2':
-            if not model_name:
-                data.update({'name': str(uuid4())})
-
-            extra_paths = [self.repo_id, self.sub_entity_uri]
-            resp = self._create(data=data, files=files, extra_paths=extra_paths, form='data')
+        extra_paths = [self.repo_id, self.sub_entity_uri]
+        resp = self._create(data=data, files=files, extra_paths=extra_paths, form='data')
 
         if int(resp.status_code / 100) == 2:
-            return True
+            return resp.json()
         else:
-            return False
+            return resp.text
 
     @deprecated(version='2.2', reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.")
     def create_model_repo(self, model_repository_name):
@@ -239,41 +221,22 @@ class models(object):
         :return: the new uuid of the repository
         """
         if isinstance(model_repository_name, str):
-            if len(model_repository_name) > 42 or len(model_repository_name) < 1:
-                raise AssertionError('Model name length  is upper limit 1-42 char')
-            pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,42}')
-            match = pattern.match(model_repository_name)
-            if match is None:
-                raise AssertionError('Model naming rule is only a-z, A-Z, 0-9, - and _ allowed.')
+            self._naming_rule(model_repository_name)
+
+            # if len(model_repository_name) > 42 or len(model_repository_name) < 1:
+            #     raise ValueError('Model name length  is upper limit 1-42 char')
+            # pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,42}')
+            # match = pattern.match(model_repository_name)
+            # if match is None:
+            #     raise ValueError('Model naming rule is only a-z, A-Z, 0-9, - and _ allowed.')
         else:
-            raise AssertionError('Repo name must be string')
+            raise TypeError('Repo name must be string')
 
         request = dict(name=model_repository_name)
         resp = self._create(request)
         self.repo_id = resp.json()['uuid']
         return self.repo_id
 
-
-    @deprecated(version='2.2', reason="v1 API will be removed.")
-    def switch_repo(self, model_repository_name=None):
-        """
-        Switch current repository. If the model is not exist, return none. (Support v2 API)
-
-        :param str repo_name: (optional)The name of model repository.
-        :return: None, repo_id, exception
-        """
-        if self.api_version == 'v1':
-            params = dict(name=model_repository_name)
-            resp = self._get(params=params)
-            if len(resp.json()) == 0:
-                return None
-            elif len(resp.json()) == 1:
-                self.repo_id = resp.json()[0]['uuid']
-                return self.repo_id
-            else:
-                raise ValueError('There are multi model repositories from server response')
-        else:
-            raise NotImplementedError('v2 API is not support this method.')
 
     @deprecated(version='2.2', reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.")
     def get_latest_model_info(self, model_repository_name=None):
@@ -283,20 +246,14 @@ class models(object):
         :param model_repository_name: (optional)The name of model repository.
         :return: dict. the latest of model info in model repository.
         """
-        if self.api_version == 'v1':
-            if model_repository_name:
-                self.switch_repo(model_repository_name)
-            resp = self._get(extra_paths=[self.repo_id, 'info'])
-            return resp.json()
-        elif self.api_version == 'v2':
-            model_id = self.get_model_id(model_repository_name=model_repository_name, last_one=True)
+        model_id = self.get_model_id(model_repository_name=model_repository_name, last_one=True)
 
-            if model_id:
-                extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
-                resp = self._get(extra_paths=extra_paths)
-                return resp.json()
-            else:
-                raise ValueError('Model not found.')
+        if model_id:
+            extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
+            resp = self._get(extra_paths=extra_paths)
+            return resp.json()
+        else:
+            raise ValueError('Model not found.')
 
     @deprecated(version='2.2', reason="v2 API will be re-implement in version 2.2.")
     def get_model_info(self, model_name, model_repository_name=None):
@@ -371,17 +328,8 @@ class models(object):
 
 
     def _create(self, data, files=None, extra_paths=[], form='json'):
-
-        if self.api_version == 'v1':
-            if len(extra_paths) == 0:
-                url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
-                                   self.entity_uri)
-            else:
-                url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
-                                      self.entity_uri, '/'.join(extra_paths))
-        elif self.api_version == 'v2':
-            url = utils.urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
-                                 extra_paths=extra_paths)
+        url = utils.urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
+                                extra_paths=extra_paths)
 
         if not files:
             response = utils._check_response(
@@ -408,58 +356,18 @@ class models(object):
                         files=files,
                         verify=False))
 
-        _logger.debug('POST - %s - %s', url, response.text)
-        return response
-
-
-    def _put(self, data, files=None, extra_paths=[]):
-        if self.api_version == 'v1':
-            if len(extra_paths) == 0:
-                url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
-                                   self.entity_uri)
-            else:
-                url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
-                                      self.entity_uri, '/'.join(extra_paths))
-        elif self.api_version == 'v2':
-            url = utils.urljoin(self.target_endpoint, 'instances' ,self.instance_id, self.entity_uri, extra_paths=extra_paths)
-
-        if not files:
-            response = utils._check_response(
-                requests.put(
-                        url,
-                        params=dict(auth_code=self.auth_code),
-                        data=data,
-                        verify=False))
-        else:
-            response = utils._check_response(
-                requests.put(
-                        url,
-                        params=dict(auth_code=self.auth_code),
-                        files=files,
-                        data=data,
-                        verify=False))
-        _logger.debug('PUT - %s - %s', url, response.text)
         return response
 
 
     def _get(self, params={}, extra_paths=[]):
-        if self.api_version == 'v1':
-                if len(extra_paths) == 0:
-                    url = '%s%s/%s' % (self.target_endpoint, self.instance_id,
-                                       self.entity_uri)
-                else:
-                    url = '%s%s/%s/%s' % (self.target_endpoint, self.instance_id,
-                                          self.entity_uri, '/'.join(extra_paths))
-        elif self.api_version == 'v2':
-            url = utils.urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
-                                 extra_paths=extra_paths)
+        url = utils.urljoin(self.target_endpoint, 'instances', self.instance_id, self.entity_uri,
+                            extra_paths=extra_paths)
 
         get_params = {}
         get_params.update(dict(auth_code=self.auth_code))
         get_params.update(params)
         response = utils._check_response(
         requests.get(url, params=get_params, verify=False))
-        _logger.debug('GET - %s - %s', url, response.text)
         return response
 
 
@@ -472,5 +380,16 @@ class models(object):
         get_params.update(params)
         response = utils._check_response(
             requests.delete(url, params=get_params, verify=False))
-        _logger.debug('DELETE - %s - %s', url, response.text)
         return response
+
+
+    def _naming_rule(self, name):
+        if len(name) > 42 or len(name) < 1:
+            raise ValueError('Name length is upper limit 1-42 char')
+
+        pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,42}')
+        match = pattern.match(name)
+        if match is None:
+            raise ValueError('Naming rule is only a-z, A-Z, 0-9, - and _ allowed.')
+    
+        return True
