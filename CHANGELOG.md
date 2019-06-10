@@ -7,6 +7,9 @@
 
 - Add Requirements #7538 - Auto add APM node if setting APM firehose
 
+- Refactor unit tests
+
+
 2.1.13 (2019-04-29)
 -------------------
 

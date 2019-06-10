@@ -134,9 +134,9 @@ class models(object):
         :param float loss: (optional) model loss value
         :param dict tags: (optional) tag from model
         :param dict extra_evaluation: (optional) other evaluation from model
-        :param str model_name:  (optional) Give model a name or a default name 
+        :param str model_name: (optional) Give model a name or a default name 
         :param str model_repository_name: (optional) model_repository_name
-        :return: bool
+        :return: dict. the information of the upload model.
         """
 
         if not isinstance(tags, dict) or \
@@ -217,18 +217,11 @@ class models(object):
         """
         Create a new model repository. (Support v2 API)
         
-        :param str repo_name: (optional)The name of model repository.
+        :param str model_repository_name: (optional)The name of model repository.
         :return: the new uuid of the repository
         """
         if isinstance(model_repository_name, str):
             self._naming_rule(model_repository_name)
-
-            # if len(model_repository_name) > 42 or len(model_repository_name) < 1:
-            #     raise ValueError('Model name length  is upper limit 1-42 char')
-            # pattern = re.compile(r'(?!.*[^a-zA-Z0-9-_.]).{1,42}')
-            # match = pattern.match(model_repository_name)
-            # if match is None:
-            #     raise ValueError('Model naming rule is only a-z, A-Z, 0-9, - and _ allowed.')
         else:
             raise TypeError('Repo name must be string')
 
