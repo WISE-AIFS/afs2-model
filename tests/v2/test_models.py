@@ -1,11 +1,18 @@
+from uuid import UUID
+
+
 def test_create_model_repo(afs_models, delete_model_respository):
     create_resp = afs_models.create_model_repo(
         model_repository_name="test_model_repository"
     )
+    assert isinstance(UUID(create_resp), UUID)
+
+
+def test_get_model_repo_id(afs_models, model_repository, delete_model_respository):
     get_resp = afs_models.get_model_repo_id(
         model_repository_name="test_model_repository"
     )
-    assert create_resp == get_resp
+    assert get_resp == model_repository
 
 
 def test_delete_model_repo(afs_models, model_repository):
@@ -35,12 +42,14 @@ def test_create_model(afs_models, delete_mr_and_model, model_file):
     assert "tags" in resp
     assert "evaluation_result" in resp
 
+
+def test_get_model_id(afs_models, model, delete_mr_and_model, model_file):
     get_resp = afs_models.get_model_id(
         model_name="test_model",
         model_repository_name="test_model_repository",
         last_one=True,
     )
-    assert get_resp == resp["uuid"]
+    assert get_resp == model["uuid"]
 
 
 def test_delete_model(afs_models, model, delete_model_respository):
