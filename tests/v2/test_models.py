@@ -1,78 +1,111 @@
-
-
 def test_create_model_repo(afs_models, delete_model_respository):
-        create_resp = afs_models.create_model_repo(model_repository_name='test_model_repository')
-        get_resp = afs_models.get_model_repo_id(model_repository_name='test_model_repository')
-        assert create_resp == get_resp
+    create_resp = afs_models.create_model_repo(
+        model_repository_name="test_model_repository"
+    )
+    get_resp = afs_models.get_model_repo_id(
+        model_repository_name="test_model_repository"
+    )
+    assert create_resp == get_resp
 
 
 def test_delete_model_repo(afs_models, model_repository):
-        delete_resp = afs_models.delete_model_repository(model_repository_name='test_model_repository')
-        assert delete_resp == True
-        resp = afs_models.get_model_repo_id(model_repository_name='test_model_repository')
-        assert resp == None
+    delete_resp = afs_models.delete_model_repository(
+        model_repository_name="test_model_repository"
+    )
+    assert delete_resp == True
+    resp = afs_models.get_model_repo_id(model_repository_name="test_model_repository")
+    assert resp == None
 
 
 def test_create_model(afs_models, delete_mr_and_model, model_file):
-        resp = afs_models.upload_model(model_path='unit_test_model',
-                            accuracy=1.,
-                            loss=1.,
-                            tags={'tag_key': 'tag_value'},
-                            extra_evaluation={'extra_loss': 1.23},
-                            model_repository_name='test_model_repository',
-                            model_name='test_model')
-        assert isinstance(resp, dict)
-        assert 'uuid' in resp
-        assert 'name' in resp
-        assert 'created_at' in resp
-        assert 'parameters' in resp
-        assert 'tags' in resp
-        assert 'evaluation_result' in resp
-        
-        get_resp = afs_models.get_model_id(model_name='test_model', model_repository_name='test_model_repository', last_one=True)
-        assert get_resp == resp['uuid']
+    resp = afs_models.upload_model(
+        model_path="unit_test_model",
+        accuracy=1.0,
+        loss=1.0,
+        tags={"tag_key": "tag_value"},
+        extra_evaluation={"extra_loss": 1.23},
+        model_repository_name="test_model_repository",
+        model_name="test_model",
+    )
+    assert isinstance(resp, dict)
+    assert "uuid" in resp
+    assert "name" in resp
+    assert "created_at" in resp
+    assert "parameters" in resp
+    assert "tags" in resp
+    assert "evaluation_result" in resp
+
+    get_resp = afs_models.get_model_id(
+        model_name="test_model",
+        model_repository_name="test_model_repository",
+        last_one=True,
+    )
+    assert get_resp == resp["uuid"]
 
 
 def test_delete_model(afs_models, model, delete_model_respository):
-        resp = afs_models.delete_model(model_name='test_model', model_repository_name='test_model_repository')
-        assert resp == True
-        get_resp = afs_models.get_model_id(model_name='test_model', model_repository_name='test_model_repository', last_one=True)
-        assert get_resp == None
+    resp = afs_models.delete_model(
+        model_name="test_model", model_repository_name="test_model_repository"
+    )
+    assert resp == True
+    get_resp = afs_models.get_model_id(
+        model_name="test_model",
+        model_repository_name="test_model_repository",
+        last_one=True,
+    )
+    assert get_resp == None
 
 
 def test_get_model_info(afs_models, model, delete_mr_and_model):
-        resp = afs_models.get_model_info(model_name='test_model', model_repository_name='test_model_repository')
-        assert resp['uuid'] == model['uuid']
+    resp = afs_models.get_model_info(
+        model_name="test_model", model_repository_name="test_model_repository"
+    )
+    assert resp["uuid"] == model["uuid"]
+
 
 def test_get_latest_model_info(afs_models, model, delete_mr_and_model):
-        resp = afs_models.get_latest_model_info(model_repository_name='test_model_repository')
-        assert resp['uuid'] == model['uuid']
+    resp = afs_models.get_latest_model_info(
+        model_repository_name="test_model_repository"
+    )
+    assert resp["uuid"] == model["uuid"]
 
 
 def test_download_model(afs_models, model, delete_mr_and_model):
-        resp = afs_models.download_model(save_path='download_model', model_repository_name='test_model_repository', model_name='test_model')
-        assert resp == True
-        with open('download_model', 'r') as f:
-                content = f.read()
-        assert content == 'unit test' 
+    resp = afs_models.download_model(
+        save_path="download_model",
+        model_repository_name="test_model_repository",
+        model_name="test_model",
+    )
+    assert resp == True
+    with open("download_model", "r") as f:
+        content = f.read()
+    assert content == "unit test"
 
 
-def test_create_firehose_apm_model(afs_models, apm_node_env, delete_mr_and_model, model_file):
-        resp = afs_models.upload_model(model_path='unit_test_model',
-                            accuracy=1.,
-                            loss=1.,
-                            tags={'tag_key': 'tag_value'},
-                            model_repository_name='test_model_repository',
-                            model_name='test_model')
-        assert isinstance(resp, dict)
-        assert 'uuid' in resp
-        assert 'name' in resp
-        assert 'created_at' in resp
-        assert 'parameters' in resp
-        assert 'tags' in resp
-        assert 'evaluation_result' in resp
-        assert 'apm_node' in resp['tags']
-        assert '3' in resp['tags']['apm_node']
+def test_create_firehose_apm_model(
+    afs_models, apm_node_env, delete_mr_and_model, model_file
+):
+    resp = afs_models.upload_model(
+        model_path="unit_test_model",
+        accuracy=1.0,
+        loss=1.0,
+        tags={"tag_key": "tag_value"},
+        model_repository_name="test_model_repository",
+        model_name="test_model",
+    )
+    assert isinstance(resp, dict)
+    assert "uuid" in resp
+    assert "name" in resp
+    assert "created_at" in resp
+    assert "parameters" in resp
+    assert "tags" in resp
+    assert "evaluation_result" in resp
+    assert "apm_node" in resp["tags"]
+    assert "3" in resp["tags"]["apm_node"]
 
-        get_resp = afs_models.get_model_id(model_name='test_model', model_repository_name='test_model_repository', last_one=True)
-        assert get_resp == resp['uuid']
+    get_resp = afs_models.get_model_id(
+        model_name="test_model",
+        model_repository_name="test_model_repository",
+        last_one=True,
+    )
+    assert get_resp == resp["uuid"]
