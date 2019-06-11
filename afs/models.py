@@ -200,7 +200,7 @@ class models(object):
             if "data" in pai_data_dir:
                 data = pai_data_dir["data"]
                 if "machineIdList" in data:
-                    machineIdList = data["machineIdList"].pop(0, None)
+                    machineIdList = data["machineIdList"].pop(0) if len(data["machineIdList"]) else None
                     if machineIdList:
                         tags.update({"apm_node": str(machineIdList)})
 
