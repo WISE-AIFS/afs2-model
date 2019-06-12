@@ -1,44 +1,120 @@
+from uuid import UUID
 
 
-def test_get_model_repo_id(mocker, mocker_models, mock_api_v2_resource, model_repository_name, model_name, model_repository_list_response):
-    mocker.patch.object(mocker_models, '_get', return_value=model_repository_list_response)
-    model_reop_id = mocker_models.get_model_repo_id(model_repository_name=model_repository_name)
-    assert model_reop_id == "1a3a9596-8ee8-44b6-94f8-56ba70169300"
+def test_create_model_repo(afs_models, delete_model_respository):
+    create_resp = afs_models.create_model_repo(
+        model_repository_name="test_model_repository"
+    )
+    assert isinstance(UUID(create_resp), UUID)
 
 
-def test_get_model_id(mocker, mocker_models, model_repository_name, model_name, model_list_response):
-    mocker.patch.object(mocker_models, '_get', return_value=model_list_response)
-    model_id = mocker_models.get_model_id(model_repository_name=model_repository_name, last_one=True)
-    assert model_id == "b8ed105e-c0b8-4b39-a453-0efd3259aafe"
+def test_get_model_repo_id(afs_models, model_repository, delete_model_respository):
+    get_resp = afs_models.get_model_repo_id(
+        model_repository_name="test_model_repository"
+    )
+    assert get_resp == model_repository
 
 
-def test_upload_model(mocker, mocker_models, mock_api_v2_resource, model_repository_name, model_name, model_response):
-    mocker.patch.object(mocker_models, '_create', return_value=model_response)
-    assert mocker_models.upload_model(
-        model_path=model_name,
-        accuracy=0.1,
-        loss=0.2,
-        tags={"machine": "01"},
-        extra_evaluation={"metric": 1},
-        model_repository_name=model_repository_name,
-        model_name=model_name) == True
+def test_delete_model_repo(afs_models, model_repository):
+    delete_resp = afs_models.delete_model_repository(
+        model_repository_name="test_model_repository"
+    )
+    assert delete_resp == True
+    resp = afs_models.get_model_repo_id(model_repository_name="test_model_repository")
+    assert resp == None
 
 
-def test_create_model_repo(mocker, mock_api_v2_resource, model_repository_name, mocker_models, model_name, model_repository_response):
-    mocker.patch.object(mocker_models, '_create', return_value=model_repository_response)
-    assert mocker_models.create_model_repo(model_name) == "11cc3faf-cd24-4d93-8f9a-09dd731f5397"
-
-
-def test_get_latest_model_info(mocker, mock_api_v2_resource, model_repository_name, mocker_models, model_name, model_list_response, model_response):
-    mocker.patch.object(mocker_models, 'get_model_id', return_value="b8ed105e-c0b8-4b39-a453-0efd3259aafe")
-    mocker.patch.object(mocker_models, '_get', return_value=model_response)
-    resp = mocker_models.get_latest_model_info(model_repository_name)
-
+def test_create_model(afs_models, delete_mr_and_model, model_file):
+    resp = afs_models.upload_model(
+        model_path="unit_test_model",
+        accuracy=1.0,
+        loss=1.0,
+        tags={"tag_key": "tag_value"},
+        extra_evaluation={"extra_loss": 1.23},
+        model_repository_name="test_model_repository",
+        model_name="test_model",
+    )
     assert isinstance(resp, dict)
-    assert 'uuid' in resp
-    assert 'name' in resp
-    assert 'owner' in resp
-    assert 'created_at' in resp
-    assert 'parameters' in resp
-    assert 'tags' in resp
-    assert 'evaluation_result' in resp
+    assert "uuid" in resp
+    assert "name" in resp
+    assert "created_at" in resp
+    assert "parameters" in resp
+    assert "tags" in resp
+    assert "evaluation_result" in resp
+
+
+def test_get_model_id(afs_models, model, delete_mr_and_model, model_file):
+    get_resp = afs_models.get_model_id(
+        model_name="test_model",
+        model_repository_name="test_model_repository",
+        last_one=True,
+    )
+    assert get_resp == model["uuid"]
+
+
+def test_delete_model(afs_models, model, delete_model_respository):
+    resp = afs_models.delete_model(
+        model_name="test_model", model_repository_name="test_model_repository"
+    )
+    assert resp == True
+    get_resp = afs_models.get_model_id(
+        model_name="test_model",
+        model_repository_name="test_model_repository",
+        last_one=True,
+    )
+    assert get_resp == None
+
+
+def test_get_model_info(afs_models, model, delete_mr_and_model):
+    resp = afs_models.get_model_info(
+        model_name="test_model", model_repository_name="test_model_repository"
+    )
+    assert resp["uuid"] == model["uuid"]
+
+
+def test_get_latest_model_info(afs_models, model, delete_mr_and_model):
+    resp = afs_models.get_latest_model_info(
+        model_repository_name="test_model_repository"
+    )
+    assert resp["uuid"] == model["uuid"]
+
+
+def test_download_model(afs_models, model, delete_mr_and_model):
+    resp = afs_models.download_model(
+        save_path="download_model",
+        model_repository_name="test_model_repository",
+        model_name="test_model",
+    )
+    assert resp == True
+    with open("download_model", "r") as f:
+        content = f.read()
+    assert content == "unit test"
+
+
+def test_create_firehose_apm_model(
+    afs_models, apm_node_env, delete_mr_and_model, model_file
+):
+    resp = afs_models.upload_model(
+        model_path="unit_test_model",
+        accuracy=1.0,
+        loss=1.0,
+        tags={"tag_key": "tag_value"},
+        model_repository_name="test_model_repository",
+        model_name="test_model",
+    )
+    assert isinstance(resp, dict)
+    assert "uuid" in resp
+    assert "name" in resp
+    assert "created_at" in resp
+    assert "parameters" in resp
+    assert "tags" in resp
+    assert "evaluation_result" in resp
+    assert "apm_node" in resp["tags"]
+    assert "3" in resp["tags"]["apm_node"]
+
+    get_resp = afs_models.get_model_id(
+        model_name="test_model",
+        model_repository_name="test_model_repository",
+        last_one=True,
+    )
+    assert get_resp == resp["uuid"]

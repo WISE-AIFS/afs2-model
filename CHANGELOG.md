@@ -1,3 +1,15 @@
+2.1.18 (unreleased)
+-------------------
+
+- Fix Bug #7564 - Fix accuracy cannot be 1.0 error
+
+- Fix Bug #7570 - Fix upload model filepath cannot be path way error
+
+- Add Requirements #7538 - Auto add APM node if setting APM firehose
+
+- Refactor unit tests
+
+
 2.1.13 (2019-04-29)
 -------------------
 
