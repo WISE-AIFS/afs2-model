@@ -1,4 +1,4 @@
-2.1.18 (unreleased)
+2.1.18 (2019-06-17)
 -------------------
 
 - Fix Bug #7564 - Fix accuracy cannot be 1.0 error
