@@ -26,8 +26,8 @@ class models(object):
         self.entity_uri = "model_repositories"
         self.sub_entity_uri = "models"
         self.repo_id = None
+        self.model_id = None
 
-    @deprecated(version="2.2", reason="v2 API will be re-implement in version 2.2.")
     def get_model_repo_id(self, model_repository_name=None):
         """Get model repository by name.
         
@@ -50,7 +50,6 @@ class models(object):
 
         return self.repo_id
 
-    @deprecated(version="2.2", reason="v2 API will be re-implement in version 2.2.")
     def get_model_id(self, model_name=None, model_repository_name=None, last_one=True):
         """Get model id by model name.
         
@@ -88,10 +87,7 @@ class models(object):
         else:
             raise NotImplementedError("v1 API is not support this method.")
 
-    @deprecated(
-        version="2.2",
-        reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.",
-    )
+
     def download_model(
         self, save_path, model_repository_name=None, model_name=None, last_one=False
     ):
@@ -126,10 +122,7 @@ class models(object):
 
         return True
 
-    @deprecated(
-        version="2.2",
-        reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.",
-    )
+
     def upload_model(
         self,
         model_path,
@@ -221,14 +214,13 @@ class models(object):
         )
 
         if int(resp.status_code / 100) == 2:
-            return resp.json()
+            resp = resp.json()
+            self.model_id = resp.get('uuid')
+            return resp
         else:
             return resp.text
 
-    @deprecated(
-        version="2.2",
-        reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.",
-    )
+
     def create_model_repo(self, model_repository_name):
         """
         Create a new model repository. (Support v2 API)
@@ -246,10 +238,7 @@ class models(object):
         self.repo_id = resp.json()["uuid"]
         return self.repo_id
 
-    @deprecated(
-        version="2.2",
-        reason="v1 API will be removed, and v2 API will be re-implement in version 2.2.",
-    )
+
     def get_latest_model_info(self, model_repository_name=None):
         """
         Get the latest model info, including created_at, tags, evaluation_result. (Support v2 API)
@@ -268,7 +257,7 @@ class models(object):
         else:
             raise ValueError("Model not found.")
 
-    @deprecated(version="2.2", reason="v2 API will be re-implement in version 2.2.")
+
     def get_model_info(self, model_name, model_repository_name=None):
         """Get model info, including created_at, tags, evaluation_result. (V2 API)
         
@@ -294,7 +283,7 @@ class models(object):
 
         return resp.json()
 
-    @deprecated(version="2.2", reason="v2 API will be re-implement in version 2.2.")
+
     def delete_model_repository(self, model_repository_name):
         """Delete model repository.
         
@@ -316,7 +305,7 @@ class models(object):
         else:
             return False
 
-    @deprecated(version="2.2", reason="v2 API will be re-implement in version 2.2.")
+
     def delete_model(self, model_name, model_repository_name=None):
         """Delete model.
         
@@ -382,6 +371,7 @@ class models(object):
 
         return response
 
+
     def _get(self, params={}, extra_paths=[]):
         url = utils.urljoin(
             self.target_endpoint,
@@ -399,6 +389,7 @@ class models(object):
         )
         return response
 
+
     def _del(self, params={}, extra_paths=[]):
         url = utils.urljoin(
             self.target_endpoint,
@@ -415,6 +406,7 @@ class models(object):
             requests.delete(url, params=get_params, verify=False)
         )
         return response
+
 
     def _naming_rule(self, name):
         if len(name) > 42 or len(name) < 1:
