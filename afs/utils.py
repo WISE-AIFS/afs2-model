@@ -1,6 +1,8 @@
 import json
 import requests
 import logging
+import botocore.session
+from botocore.client import Config
 
 _logger = logging.getLogger(__name__)
 
@@ -35,3 +37,44 @@ def urljoin(*args, extra_paths):
     if len(extra_paths) > 0:
         url = url + "/" + "/".join(extra_paths)
     return url
+
+
+def upload_model_to_blob(
+    blob_endpoint, blob_accessKey, blob_secretKey, bucket_name, key, filename
+):
+    try:
+        config = Config(signature_version="s3")
+        session = botocore.session.get_session()
+        blob_client = session.create_client(
+            "s3",
+            region_name="",
+            endpoint_url=blob_endpoint,
+            aws_access_key_id=blob_accessKey,
+            aws_secret_access_key=blob_secretKey,
+            config=config,
+        )
+    except Exception as e:
+        raise ConnectionError(f'Connect to blob {blob_endpoint} error, exception: {e}')
+
+    retry = 0
+    while retry < 3:
+        try:
+            resp = blob_client.put_object(
+                Bucket=bucket_name, Key=key, Body=open(filename, "rb").read()
+            )
+        except Exception as e:
+            print(ConnectionError(f'[ConnectionError] Put object error {retry} time'))
+        if resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
+            retry = retry + 1
+            if retry == 3:
+                raise ConnectionError(f"[ConnectionError] Put object error after retry 3 times, check response {resp}")
+        else:
+            break
+
+    resp_get = blob_client.list_objects(Bucket=bucket_name, Prefix=key)
+    if resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
+        raise ConnectionError(f"List blob key has some error, check response {resp}")
+
+
+    object_size = resp_get["Contents"][0]["Size"]
+    return object_size

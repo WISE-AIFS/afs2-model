@@ -1,6 +1,6 @@
 requests
 urllib3
-Deprecated
+botocore
 
 # For client
 pyyaml

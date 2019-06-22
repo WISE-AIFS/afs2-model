@@ -4,10 +4,12 @@ import os
 from io import BytesIO
 import requests
 import afs.utils as utils
-from afs.get_env import AfsEnv
 import re
+import base64
 from uuid import uuid4
-from deprecated import deprecated
+from afs.utils import upload_model_to_blob
+
+from afs.get_env import AfsEnv
 
 
 class models(object):
@@ -27,6 +29,29 @@ class models(object):
         self.sub_entity_uri = "models"
         self.repo_id = None
         self.model_id = None
+
+        # blob info
+        self._blob_endpoint = None
+        self._blob_accessKey = None
+        self._blob_secretKey = None
+        self._bucket_name = envir.bucket_name
+
+    def set_blob_credential(self, blob_endpoint, blob_accessKey, blob_secretKey):
+        """Set blob credential when upload the big model
+
+        :param str blob_endpoint: blob endpoint
+        :param str blob_accessKey: blob accessKey
+        :param str blob_secretKey: blob secretKey
+        """
+        try:
+            _blob_accessKey = str(base64.b64decode(blob_accessKey), 'utf-8')
+            _blob_secretKey = str(base64.b64decode(blob_secretKey), 'utf-8')
+        except Exception as e:
+            raise ValueError('blob_accessKey, blob_secretKey decode failed.')
+
+        self._blob_endpoint = blob_endpoint
+        self._blob_accessKey = _blob_accessKey
+        self._blob_secretKey = _blob_secretKey
 
     def get_model_repo_id(self, model_repository_name=None):
         """Get model repository by name.
@@ -87,7 +112,6 @@ class models(object):
         else:
             raise NotImplementedError("v1 API is not support this method.")
 
-
     def download_model(
         self, save_path, model_repository_name=None, model_name=None, last_one=False
     ):
@@ -118,10 +142,9 @@ class models(object):
             with open(save_path, "wb") as f:
                 f.write(resp.content)
         except Exception as e:
-            raise RuntimeError("Write download file error.")
+            raise RuntimeError(f"Write download file error. Exception: {e}")
 
         return True
-
 
     def upload_model(
         self,
@@ -154,14 +177,14 @@ class models(object):
         # evaluation_result info
         evaluation_result = {}
         if accuracy:
-            if not isinstance(accuracy, float):
+            if not isinstance(accuracy, (float, int)):
                 raise TypeError("Type error, accuracy is float.")
             if accuracy > 1.0 or accuracy < 0:
                 raise ValueError("Accuracy value should be between 0-1")
             evaluation_result.update({"accuracy": accuracy})
 
         if loss:
-            if not isinstance(loss, float):
+            if not isinstance(loss, (float, int)):
                 raise TypeError("Type error, loss is float.")
             evaluation_result.update({"loss": loss})
 
@@ -170,10 +193,6 @@ class models(object):
 
         if not os.path.isfile(model_path):
             raise IOError("File not found, model path is not exist.")
-
-        with open(model_path, "rb") as f:
-            model_file = BytesIO(f.read())
-        model_file.seek(0)
 
         # Check default repo_id
         if not self.repo_id:
@@ -189,37 +208,89 @@ class models(object):
         # Fetch tags apm_node
         pai_data_dir = os.getenv("PAI_DATA_DIR", None)
         if pai_data_dir:
-            pai_data_dir = json.loads(pai_data_dir)
-            if "data" in pai_data_dir:
-                data = pai_data_dir["data"]
-                if "machineIdList" in data:
-                    machineIdList = data.get('machineIdList', [None]).pop(0)
-                    if machineIdList:
-                        tags.update({"apm_node": str(machineIdList)})
+            try:
+                pai_data_dir = json.loads(pai_data_dir)
+                if "data" in pai_data_dir and "type" in pai_data_dir:
+                    data = pai_data_dir["data"]
+                    firehose_type = pai_data_dir["type"]
+
+                    if "machineIdList" in data and firehose_type == "apm-firehose":
+                        machineIdList = data.get("machineIdList", [None]).pop(0)
+
+                        if machineIdList:
+                            tags.update({"apm_node": str(machineIdList)})
+            except Exception as e:
+                print(
+                    f"PAI_DATA_DIR value is not valid json format for apm_node. Exception:{e}, Value: {pai_data_dir}"
+                )
 
         # evaluation result
         evaluation_result.update(extra_evaluation)
         data = dict(
             tags=json.dumps(tags), evaluation_result=json.dumps(evaluation_result)
         )
-        files = {"model": model_file}
-
+        # model name
         if model_name:
             self._naming_rule(model_name)
             data.update({"name": model_name})
 
         extra_paths = [self.repo_id, self.sub_entity_uri]
-        resp = self._create(
-            data=data, files=files, extra_paths=extra_paths, form="data"
-        )
+        # Load model size < 300 MB
+        file_size = os.path.getsize(model_path)
+        if file_size < (300 * 1024 * 1024):
+            with open(model_path, "rb") as f:
+                model_file = BytesIO(f.read())
+            model_file.seek(0)
+            files = {"model": model_file}
+
+            resp = self._create(
+                data=data, files=files, extra_paths=extra_paths, form="data"
+            )
+
+        # between 300M - 1G model file
+        elif file_size < (1024 * 1024 * 1024):
+            if not (
+                self._blob_endpoint
+                and self._blob_accessKey
+                and self._blob_secretKey
+                and self._bucket_name
+            ):
+                raise ValueError(
+                    f"Blob information is not enough to put object to blob, {self._blob_endpoint}, {self._blob_accessKey}, {self._blob_secretKey}, {self._bucket_name}"
+                )
+
+            # create model meta-data
+            resp = self._create(data=data, extra_paths=extra_paths, form="data")
+            self.model_id = resp.json()["uuid"]
+
+            key = f"models/{self.instance_id}/{self.repo_id}/{self.model_id}"
+            object_size = upload_model_to_blob(
+                self._blob_endpoint,
+                self._blob_accessKey,
+                self._blob_secretKey,
+                self._bucket_name,
+                key,
+                model_path,
+            )
+
+            extra_paths = [
+                self.repo_id,
+                self.sub_entity_uri,
+                self.model_id,
+                "file_info",
+            ]
+            put_payload = {"size": object_size}
+            resp = self._put(extra_paths=extra_paths, data=put_payload)
+
+        else:
+            raise Exception(f"The size of the file has exceeded the upper limit of 1G")
 
         if int(resp.status_code / 100) == 2:
             resp = resp.json()
-            self.model_id = resp.get('uuid')
+            self.model_id = resp.get("uuid")
             return resp
         else:
             return resp.text
-
 
     def create_model_repo(self, model_repository_name):
         """
@@ -237,7 +308,6 @@ class models(object):
         resp = self._create(request)
         self.repo_id = resp.json()["uuid"]
         return self.repo_id
-
 
     def get_latest_model_info(self, model_repository_name=None):
         """
@@ -257,7 +327,6 @@ class models(object):
         else:
             raise ValueError("Model not found.")
 
-
     def get_model_info(self, model_name, model_repository_name=None):
         """Get model info, including created_at, tags, evaluation_result. (V2 API)
         
@@ -265,24 +334,20 @@ class models(object):
         :param model_repository_name: The name of model repository.
         :return: dict model info
         """
-        if self.api_version == "v2":
-            if not self.get_model_repo_id(model_repository_name=model_repository_name):
-                raise ValueError("Model_repository not found.")
+        if not self.get_model_repo_id(model_repository_name=model_repository_name):
+            raise ValueError("Model_repository not found.")
 
-            model_id = self.get_model_id(
-                model_name=model_name, model_repository_name=model_repository_name
-            )
+        model_id = self.get_model_id(
+            model_name=model_name, model_repository_name=model_repository_name
+        )
 
-            if model_id:
-                extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
-                resp = self._get(extra_paths=extra_paths)
-            else:
-                raise ValueError("Model not found.")
+        if model_id:
+            extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
+            resp = self._get(extra_paths=extra_paths)
         else:
-            raise NotImplementedError("v1 API is not support this method.")
+            raise ValueError("Model not found.")
 
         return resp.json()
-
 
     def delete_model_repository(self, model_repository_name):
         """Delete model repository.
@@ -304,7 +369,6 @@ class models(object):
             return True
         else:
             return False
-
 
     def delete_model(self, model_name, model_repository_name=None):
         """Delete model.
@@ -342,11 +406,24 @@ class models(object):
         )
 
         if not files:
-            response = utils._check_response(
-                requests.post(
-                    url, params=dict(auth_code=self.auth_code), json=data, verify=False
+            if form in "json":
+                response = utils._check_response(
+                    requests.post(
+                        url,
+                        params=dict(auth_code=self.auth_code),
+                        json=data,
+                        verify=False,
+                    )
                 )
-            )
+            elif form in "data":
+                response = utils._check_response(
+                    requests.post(
+                        url,
+                        params=dict(auth_code=self.auth_code),
+                        data=data,
+                        verify=False,
+                    )
+                )
         else:
             if form in "json":
                 response = utils._check_response(
@@ -371,7 +448,6 @@ class models(object):
 
         return response
 
-
     def _get(self, params={}, extra_paths=[]):
         url = utils.urljoin(
             self.target_endpoint,
@@ -388,7 +464,6 @@ class models(object):
             requests.get(url, params=get_params, verify=False)
         )
         return response
-
 
     def _del(self, params={}, extra_paths=[]):
         url = utils.urljoin(
@@ -407,7 +482,6 @@ class models(object):
         )
         return response
 
-
     def _naming_rule(self, name):
         if len(name) > 42 or len(name) < 1:
             raise ValueError("Name length is upper limit 1-42 char")
@@ -418,3 +492,18 @@ class models(object):
             raise ValueError("Naming rule is only a-z, A-Z, 0-9, - and _ allowed.")
 
         return True
+
+    def _put(self, data, extra_paths=[]):
+        url = utils.urljoin(
+            self.target_endpoint,
+            "instances",
+            self.instance_id,
+            self.entity_uri,
+            extra_paths=extra_paths,
+        )
+        get_params = {}
+        get_params.update(dict(auth_code=self.auth_code))
+        response = utils._check_response(
+            requests.put(url, params=get_params, json=data, verify=False)
+        )
+        return response
