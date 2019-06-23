@@ -36,7 +36,7 @@ class models(object):
         self._blob_secretKey = None
         self._bucket_name = envir.bucket_name
 
-    def set_blob_credential(self, blob_endpoint, blob_accessKey, blob_secretKey):
+    def set_blob_credential(self, blob_endpoint, encode_blob_accessKey, encode_blob_secretKey):
         """Set blob credential when upload the big model
 
         :param str blob_endpoint: blob endpoint
@@ -44,10 +44,10 @@ class models(object):
         :param str blob_secretKey: blob secretKey
         """
         try:
-            _blob_accessKey = str(base64.b64decode(blob_accessKey), 'utf-8')
-            _blob_secretKey = str(base64.b64decode(blob_secretKey), 'utf-8')
+            _blob_accessKey = str(base64.b64decode(encode_blob_accessKey), 'utf-8')
+            _blob_secretKey = str(base64.b64decode(encode_blob_secretKey), 'utf-8')
         except Exception as e:
-            raise ValueError('blob_accessKey, blob_secretKey decode failed.')
+            raise ValueError('encode_blob_accessKey, encode_blob_secretKey cannot be decoded.')
 
         self._blob_endpoint = blob_endpoint
         self._blob_accessKey = _blob_accessKey
@@ -155,6 +155,7 @@ class models(object):
         extra_evaluation={},
         model_repository_name=None,
         model_name=None,
+        blob_mode=False
     ):
         """
         Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.(Support v2 API)
@@ -237,7 +238,7 @@ class models(object):
         extra_paths = [self.repo_id, self.sub_entity_uri]
         # Load model size < 300 MB
         file_size = os.path.getsize(model_path)
-        if file_size < (300 * 1024 * 1024):
+        if file_size < (300 * 1024 * 1024) and not blob_mode:
             with open(model_path, "rb") as f:
                 model_file = BytesIO(f.read())
             model_file.seek(0)
@@ -248,7 +249,7 @@ class models(object):
             )
 
         # between 300M - 1G model file
-        elif file_size < (1024 * 1024 * 1024):
+        elif file_size < (1024 * 1024 * 1024) or blob_mode:
             if not (
                 self._blob_endpoint
                 and self._blob_accessKey
@@ -264,6 +265,8 @@ class models(object):
             self.model_id = resp.json()["uuid"]
 
             key = f"models/{self.instance_id}/{self.repo_id}/{self.model_id}"
+            
+            # try:
             object_size = upload_model_to_blob(
                 self._blob_endpoint,
                 self._blob_accessKey,
@@ -272,6 +275,9 @@ class models(object):
                 key,
                 model_path,
             )
+            # finally:
+            #     extra_paths = [self.repo_id, self.sub_entity_uri, self.model_id]
+            #     resp = self._del(extra_paths=extra_paths)
 
             extra_paths = [
                 self.repo_id,

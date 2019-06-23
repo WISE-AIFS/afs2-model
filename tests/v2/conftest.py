@@ -58,11 +58,17 @@ def delete_model_respository(afs_models):
 @pytest.fixture(scope="function")
 def delete_mr_and_model(afs_models):
     yield
-    afs_models.delete_model(
+    try:
+        afs_models.delete_model(
         model_name="test_model", model_repository_name="test_model_repository"
-    )
-    afs_models.delete_model_repository(model_repository_name="test_model_repository")
+        )
+    except Exception as e:
+        pass
 
+    try:
+        afs_models.delete_model_repository(model_repository_name="test_model_repository")
+    except Exception as e:
+        pass
 
 @pytest.fixture(scope="function")
 def apm_node_env():
@@ -85,7 +91,8 @@ def big_model():
     big_model_filename = "big_model.h5"
     if not os.path.exists(big_model_filename):
         f = open(big_model_filename, "wb")
-        f.seek((301 * 1024 * 1024 + 1) - 1)
+        # f.seek((301 * 1024 * 1024 + 1) - 1)
+        f.seek((1 * 1024 * 1024 + 1) - 1)
         f.write(b"\0")
 
     yield big_model_filename

@@ -63,8 +63,10 @@ def upload_model_to_blob(
                 Bucket=bucket_name, Key=key, Body=open(filename, "rb").read()
             )
         except Exception as e:
-            print(ConnectionError(f'[ConnectionError] Put object error {retry} time'))
-        if resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
+            resp = {}
+            print(ConnectionError(f'[ConnectionError] Put object error {retry} time, exeception: {e}'))
+        
+        if not resp or resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
             retry = retry + 1
             if retry == 3:
                 raise ConnectionError(f"[ConnectionError] Put object error after retry 3 times, check response {resp}")
@@ -72,9 +74,8 @@ def upload_model_to_blob(
             break
 
     resp_get = blob_client.list_objects(Bucket=bucket_name, Prefix=key)
-    if resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
+    if not resp_get or resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
         raise ConnectionError(f"List blob key has some error, check response {resp}")
-
 
     object_size = resp_get["Contents"][0]["Size"]
     return object_size
