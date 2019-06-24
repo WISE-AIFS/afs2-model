@@ -3,8 +3,6 @@ from tests.mock_requests import MockResponse
 from dotenv import load_dotenv
 from afs import models
 
-load_dotenv()
-
 
 @pytest.fixture(scope="session")
 def model_file():
