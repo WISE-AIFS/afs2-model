@@ -92,5 +92,6 @@ def big_model():
         # f.seek((301 * 1024 * 1024 + 1) - 1)
         f.seek((1 * 1024 * 1024 + 1) - 1)
         f.write(b"\0")
+        f.close()
 
     yield big_model_filename

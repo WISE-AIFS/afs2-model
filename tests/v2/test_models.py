@@ -165,6 +165,7 @@ def test_create_big_model(afs_models_blob, big_model, delete_mr_and_model):
     assert "tags" in resp
     assert "evaluation_result" in resp
     assert "size" in resp
+    print(resp['size'])
     assert resp["size"] > 1 * 1024 * 1024
 
     get_resp = afs_models_blob.get_model_id(

@@ -59,7 +59,6 @@ class AfsEnv:
         # url = f"{self.afs_url}info/bucket"
         response = requests.get(url, params={"auth_code": self.auth_code}, verify=False)
         if response.status_code == 200:
-            print(f'resp: {response}')
             bucket = response.json()["bucket"]
             return bucket
         else:

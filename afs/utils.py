@@ -71,7 +71,7 @@ def upload_model_to_blob(
             if retry == 3:
                 raise ConnectionError(f"[ConnectionError] Put object error after retry 3 times, check response {resp}")
         else:
-            break
+            continue
 
     resp_get = blob_client.list_objects(Bucket=bucket_name, Prefix=key)
     if not resp_get or resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
