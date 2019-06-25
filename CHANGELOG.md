@@ -1,7 +1,7 @@
 2.1.19 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add Requirements #7777 - Uplod big model to blob and sync metadata
 
 
 2.1.18 (2019-06-17)
