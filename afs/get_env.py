@@ -55,7 +55,7 @@ class AfsEnv:
             raise ConnectionError("Cannot fetch AFS server from {}".format(url))
 
     def _get_blob_bucket(self):
-        url = utils.urljoin(self.afs_url, 'info', 'bucket', extra_paths=[])
+        url = utils.urljoin(self.afs_url, "info", "bucket", extra_paths=[])
         # url = f"{self.afs_url}info/bucket"
         response = requests.get(url, params={"auth_code": self.auth_code}, verify=False)
         if response.status_code == 200:

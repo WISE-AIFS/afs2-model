@@ -54,7 +54,7 @@ def upload_model_to_blob(
             config=config,
         )
     except Exception as e:
-        raise ConnectionError(f'Connect to blob {blob_endpoint} error, exception: {e}')
+        raise ConnectionError(f"Connect to blob {blob_endpoint} error, exception: {e}")
 
     retry = 0
     while retry < 3:
@@ -64,12 +64,18 @@ def upload_model_to_blob(
             )
         except Exception as e:
             resp = {}
-            print(ConnectionError(f'[ConnectionError] Put object error {retry} time, exeception: {e}'))
-        
+            print(
+                ConnectionError(
+                    f"[ConnectionError] Put object error {retry} time, exeception: {e}"
+                )
+            )
+
         if not resp or resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
             retry = retry + 1
             if retry == 3:
-                raise ConnectionError(f"[ConnectionError] Put object error after retry 3 times, check response {resp}")
+                raise ConnectionError(
+                    f"[ConnectionError] Put object error after retry 3 times, check response {resp}"
+                )
         else:
             break
 

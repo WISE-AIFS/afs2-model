@@ -36,18 +36,22 @@ class models(object):
         self._blob_secretKey = None
         self._bucket_name = envir.bucket_name
 
-    def set_blob_credential(self, blob_endpoint, encode_blob_accessKey, encode_blob_secretKey):
-        """Set blob credential when upload the big model
+    def set_blob_credential(
+        self, blob_endpoint, encode_blob_accessKey, encode_blob_secretKey
+    ):
+        """Set blob credential when upload the big model.
 
         :param str blob_endpoint: blob endpoint
-        :param str blob_accessKey: blob accessKey
-        :param str blob_secretKey: blob secretKey
+        :param str encode_blob_accessKey: blob accessKey encode with base64
+        :param str encode_blob_secretKey: blob secretKey encode with base64
         """
         try:
-            _blob_accessKey = str(base64.b64decode(encode_blob_accessKey), 'utf-8')
-            _blob_secretKey = str(base64.b64decode(encode_blob_secretKey), 'utf-8')
+            _blob_accessKey = str(base64.b64decode(encode_blob_accessKey), "utf-8")
+            _blob_secretKey = str(base64.b64decode(encode_blob_secretKey), "utf-8")
         except Exception as e:
-            raise ValueError('encode_blob_accessKey, encode_blob_secretKey cannot be decoded.')
+            raise ValueError(
+                "encode_blob_accessKey, encode_blob_secretKey cannot be decoded."
+            )
 
         self._blob_endpoint = blob_endpoint
         self._blob_accessKey = _blob_accessKey
@@ -155,10 +159,9 @@ class models(object):
         extra_evaluation={},
         model_repository_name=None,
         model_name=None,
-        blob_mode=False
+        blob_mode=False,
     ):
-        """
-        Upload model_name to model repository.If model_name is not exists in the repository, this function will create one.(Support v2 API)
+        """Upload model to model repository. (Support v2 API)
 
         :param str model_path:  (required) model filepath 
         :param float accuracy: (optional) model accuracy value, between 0-1
@@ -167,6 +170,7 @@ class models(object):
         :param dict extra_evaluation: (optional) other evaluation from model
         :param str model_name: (optional) Give model a name or a default name 
         :param str model_repository_name: (optional) model_repository_name
+        :param bool blob_mode: (optional) upload model direct to blob mode, default False
         :return: dict. the information of the upload model.
         """
 
@@ -260,25 +264,28 @@ class models(object):
                     f"Blob information is not enough to put object to blob, {self._blob_endpoint}, {self._blob_accessKey}, {self._blob_secretKey}, {self._bucket_name}"
                 )
 
-            # create model meta-data
+            # create model metadata
             resp = self._create(data=data, extra_paths=extra_paths, form="data")
             self.model_id = resp.json()["uuid"]
 
             key = f"models/{self.instance_id}/{self.repo_id}/{self.model_id}"
-            
-            # try:
-            object_size = upload_model_to_blob(
-                self._blob_endpoint,
-                self._blob_accessKey,
-                self._blob_secretKey,
-                self._bucket_name,
-                key,
-                model_path,
-            )
-            # finally:
-            #     extra_paths = [self.repo_id, self.sub_entity_uri, self.model_id]
-            #     resp = self._del(extra_paths=extra_paths)
 
+            try:
+                object_size = upload_model_to_blob(
+                    self._blob_endpoint,
+                    self._blob_accessKey,
+                    self._blob_secretKey,
+                    self._bucket_name,
+                    key,
+                    model_path,
+                )
+            except ConnectionError as ex:
+                # Delete model metadata if connection error
+                extra_paths = [self.repo_id, self.sub_entity_uri, self.model_id]
+                resp = self._del(extra_paths=extra_paths)
+                raise ex
+
+            # Update PUT Model File_info
             extra_paths = [
                 self.repo_id,
                 self.sub_entity_uri,
@@ -412,7 +419,7 @@ class models(object):
         )
 
         if not files:
-            if form in "json":
+            if form == "json":
                 response = utils._check_response(
                     requests.post(
                         url,
@@ -421,7 +428,7 @@ class models(object):
                         verify=False,
                     )
                 )
-            elif form in "data":
+            elif form == "data":
                 response = utils._check_response(
                     requests.post(
                         url,
@@ -431,7 +438,7 @@ class models(object):
                     )
                 )
         else:
-            if form in "json":
+            if form == "json":
                 response = utils._check_response(
                     requests.post(
                         url,
@@ -441,7 +448,7 @@ class models(object):
                         verify=False,
                     )
                 )
-            elif form in "data":
+            elif form == "data":
                 response = utils._check_response(
                     requests.post(
                         url,

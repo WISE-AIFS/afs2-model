@@ -25,10 +25,12 @@ def afs_models():
 def afs_models_blob():
     my_models = models()
     blob_endpoint = os.getenv("blob_endpoint", None)
-    blob_accessKey = os.getenv("blob_accessKey", None)
-    blob_secretKey = os.getenv("blob_secretKey", None)
+    encode_blob_accessKey = os.getenv("blob_accessKey", None)
+    encode_blob_secretKey = os.getenv("blob_secretKey", None)
 
-    my_models.set_blob_credential(blob_endpoint, blob_accessKey, blob_secretKey)
+    my_models.set_blob_credential(
+        blob_endpoint, encode_blob_accessKey, encode_blob_secretKey
+    )
     yield my_models
 
 
@@ -58,15 +60,18 @@ def delete_mr_and_model(afs_models):
     yield
     try:
         afs_models.delete_model(
-        model_name="test_model", model_repository_name="test_model_repository"
+            model_name="test_model", model_repository_name="test_model_repository"
         )
     except Exception as e:
         pass
 
     try:
-        afs_models.delete_model_repository(model_repository_name="test_model_repository")
+        afs_models.delete_model_repository(
+            model_repository_name="test_model_repository"
+        )
     except Exception as e:
         pass
+
 
 @pytest.fixture(scope="function")
 def apm_node_env():
@@ -95,3 +100,17 @@ def big_model():
         f.close()
 
     yield big_model_filename
+
+
+@pytest.fixture(scope="function")
+def afs_models_with_error_blob():
+    my_models = models()
+    blob_endpoint = os.getenv("blob_endpoint", None)
+    encode_blob_accessKey = os.getenv("blob_accessKey", None)
+    encode_blob_secretKey = "NDhkZTU1MGFjOTEwNGI3MTk4N2RjZGQ5ZWFjMTI0OTk="
+
+    encode_blob_accessKey = os.getenv("blob_accessKey", None)
+    my_models.set_blob_credential(
+        blob_endpoint, encode_blob_accessKey, encode_blob_secretKey
+    )
+    yield my_models

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 @pytest.fixture(scope="session")
 def client_session():
     from afs.client import EIPaaSAFSSession

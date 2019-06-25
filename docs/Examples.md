@@ -91,6 +91,9 @@ afs_models.get_latest_model_info(model_repository_name='model.h5')
 
 How to upload a big model (300MB-1GB) file on notebook. 
 
+Both `encode_blob_accessKey` and `encode_blob_secretKey` can be gotten from encoded blob credential `accessKey` and `blob_secretKey` by `base64`. Developer can use `python` to encode or use web tool like [utilities-online](http://www.utilities-online.info/base64/#.XRG3H9MzbOQ).
+
+
 **Code**
 
 ```
@@ -113,7 +116,9 @@ tags = {'machine': 'machine01'}
 # Model object
 afs_models = models()
 afs_models.set_blob_credential(
-	blob_endpoint="http://x.x.x.x:x", encode_blob_accessKey="ENCODE_BLOB_ACCESSKEY", encode_blob_secretKey="ENCODE_BLOB_SECRETKEY"
+	blob_endpoint="http://x.x.x.x:x",
+	encode_blob_accessKey="ENCODE_BLOB_ACCESSKEY", 
+	encode_blob_secretKey="ENCODE_BLOB_SECRETKEY"
 	)
 
 
