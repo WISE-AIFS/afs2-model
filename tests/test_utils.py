@@ -1,8 +1,9 @@
 import pytest
+from afs import utils
 
 
-def test_urljoin(mock_api_v2_resource, utils_resource):
-    url = utils_resource.urljoin(
+def test_urljoin():
+    url = utils.urljoin(
         "http://afs.org.tw",
         "instance_id",
         "1234-4567-7890",
@@ -13,8 +14,8 @@ def test_urljoin(mock_api_v2_resource, utils_resource):
     assert url == "http://afs.org.tw/instance_id/1234-4567-7890/model_respositories/123"
 
 
-def test_urljoin_extra_paths(mock_api_v2_resource, utils_resource):
-    url = utils_resource.urljoin(
+def test_urljoin_extra_paths():
+    url = utils.urljoin(
         "http://afs.org.tw",
         "instance_id",
         "1234-4567-7890",

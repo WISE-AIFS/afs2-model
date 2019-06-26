@@ -1,3 +1,11 @@
+2.1.19 (unreleased)
+-------------------
+
+- Add Requirements #7777 - Upload big model to blob and sync metadata
+
+- Add Bug #7912 - Check the PAI_DATA_DIR value format
+
+
 2.1.18 (2019-06-17)
 -------------------
 

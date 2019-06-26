@@ -3,7 +3,7 @@
 
 ## models
 
-### upload_models
+### upload_model
 
 How to upload a model file on notebook. 
 
@@ -83,5 +83,70 @@ afs_models.get_latest_model_info(model_repository_name='model.h5')
 	},
 	'tags': {},
 	'created_at': '2018-09-11 10:15:54'
+}
+```
+
+
+### upload_model (big model)
+
+How to upload a big model (300MB-1GB) file on notebook. 
+
+Both `encode_blob_accessKey` and `encode_blob_secretKey` can be gotten from encoded blob credential `accessKey` and `blob_secretKey` by `base64`. Developer can use `python` to encode or use web tool like [utilities-online](http://www.utilities-online.info/base64/#.XRG3H9MzbOQ).
+
+
+**Code**
+
+```
+from afs import models
+
+# Write a big file as 301 MB model file.
+f = open('big_model.h5', "wb")
+f.seek((301 * 1024 * 1024 + 1) - 1)
+f.write(b"\0")
+f.close()
+
+# User-define evaluation result
+extra_evaluation = {
+    'AUC': 1.0
+}
+
+# User-define Tags 
+tags = {'machine': 'machine01'}
+
+# Model object
+afs_models = models()
+afs_models.set_blob_credential(
+	blob_endpoint="http://x.x.x.x:x",
+	encode_blob_accessKey="ENCODE_BLOB_ACCESSKEY", 
+	encode_blob_secretKey="ENCODE_BLOB_SECRETKEY"
+	)
+
+
+# Upload the model to repository and the repository name is the same as file name.
+# Accuracy and loss is necessary, but extra_evaluation and tags are optional.
+afs_models.upload_model(
+    model_path='big_model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5')
+
+```
+
+
+**Output**
+```
+{
+	'uuid': '433184a2-e930-465d-8b03-ecf0d649a7f9',
+	'name': '2019-06-25 01:42:44.810366',
+	'model_repository': 'bff9ea46-8856-4eef-b8dc-a4879a6ed9f9',
+	'owner': 'dd9fcd3b-cfe7-47ec-9452-5157efcf1e50',
+	'evaluation_result': {
+		'accuracy': 0.4,
+		'loss': 0.3,
+		'AUC': 1.0
+	},
+	'parameters': {},
+	'tags': {
+		'machine': 'machine01'
+	},
+	'size': 315621377,
+	'created_at': '2019-06-25T01:42:44.821000+00:00'
 }
 ```

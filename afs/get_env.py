@@ -10,6 +10,7 @@ class AfsEnv:
         self.version = os.getenv("AFS_API_VERSION", os.getenv("version", ""))
 
         if target_endpoint is None or instance_id is None or auth_code is None:
+            self.afs_url = os.getenv("afs_url", None)
             self.target_endpoint = os.getenv("afs_url", None)
             self.auth_code = os.getenv("auth_code", None)
             self.instance_id = os.getenv("instance_id", None)
@@ -34,6 +35,7 @@ class AfsEnv:
 
         self.api_version, self.afs_portal_version = self._get_api_version()
         self.target_endpoint = self.target_endpoint + self.api_version + "/"
+        self.bucket_name = self._get_blob_bucket()
 
     def _get_api_version(self):
         url = utils.urljoin(self.target_endpoint, extra_paths={})
@@ -51,3 +53,14 @@ class AfsEnv:
             return response.json()["API_version"], afs_portal_version
         else:
             raise ConnectionError("Cannot fetch AFS server from {}".format(url))
+
+    def _get_blob_bucket(self):
+        url = utils.urljoin(self.afs_url, "info", "bucket", extra_paths=[])
+        # url = f"{self.afs_url}info/bucket"
+        response = requests.get(url, params={"auth_code": self.auth_code}, verify=False)
+        if response.status_code == 200:
+            bucket = response.json()["bucket"]
+            return bucket
+        else:
+            print(f"Not found {url}, {response.text}")
+            return None
