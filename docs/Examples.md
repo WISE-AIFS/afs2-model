@@ -99,8 +99,11 @@ from afs import models
 # Model object
 afs_models = models()
 
-# Download model from model repository, and get the last one model or get the specific model name
+# Download model from model repository, and get the last one model.
 afs_models.download_model(save_path='dl_model.h5', model_repository_name='model.h5', last_one=True)
+
+# Or get the specific model name in the model repository.
+afs_models.download_model(save_path='dl_model.h5', model_repository_name='model.h5', model_name='2019-07-10 02:59:11.610828')
 
 # List the directory
 !ls
