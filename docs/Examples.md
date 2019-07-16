@@ -31,8 +31,11 @@ tags = {'machine': 'machine01'}
 # Model object
 afs_models = models()
 
-# Upload the model to repository and the repository name is the same as file name.
-# Accuracy and loss is necessary, but extra_evaluation and tags are optional.
+# Upload the model to repository and the repository name is the same as file name, the the following is optional parameters:
+#   1. (optional) accuracy is a evaluation of the model by the result of testing.
+#   2. (optional) loss is a evaluation of the model by the result of testing.
+#   3. (optional) extra_evaluation is for other evaluations for the model, you can put them to this parameter.
+#   4. (optional) tags is the label for the model, like the time of data or the type of the algorithm.
 afs_models.upload_model(
     model_path='model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5')
 
@@ -85,6 +88,32 @@ afs_models.get_latest_model_info(model_repository_name='model.h5')
 	'created_at': '2018-09-11 10:15:54'
 }
 ```
+
+
+###  download_model
+
+**Code**
+```
+from afs import models
+
+# Model object
+afs_models = models()
+
+# Download model from model repository, and get the last one model.
+afs_models.download_model(save_path='dl_model.h5', model_repository_name='model.h5', last_one=True)
+
+# Or get the specific model name in the model repository.
+afs_models.download_model(save_path='dl_model.h5', model_repository_name='model.h5', model_name='2019-07-10 02:59:11.610828')
+
+# List the directory
+!ls
+```
+
+**Output**
+```
+dl_model.h5 
+```
+
 
 
 ### upload_model (big model)

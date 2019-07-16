@@ -121,8 +121,10 @@ class models(object):
     ):
         """Download model from model repository to a file.
 
-        :param str model_repository_name: The model name exists in model repository
-        :param str save_path: The path exist in file system
+        :param str model_repository_name: The model name exists in the model repository
+        :param str save_path: The path exist in the file system
+        :param str model_name: Get the specific model file from the model reposiotry
+        :param str last_one: Get the last uploading model from the model repository.
         """
         if model_repository_name:
             self.get_model_repo_id(model_repository_name)
