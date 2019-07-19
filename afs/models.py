@@ -8,33 +8,37 @@ import re
 import base64
 from uuid import uuid4
 from afs.utils import upload_model_to_blob
-
 from afs.get_env import AfsEnv
 
 
-class models(object):
-    def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
+class models(AfsEnv):
+    # def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
+    def __init__(
+        self, target_endpoint=None, instance_id=None, auth_code=None, token=None
+    ):
         """Connect to afs models service, user can connect to service by enviroment parameter. Another way is input when created.
         """
-        envir = AfsEnv(
-            target_endpoint=target_endpoint,
-            instance_id=instance_id,
-            auth_code=auth_code,
-        )
-        self.target_endpoint = envir.target_endpoint
-        self.instance_id = envir.instance_id
-        self.auth_code = envir.auth_code
-        self.api_version = envir.api_version
+        # envir = AfsEnv(
+        #     target_endpoint=target_endpoint,
+        #     instance_id=instance_id,
+        #     auth_code=auth_code,
+        # )
+        # self.target_endpoint = envir.target_endpoint
+        # self.instance_id = envir.instance_id
+        # self.auth_code = envir.auth_code
+        # self.api_version = envir.api_version
+
+        super(models, self).__init__(target_endpoint, instance_id, auth_code, token)
         self.entity_uri = "model_repositories"
         self.sub_entity_uri = "models"
         self.repo_id = None
         self.model_id = None
 
-        # blob info
+        # Blob info
         self._blob_endpoint = None
         self._blob_accessKey = None
         self._blob_secretKey = None
-        self._bucket_name = envir.bucket_name
+        # self._bucket_name = envir.bucket_name
 
     def set_blob_credential(
         self, blob_endpoint, encode_blob_accessKey, encode_blob_secretKey
@@ -260,10 +264,10 @@ class models(object):
                 self._blob_endpoint
                 and self._blob_accessKey
                 and self._blob_secretKey
-                and self._bucket_name
+                and self.bucket_name
             ):
                 raise ValueError(
-                    f"Blob information is not enough to put object to blob, {self._blob_endpoint}, {self._blob_accessKey}, {self._blob_secretKey}, {self._bucket_name}"
+                    f"Blob information is not enough to put object to blob, {self._blob_endpoint}, {self._blob_accessKey}, {self._blob_secretKey}, {self.bucket_name}"
                 )
 
             # create model metadata
@@ -277,7 +281,7 @@ class models(object):
                     self._blob_endpoint,
                     self._blob_accessKey,
                     self._blob_secretKey,
-                    self._bucket_name,
+                    self.bucket_name,
                     key,
                     model_path,
                 )
@@ -319,8 +323,8 @@ class models(object):
         else:
             raise TypeError("Repo name must be string")
 
-        request = dict(name=model_repository_name)
-        resp = self._create(request)
+        payload = dict(name=model_repository_name)
+        resp = self._create(payload)
         self.repo_id = resp.json()["uuid"]
         return self.repo_id
 
@@ -423,7 +427,7 @@ class models(object):
         if not files:
             if form == "json":
                 response = utils._check_response(
-                    requests.post(
+                    self.session.post(
                         url,
                         params=dict(auth_code=self.auth_code),
                         json=data,
@@ -432,7 +436,7 @@ class models(object):
                 )
             elif form == "data":
                 response = utils._check_response(
-                    requests.post(
+                    self.session.post(
                         url,
                         params=dict(auth_code=self.auth_code),
                         data=data,
@@ -442,7 +446,7 @@ class models(object):
         else:
             if form == "json":
                 response = utils._check_response(
-                    requests.post(
+                    self.session.post(
                         url,
                         params=dict(auth_code=self.auth_code),
                         json=data,
@@ -452,7 +456,7 @@ class models(object):
                 )
             elif form == "data":
                 response = utils._check_response(
-                    requests.post(
+                    self.session.post(
                         url,
                         params=dict(auth_code=self.auth_code),
                         data=data,
@@ -476,7 +480,7 @@ class models(object):
         get_params.update(dict(auth_code=self.auth_code))
         get_params.update(params)
         response = utils._check_response(
-            requests.get(url, params=get_params, verify=False)
+            self.session.get(url, params=get_params, verify=False)
         )
         return response
 
@@ -493,7 +497,7 @@ class models(object):
         get_params.update(dict(auth_code=self.auth_code))
         get_params.update(params)
         response = utils._check_response(
-            requests.delete(url, params=get_params, verify=False)
+            self.session.delete(url, params=get_params, verify=False)
         )
         return response
 
@@ -519,6 +523,6 @@ class models(object):
         get_params = {}
         get_params.update(dict(auth_code=self.auth_code))
         response = utils._check_response(
-            requests.put(url, params=get_params, json=data, verify=False)
+            self.session.put(url, params=get_params, json=data, verify=False)
         )
         return response

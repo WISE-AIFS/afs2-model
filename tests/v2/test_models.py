@@ -2,21 +2,23 @@ from uuid import UUID
 import pytest
 
 
-def test_create_model_repo(afs_models, delete_model_respository):
+def test_create_model_repo(test_env, afs_models, delete_model_respository):
     create_resp = afs_models.create_model_repo(
         model_repository_name="test_model_repository"
     )
     assert isinstance(UUID(create_resp), UUID)
 
 
-def test_get_model_repo_id(afs_models, model_repository, delete_model_respository):
+def test_get_model_repo_id(
+    test_env, afs_models, model_repository, delete_model_respository
+):
     get_resp = afs_models.get_model_repo_id(
         model_repository_name="test_model_repository"
     )
     assert get_resp == model_repository
 
 
-def test_delete_model_repo(afs_models, model_repository):
+def test_delete_model_repo(test_env, afs_models, model_repository):
     delete_resp = afs_models.delete_model_repository(
         model_repository_name="test_model_repository"
     )
@@ -25,7 +27,7 @@ def test_delete_model_repo(afs_models, model_repository):
     assert resp == None
 
 
-def test_create_model(afs_models, delete_mr_and_model, model_file):
+def test_create_model(test_env, afs_models, delete_mr_and_model, model_file):
     resp = afs_models.upload_model(
         model_path="unit_test_model",
         accuracy=1.0,
@@ -44,7 +46,7 @@ def test_create_model(afs_models, delete_mr_and_model, model_file):
     assert "evaluation_result" in resp
 
 
-def test_get_model_id(afs_models, model, delete_mr_and_model, model_file):
+def test_get_model_id(test_env, afs_models, model, delete_mr_and_model, model_file):
     get_resp = afs_models.get_model_id(
         model_name="test_model",
         model_repository_name="test_model_repository",
@@ -53,7 +55,7 @@ def test_get_model_id(afs_models, model, delete_mr_and_model, model_file):
     assert get_resp == model["uuid"]
 
 
-def test_delete_model(afs_models, model, delete_model_respository):
+def test_delete_model(test_env, afs_models, model, delete_model_respository):
     resp = afs_models.delete_model(
         model_name="test_model", model_repository_name="test_model_repository"
     )
@@ -66,21 +68,21 @@ def test_delete_model(afs_models, model, delete_model_respository):
     assert get_resp == None
 
 
-def test_get_model_info(afs_models, model, delete_mr_and_model):
+def test_get_model_info(test_env, afs_models, model, delete_mr_and_model):
     resp = afs_models.get_model_info(
         model_name="test_model", model_repository_name="test_model_repository"
     )
     assert resp["uuid"] == model["uuid"]
 
 
-def test_get_latest_model_info(afs_models, model, delete_mr_and_model):
+def test_get_latest_model_info(test_env, afs_models, model, delete_mr_and_model):
     resp = afs_models.get_latest_model_info(
         model_repository_name="test_model_repository"
     )
     assert resp["uuid"] == model["uuid"]
 
 
-def test_download_model(afs_models, model, delete_mr_and_model):
+def test_download_model(test_env, afs_models, model, delete_mr_and_model):
     resp = afs_models.download_model(
         save_path="download_model",
         model_repository_name="test_model_repository",
@@ -93,7 +95,7 @@ def test_download_model(afs_models, model, delete_mr_and_model):
 
 
 def test_create_firehose_apm_model(
-    afs_models, apm_node_env, delete_mr_and_model, model_file
+    test_env, afs_models, apm_node_env, delete_mr_and_model, model_file
 ):
     resp = afs_models.upload_model(
         model_path="unit_test_model",
@@ -122,7 +124,7 @@ def test_create_firehose_apm_model(
 
 
 def test_error1_create_firehose_apm_model(
-    afs_models, error1_apm_node_env, delete_mr_and_model, model_file
+    test_env, afs_models, error1_apm_node_env, delete_mr_and_model, model_file
 ):
     resp = afs_models.upload_model(
         model_path="unit_test_model",
@@ -148,7 +150,7 @@ def test_error1_create_firehose_apm_model(
     assert get_resp == resp["uuid"]
 
 
-def test_create_big_model(afs_models_blob, big_model, delete_mr_and_model):
+def test_create_big_model(test_env, afs_models_blob, big_model, delete_mr_and_model):
     resp = afs_models_blob.upload_model(
         model_path=big_model,
         accuracy=1.0,
@@ -177,7 +179,7 @@ def test_create_big_model(afs_models_blob, big_model, delete_mr_and_model):
 
 
 def test_connect_blob_error_create_model(
-    afs_models_with_error_blob, big_model, delete_mr_and_model
+    test_env, afs_models_with_error_blob, big_model, delete_mr_and_model
 ):
     with pytest.raises(Exception):
         assert afs_models_with_error_blob.upload_model(
