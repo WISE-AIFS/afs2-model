@@ -2,7 +2,6 @@ import json
 import logging
 import os
 from io import BytesIO
-import requests
 import afs.utils as utils
 import re
 import base64
@@ -18,16 +17,6 @@ class models(AfsEnv):
     ):
         """Connect to afs models service, user can connect to service by enviroment parameter. Another way is input when created.
         """
-        # envir = AfsEnv(
-        #     target_endpoint=target_endpoint,
-        #     instance_id=instance_id,
-        #     auth_code=auth_code,
-        # )
-        # self.target_endpoint = envir.target_endpoint
-        # self.instance_id = envir.instance_id
-        # self.auth_code = envir.auth_code
-        # self.api_version = envir.api_version
-
         super(models, self).__init__(target_endpoint, instance_id, auth_code, token)
         self.entity_uri = "model_repositories"
         self.sub_entity_uri = "models"
