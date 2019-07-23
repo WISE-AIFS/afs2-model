@@ -16,13 +16,13 @@ def model_file():
 
 
 @pytest.fixture(scope="function")
-def afs_models():
+def afs_models(test_env):
     my_models = models()
     yield my_models
 
 
 @pytest.fixture(scope="function")
-def afs_models_blob():
+def afs_models_blob(test_env):
     my_models = models()
     blob_endpoint = os.getenv("blob_endpoint", None)
     encode_blob_accessKey = os.getenv("blob_accessKey", None)
@@ -112,5 +112,15 @@ def afs_models_with_error_blob():
     encode_blob_accessKey = os.getenv("blob_accessKey", None)
     my_models.set_blob_credential(
         blob_endpoint, encode_blob_accessKey, encode_blob_secretKey
+    )
+    yield my_models
+
+
+@pytest.fixture(scope="function")
+def afs_models_token(test_param_token):
+    my_models = models(
+        target_endpoint=test_param_token["afs_url"],
+        instance_id=test_param_token["instance_id"],
+        token=test_param_token["token"],
     )
     yield my_models

@@ -1,4 +1,10 @@
-2.1.19 (unreleased)
+2.1.23 (unreleased)
+-------------------
+
+- Add Requirements #8366 - Support API by token
+
+
+2.1.19 (2019-06-26)
 -------------------
 
 - Add Requirements #7777 - Upload big model to blob and sync metadata
