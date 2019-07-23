@@ -1,4 +1,4 @@
-2.1.23 (unreleased)
+2.1.23 (2019-07-23)
 -------------------
 
 - Add Requirements #8366 - Support API by token
