@@ -181,6 +181,54 @@ afs_models.upload_model(
 ```
 
 
+### Upload Model Metafile
+To upload model metafile to AFS. In order to maintain performance upload the file, developer has to input blob credential.
+
+Both `encode_blob_accessKey` and `encode_blob_secretKey` can be gotten from encoded blob credential `accessKey` and `blob_secretKey` by `base64`. Developer can use `python` to encode or use web tool like [utilities-online](http://www.utilities-online.info/base64/#.XRG3H9MzbOQ).
+
+
+**Code**
+```
+from afs import models
+
+# Write a file as model metafile.
+with open('model_meta_data.txt', 'w') as f:
+    f.write('dummy model')
+
+
+# SDK Model object
+afs_models = models()
+afs_models.set_blob_credential(
+	blob_endpoint="http://x.x.x.x:x",
+	encode_blob_accessKey="ENCODE_BLOB_ACCESSKEY", 
+	encode_blob_secretKey="ENCODE_BLOB_SECRETKEY"
+	)
+
+# Upload a model metafile under model_repository. If the name of metafile is existed, this upload will overwrite.
+afs_models.upload_model_metafile(
+        file_path='model_meta_data.txt',
+        name="test_metafile",
+        model_repository_name="test_model_repository",
+    )
+```
+
+**Output**
+```
+{
+	"uuid": "4dde12a1-c035-4b6d-ae1e-96baf28fb42e",
+	"name": "test_metafile",
+	"model_repository": "7ae7667a-273b-47be-a538-79b0e6531775",
+	"owner": "c5442dba-7c12-4955-b161-4a7578e314b9",
+	"size": 11,
+	"blob_key": "model_metafile\/c5442dba-7c12-4955-b161-4a7578e314b9\/7ae7667a-273b-47be-a538-79b0e6531775\/4dde12a1-c035-4b6d-ae1e-96baf28fb42e",
+	"created_at": "2019-08-05T05:37:28.762000+00:00",
+	"update_time": "2019-08-05T05:51:34.180000+00:00",
+	"deploy_time": [],
+	"status": "done"
+}
+```
+
+
 ### [Advanced] Token download_model
 
 
