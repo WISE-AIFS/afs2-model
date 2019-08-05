@@ -39,7 +39,7 @@ def urljoin(*args, extra_paths):
     return url
 
 
-def upload_model_to_blob(
+def upload_file_to_blob(
     blob_endpoint, blob_accessKey, blob_secretKey, bucket_name, key, filename
 ):
     try:
