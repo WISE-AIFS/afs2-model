@@ -6,12 +6,11 @@ import afs.utils as utils
 import re
 import base64
 from uuid import uuid4
-from afs.utils import upload_model_to_blob
+from afs.utils import upload_file_to_blob
 from afs.get_env import AfsEnv
 
 
 class models(AfsEnv):
-    # def __init__(self, target_endpoint=None, instance_id=None, auth_code=None):
     def __init__(
         self, target_endpoint=None, instance_id=None, auth_code=None, token=None
     ):
@@ -20,6 +19,7 @@ class models(AfsEnv):
         super(models, self).__init__(target_endpoint, instance_id, auth_code, token)
         self.entity_uri = "model_repositories"
         self.sub_entity_uri = "models"
+        self.metafile_uri = "model_metafiles"
         self.repo_id = None
         self.model_id = None
 
@@ -56,19 +56,16 @@ class models(AfsEnv):
         :param str model_repository_name:  
         :return: str model repository id
         """
-        if self.api_version == "v2":
-            if model_repository_name:
-                params = dict(name=model_repository_name)
-                resp = self._get(params=params).json()
+        if model_repository_name:
+            params = dict(name=model_repository_name)
+            resp = self._get(params=params).json()
 
-                if resp["resources"]:
-                    repo_id = resp["resources"][0]["uuid"]
-                else:
-                    self.repo_id = None
-                    return None
-                self.repo_id = repo_id
-        else:
-            raise NotImplementedError("v1 API is not support this method.")
+            if resp["resources"]:
+                repo_id = resp["resources"][0]["uuid"]
+            else:
+                self.repo_id = None
+                return None
+            self.repo_id = repo_id
 
         return self.repo_id
 
@@ -80,34 +77,31 @@ class models(AfsEnv):
         :param bool last_one: auto get the model_repository last one model
         :return: str model id
         """
-        if self.api_version == "v2":
-            if not model_repository_name:
-                if not self.repo_id:
-                    raise ValueError("Please enter model_repository_name.")
-            else:
-                self.get_model_repo_id(model_repository_name=model_repository_name)
-                if not self.repo_id:
-                    raise ValueError(
-                        "Model repository with name {} not found.".format(
-                            model_repository_name
-                        )
-                    )
-
-            if model_name:
-                params = dict(name=model_name)
-                extra_paths = [self.repo_id, self.sub_entity_uri]
-                resp = self._get(extra_paths=extra_paths, params=params).json()
-            else:
-                extra_paths = [self.repo_id, self.sub_entity_uri]
-                resp = self._get(extra_paths=extra_paths).json()
-
-            if resp["resources"]:
-                model_id = resp["resources"][0]["uuid"]
-            else:
-                return None
-            return model_id
+        if not model_repository_name:
+            if not self.repo_id:
+                raise ValueError("Please enter model_repository_name.")
         else:
-            raise NotImplementedError("v1 API is not support this method.")
+            self.get_model_repo_id(model_repository_name=model_repository_name)
+            if not self.repo_id:
+                raise ValueError(
+                    "Model repository with name {} not found.".format(
+                        model_repository_name
+                    )
+                )
+
+        if model_name:
+            params = dict(name=model_name)
+            extra_paths = [self.repo_id, self.sub_entity_uri]
+            resp = self._get(extra_paths=extra_paths, params=params).json()
+        else:
+            extra_paths = [self.repo_id, self.sub_entity_uri]
+            resp = self._get(extra_paths=extra_paths).json()
+
+        if resp["resources"]:
+            model_id = resp["resources"][0]["uuid"]
+        else:
+            return None
+        return model_id
 
     def download_model(
         self, save_path, model_repository_name=None, model_name=None, last_one=False
@@ -266,7 +260,7 @@ class models(AfsEnv):
             key = f"models/{self.instance_id}/{self.repo_id}/{self.model_id}"
 
             try:
-                object_size = upload_model_to_blob(
+                object_size = upload_file_to_blob(
                     self._blob_endpoint,
                     self._blob_accessKey,
                     self._blob_secretKey,
@@ -363,15 +357,11 @@ class models(AfsEnv):
         :param model_repository_name: model repository name.
         :return: bool 
         """
-        if self.api_version == "v2":
-            if not self.get_model_repo_id(model_repository_name):
-                raise ValueError("Model_repository not found.")
+        if not self.get_model_repo_id(model_repository_name):
+            raise ValueError("Model_repository not found.")
 
-            extra_paths = [self.repo_id]
-            resp = self._del(extra_paths=extra_paths)
-
-        else:
-            raise NotImplementedError("v1 API is not support this method.")
+        extra_paths = [self.repo_id]
+        resp = self._del(extra_paths=extra_paths)
 
         if int(resp.status_code / 100) == 2:
             return True
@@ -385,19 +375,139 @@ class models(AfsEnv):
         :param model_repository_name: model repository name.
         :return: bool
         """
-        if self.api_version == "v2":
-            if not self.get_model_repo_id(model_repository_name=model_repository_name):
-                raise ValueError("Model_repository not found.")
+        if not self.get_model_repo_id(model_repository_name=model_repository_name):
+            raise ValueError("Model_repository not found.")
 
-            model_id = self.get_model_id(
-                model_name, model_repository_name=model_repository_name, last_one=False
-            )
-            if not model_id:
-                raise ValueError("Model not found.")
-            extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
-            resp = self._del(extra_paths=extra_paths)
+        model_id = self.get_model_id(
+            model_name, model_repository_name=model_repository_name, last_one=False
+        )
+        if not model_id:
+            raise ValueError("Model not found.")
+        extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
+        resp = self._del(extra_paths=extra_paths)
+
+        if int(resp.status_code / 100) == 2:
+            return True
         else:
-            raise NotImplementedError("v1 API is not support this method.")
+            return False
+
+    def upload_model_metafile(self, file_path, name, model_repository_name=None):
+        """Upload model metafile
+        :param file_path: model name.
+        :param name: model metafile name.
+        :param model_repository_name: model repository name.
+        :return: dict API
+        """
+
+        if model_repository_name:
+            self.get_model_repo_id(model_repository_name)
+
+        if not (
+            self._blob_endpoint
+            and self._blob_accessKey
+            and self._blob_secretKey
+            and self.bucket_name
+        ):
+            raise ValueError(
+                f"Blob information is not enough to put object to blob, {self._blob_endpoint}, {self._blob_accessKey}, {self._blob_secretKey}, {self.bucket_name}"
+            )
+
+        # Create model metadata
+        if name:
+            self._naming_rule(name)
+            payload = {"name": name}
+        else:
+            raise ValueError("Name of model metafile is empty.")
+        extra_paths = [self.repo_id, self.metafile_uri]
+
+        resp = self._create(data=payload, extra_paths=extra_paths, form="json")
+        self.model_metadata_id = resp.json()["uuid"]
+
+        key = resp.json()["blob_key"]
+
+        try:
+            object_size = upload_file_to_blob(
+                self._blob_endpoint,
+                self._blob_accessKey,
+                self._blob_secretKey,
+                self.bucket_name,
+                key,
+                file_path,
+            )
+        except ConnectionError as ex:
+            # Delete model metadata if connection error
+            extra_paths = [self.repo_id, self.metafile_uri, self.model_metadata_id]
+            resp = self._del(extra_paths=extra_paths)
+            raise ex
+
+        # Update PUT Model metafile File_info
+        extra_paths = [
+            self.repo_id,
+            self.metafile_uri,
+            self.model_metadata_id,
+            "file_info",
+        ]
+        put_payload = {"size": object_size}
+        resp = self._put(extra_paths=extra_paths, data=put_payload)
+
+        if int(resp.status_code / 100) == 2:
+            resp = resp.json()
+            self.model_metadata_id = resp.get("uuid")
+            return resp
+        else:
+            return resp.text
+
+    def get_model_metafile_id(self, name, model_repository_name=None):
+        """Get model metafile id by name.
+        
+        :param str name: model metafile name..
+        :param str model_repository_name: model respository name where the model metafile is.
+        :return: str model metafile id
+        """
+        if not model_repository_name:
+            if not self.repo_id:
+                raise ValueError("Please enter model_repository_name.")
+        else:
+            self.get_model_repo_id(model_repository_name=model_repository_name)
+            if not self.repo_id:
+                raise ValueError(
+                    "Model repository with name {} not found.".format(
+                        model_repository_name
+                    )
+                )
+
+        if name:
+            params = dict(name=name)
+            extra_paths = [self.repo_id, self.metafile_uri]
+            resp = self._get(extra_paths=extra_paths, params=params).json()
+
+        if resp["resources"]:
+            model_metafile_id = resp["resources"][0]["uuid"]
+        else:
+            return None
+        return model_metafile_id
+
+    def delete_model_metafile(self, name, model_repository_name=None):
+        """Delete model metafile.
+        
+        :param model_name: model metafile name.
+        :param model_repository_name: model repository name.
+        :return: bool
+        """
+        if not model_repository_name:
+            if not self.repo_id:
+                raise ValueError("Please enter model_repository_name.")
+        else:
+            self.get_model_repo_id(model_repository_name=model_repository_name)
+            if not self.repo_id:
+                raise ValueError(
+                    "Model repository with name {} not found.".format(
+                        model_repository_name
+                    )
+                )
+        model_metafile_id = self.get_model_metafile_id(name=name)
+        extra_paths = [self.repo_id, self.metafile_uri, model_metafile_id]
+        resp = self._del(extra_paths=extra_paths)
 
         if int(resp.status_code / 100) == 2:
             return True

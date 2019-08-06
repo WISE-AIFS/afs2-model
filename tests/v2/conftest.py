@@ -124,3 +124,31 @@ def afs_models_token(test_param_token):
         token=test_param_token["token"],
     )
     yield my_models
+
+
+@pytest.fixture(scope="session")
+def model_metafile():
+    with open("unit_test_metafile", "w") as f:
+        f.write("unit test")
+    yield "unit_test_metafile"
+
+    if os.path.exists("unit_test_metafile"):
+        os.remove("unit_test_metafile")
+
+
+@pytest.fixture(scope="function")
+def delete_mr_and_metafile(afs_models):
+    yield
+    try:
+        afs_models.delete_model_metafile(
+            name="test_metafile", model_repository_name="test_model_repository"
+        )
+    except Exception as e:
+        print(e)
+
+    try:
+        afs_models.delete_model_repository(
+            model_repository_name="test_model_repository"
+        )
+    except Exception as e:
+        pass

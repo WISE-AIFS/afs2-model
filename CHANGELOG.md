@@ -1,4 +1,10 @@
-2.1.23 (unreleased)
+2.1.25 (unreleased)
+-------------------
+
+- Add Requirements #8629 - Support model metafile operation(upload, delete, list)
+
+
+2.1.23 (2019-07-23)
 -------------------
 
 - Add Requirements #8366 - Support API by token
