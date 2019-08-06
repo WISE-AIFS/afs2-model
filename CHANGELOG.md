@@ -1,4 +1,4 @@
-2.1.25 (unreleased)
+2.1.25 (2019-08-06)
 -------------------
 
 - Add Requirements #8629 - Support model metafile operation(upload, delete, list)
