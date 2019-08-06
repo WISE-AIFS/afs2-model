@@ -204,6 +204,9 @@ afs_models.set_blob_credential(
 	encode_blob_secretKey="ENCODE_BLOB_SECRETKEY"
 	)
 
+# Create a model_repository
+afs_models.create_model_repo("test_model_repository")
+
 # Upload a model metafile under model_repository. If the name of metafile is existed, this upload will overwrite.
 afs_models.upload_model_metafile(
         file_path='model_meta_data.txt',
