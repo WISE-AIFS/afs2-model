@@ -2,7 +2,7 @@ import os
 from tests.mock_requests import MockResponse
 
 
-def test_info_v2_check():
+def test_info_v2_check(test_env):
     from afs.get_env import AfsEnv
 
     afs_env = AfsEnv()

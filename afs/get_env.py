@@ -25,17 +25,15 @@ class AfsEnv:
             self.instance_id = instance_id
 
         self.session = requests.Session()
-        self.token = None
-
-        if auth_code == None:
-            self.auth_code = os.getenv("auth_code", None)
-        else:
-            self.auth_code = auth_code
-
         self.token = token
-        if self.auth_code != None:
-            self.session.headers.update({"Authorization": "Bearer {token}"})
-        else:
+        self.auth_code = auth_code
+
+        if self.token:
+            self.session.headers.update({"Authorization": token})
+        elif auth_code == None:
+            self.auth_code = os.getenv("auth_code", None)
+
+        if self.auth_code == None and self.token == None:
             raise ValueError("There is no auth_code and token to verify.")
 
         if not self.target_endpoint.endswith("/"):
