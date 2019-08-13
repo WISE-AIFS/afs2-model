@@ -1,6 +1,6 @@
 # AFS2-MODEL SDK
 
-[![Documentation Status](https://readthedocs.org/projects/afs-sdk/badge/?version=latest)](https://afs-sdk.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/afs-sdk/badge/?version=latest)](https://afs-sdk.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.com/benchuang11046/afs2-model.svg?branch=master)](https://travis-ci.com/benchuang11046/afs2-model)
 
 
 ## Documents
