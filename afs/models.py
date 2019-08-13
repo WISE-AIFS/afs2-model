@@ -27,7 +27,6 @@ class models(AfsEnv):
         self._blob_endpoint = None
         self._blob_accessKey = None
         self._blob_secretKey = None
-        # self._bucket_name = envir.bucket_name
 
     def set_blob_credential(
         self, blob_endpoint, encode_blob_accessKey, encode_blob_secretKey

@@ -1,3 +1,9 @@
+2.1.26 (unreleased)
+-------------------
+
+- Fix Bug #8788 - Fix download_model doc and token prefix bearer
+
+
 2.1.25 (2019-08-06)
 -------------------
 
