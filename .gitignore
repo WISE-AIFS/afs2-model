@@ -114,3 +114,6 @@ venv.bak/
 test_reports/
 limit_model
 test_workspace/
+
+# something
+*.h5
