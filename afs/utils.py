@@ -51,6 +51,7 @@ def upload_file_to_blob(
             endpoint_url=blob_endpoint,
             aws_access_key_id=blob_accessKey,
             aws_secret_access_key=blob_secretKey,
+            verify=False,
             config=config,
         )
     except Exception as e:
