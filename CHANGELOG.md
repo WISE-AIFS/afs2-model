@@ -1,4 +1,4 @@
-2.1.27 (unreleased)
+2.1.27 (2019-09-19)
 -------------------
 
 - Set env blobstore to blob credential
