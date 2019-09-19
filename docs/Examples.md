@@ -154,7 +154,36 @@ afs_models.set_blob_credential(
 # Upload the model to repository and the repository name is the same as file name.
 # Accuracy and loss is necessary, but extra_evaluation and tags are optional.
 afs_models.upload_model(
-    model_path='big_model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5')
+    model_path='big_model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5', blob_mode=True)
+
+```
+
+(Update 2019-09-18) Using `AFS 2.1.27006` or later, the `set_blob_credential` method can be ignored. Like the following:
+
+```
+from afs import models
+
+# Write a big file as 301 MB model file.
+f = open('big_model.h5', "wb")
+f.seek((301 * 1024 * 1024 + 1) - 1)
+f.write(b"\0")
+f.close()
+
+# User-define evaluation result
+extra_evaluation = {
+    'AUC': 1.0
+}
+
+# User-define Tags 
+tags = {'machine': 'machine01'}
+
+# Model object
+afs_models = models()
+
+# Upload the model to repository and the repository name is the same as file name.
+# Accuracy and loss is necessary, but extra_evaluation and tags are optional.
+afs_models.upload_model(
+    model_path='big_model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5', blob_mode=True)
 
 ```
 

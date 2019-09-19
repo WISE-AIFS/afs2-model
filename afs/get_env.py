@@ -43,6 +43,11 @@ class AfsEnv:
         self.target_endpoint = self.target_endpoint + self.api_version + "/"
         self.bucket_name = self._get_blob_bucket()
 
+        self.blob_endpoint = None
+        self.blob_accessKey = None
+        self.blob_secretKey = None
+        self._get_blobstore_credential()
+
     def _get_api_version(self):
         url = utils.urljoin(self.target_endpoint, extra_paths={})
         response = utils._check_response(self.session.get(url, verify=False))
@@ -71,3 +76,19 @@ class AfsEnv:
         else:
             print(f"Not found {url}, {response.text}")
             return None
+
+    def _get_blobstore_credential(self):
+        blobstore = os.getenv("blobstore", None)
+        if blobstore:
+            try:
+                blobstore = json.loads(blobstore)
+                credentials = blobstore.get('credentials')
+                self.blob_endpoint = credentials.get('endpoint')
+                self.blob_accessKey = credentials.get('accessKey')
+                self.blob_secretKey = credentials.get('secretKey')
+            except Exception as e:
+                print('Please set blob credentials manually, if you need to upload large model.')            
+        else:
+            print('Please set blob credentials manually, if you need to upload large model.')
+
+            
