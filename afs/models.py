@@ -134,7 +134,7 @@ class models(AfsEnv):
             with open(save_path, "wb") as f:
                 f.write(resp.content)
         except Exception as e:
-            raise RuntimeError(f"Write download file error. Exception: {e}")
+            raise RuntimeError("Write download file error. Exception: {}".format(e))
 
         return True
 
@@ -214,7 +214,7 @@ class models(AfsEnv):
                             tags.update({"apm_node": str(machineIdList)})
             except Exception as e:
                 print(
-                    f"PAI_DATA_DIR value is not valid json format for apm_node. Exception:{e}, Value: {pai_data_dir}"
+                    "PAI_DATA_DIR value is not valid json format for apm_node. Exception:{}, Value: {}".format(e, pai_data_dir)
                 )
 
         # evaluation result
@@ -249,14 +249,14 @@ class models(AfsEnv):
                 and self.bucket_name
             ):
                 raise ValueError(
-                    f"Blob information is not enough to put object to blob, {self._blob_endpoint}, {self._blob_accessKey}, {self._blob_secretKey}, {self.bucket_name}"
+                    "Blob information is not enough to put object to blob, {}, {}, {}, {}".format(self._blob_endpoint, self._blob_accessKey, self._blob_secretKey, self.bucket_name)
                 )
 
             # create model metadata
             resp = self._create(data=data, extra_paths=extra_paths, form="data")
             self.model_id = resp.json()["uuid"]
 
-            key = f"models/{self.instance_id}/{self.repo_id}/{self.model_id}"
+            key = "models/{}/{}/{}".format(self.instance_id, self.repo_id, self.model_id)
 
             try:
                 object_size = upload_file_to_blob(
@@ -284,7 +284,7 @@ class models(AfsEnv):
             resp = self._put(extra_paths=extra_paths, data=put_payload)
 
         else:
-            raise Exception(f"The size of the file has exceeded the upper limit of 1G")
+            raise Exception("The size of the file has exceeded the upper limit of 1G")
 
         if int(resp.status_code / 100) == 2:
             resp = resp.json()
@@ -408,7 +408,7 @@ class models(AfsEnv):
             and self.bucket_name
         ):
             raise ValueError(
-                f"Blob information is not enough to put object to blob, {self._blob_endpoint}, {self._blob_accessKey}, {self._blob_secretKey}, {self.bucket_name}"
+                "Blob information is not enough to put object to blob, {}, {}, {}, {}".foramt(self._blob_endpoint, self._blob_accessKey, self._blob_secretKey, self.bucket_name)
             )
 
         # Create model metadata

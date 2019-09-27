@@ -74,7 +74,7 @@ class AfsEnv:
             bucket = response.json()["bucket"]
             return bucket
         else:
-            print(f"Not found {url}, {response.text}")
+            print("Not found {}, {}".format(url, response.text))
             return None
 
     def _get_blobstore_credential(self):
