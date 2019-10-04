@@ -1,5 +1,5 @@
 
-def test_create_big_model(test_env, afs_models_blob, big_model, delete_mr_and_model):
+def test_create_big_model(test_env, afs_models_blob, clean_mr, big_model, delete_mr_and_model):
     resp = afs_models_blob.upload_model(
         model_path=big_model,
         accuracy=1.0,
@@ -27,7 +27,7 @@ def test_create_big_model(test_env, afs_models_blob, big_model, delete_mr_and_mo
     assert get_resp == resp["uuid"]
 
 
-def test_create_big_model_env(test_env, afs_models, big_model, delete_mr_and_model):
+def test_create_big_model_env(test_env, afs_models, clean_mr, big_model, delete_mr_and_model):
     resp = afs_models.upload_model(
         model_path=big_model,
         accuracy=1.0,

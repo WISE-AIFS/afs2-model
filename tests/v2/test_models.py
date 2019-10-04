@@ -2,7 +2,7 @@ from uuid import UUID
 import pytest
 
 
-def test_create_model_repo(test_env, afs_models, delete_model_respository):
+def test_create_model_repo(test_env, clean_mr, afs_models, delete_model_respository):
     create_resp = afs_models.create_model_repo(
         model_repository_name="test_model_repository"
     )
@@ -27,7 +27,7 @@ def test_delete_model_repo(test_env, afs_models, model_repository):
     assert resp == None
 
 
-def test_create_model(test_env, afs_models, delete_mr_and_model, model_file):
+def test_create_model(test_env, afs_models, clean_mr, delete_mr_and_model, model_file):
     resp = afs_models.upload_model(
         model_path="unit_test_model",
         accuracy=1.0,
@@ -95,7 +95,7 @@ def test_download_model(test_env, afs_models, model, delete_mr_and_model):
 
 
 def test_create_firehose_apm_model(
-    test_env, afs_models, apm_node_env, delete_mr_and_model, model_file
+    test_env, afs_models, clean_mr, apm_node_env, delete_mr_and_model, model_file
 ):
     resp = afs_models.upload_model(
         model_path="unit_test_model",
@@ -124,7 +124,7 @@ def test_create_firehose_apm_model(
 
 
 def test_error1_create_firehose_apm_model(
-    test_env, afs_models, error1_apm_node_env, delete_mr_and_model, model_file
+    test_env, afs_models, clean_mr, error1_apm_node_env, delete_mr_and_model, model_file
 ):
     resp = afs_models.upload_model(
         model_path="unit_test_model",

@@ -55,7 +55,7 @@ def upload_file_to_blob(
             config=config,
         )
     except Exception as e:
-        raise ConnectionError(f"Connect to blob {blob_endpoint} error, exception: {e}")
+        raise ConnectionError("Connect to blob {} error, exception: {}".foramt(blob_endpoint, e))
 
     retry = 0
     while retry < 3:
@@ -67,7 +67,7 @@ def upload_file_to_blob(
             resp = {}
             print(
                 ConnectionError(
-                    f"[ConnectionError] Put object error {retry} time, exeception: {e}"
+                    "[ConnectionError] Put object error {} time, exeception: {}".format(retry, e)
                 )
             )
 
@@ -75,14 +75,14 @@ def upload_file_to_blob(
             retry = retry + 1
             if retry == 3:
                 raise ConnectionError(
-                    f"[ConnectionError] Put object error after retry 3 times, check response {resp}"
+                    "[ConnectionError] Put object error after retry 3 times, check response {}".format(resp)
                 )
         else:
             break
 
     resp_get = blob_client.list_objects(Bucket=bucket_name, Prefix=key)
     if not resp_get or resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
-        raise ConnectionError(f"List blob key has some error, check response {resp}")
+        raise ConnectionError("List blob key has some error, check response {}".format(resp))
 
     object_size = resp_get["Contents"][0]["Size"]
     return object_size
