@@ -9,7 +9,7 @@ Reference documents [Readthedocs](https://afs-sdk.readthedocs.io/en/latest/overv
 
 ## Installation
 
-Support python version 3.6 or later
+Support python version 3.5 or later
 
 
 ### pip install on AFS notebook
