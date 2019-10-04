@@ -40,14 +40,14 @@ def model_repository(afs_models):
 
 
 @pytest.fixture(scope="function")
-def model(afs_models, model_repository, model_file):
+def clean_mr(afs_models):
     try:
-        afs_models.delete_model_metafile(
-            name="test_metafile", model_repository_name="test_model_repository"
-        )
+        afs_models.delete_model_repository(model_repository_name="test_model_repository")
     except Exception as e:
         print(e)
 
+@pytest.fixture(scope="function")
+def model(clean_mr, afs_models, model_repository, model_file):
     yield afs_models.upload_model(
         model_path="unit_test_model",
         extra_evaluation={"extra_loss": 1.23},
