@@ -49,21 +49,29 @@ class AfsEnv:
         self._get_blobstore_credential()
 
     def _get_api_version(self):
+        # Fetch api-afs root info 
         url = utils.urljoin(self.target_endpoint, extra_paths={})
         response = utils._check_response(self.session.get(url, verify=False))
 
-        afs_portal_version = response.json().get("AFS_version", None)
-        if afs_portal_version != afs.__version__:
+        # Check AFS version
+        afs_version = response.json().get("AFS_version", None)
+        if afs_version.split('.')[2] != afs.__version__.split('.')[2]:
             warnings.warn(
-                "SDK version: {0}, and AFS api version: {1}. It might cause some compatibility issues. Readthedocs: https://afs-sdk.readthedocs.io/en/latest/Examples.html#models".format(
-                    afs.__version__, afs_portal_version
+                "SDK version: {0}, and AFS api version: {1}. It might cause some compatibility issues. \
+                    Readthedocs: https://afs-sdk.readthedocs.io/en/latest/Examples.html#models".format(
+                    afs.__version__, afs_version
                 )
             )
 
+        # Check API version
+        api_version = response.json().get("API_version", None)
+        if not api_version:
+            raise ValueError("No API_version from api-afs.")
+
         if response.json().get("AFS_version", None):
-            return response.json()["API_version"], afs_portal_version
+            return api_version, afs_version
         else:
-            raise ConnectionError("Cannot fetch AFS server from {}".format(url))
+            raise ConnectionError("Cannot fetch AFS server from {}.".format(url))
 
     def _get_blob_bucket(self):
         url = utils.urljoin(self.afs_url, "info", "bucket", extra_paths=[])
