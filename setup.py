@@ -40,9 +40,7 @@ setup(
     keywords=[
         "AFS",
         "WISE-PaaS",
-        "EI-PaaS",
         "AI framework service",
-        "afs-sdk",
         "ADVANTECH",
     ],
     entry_points="""

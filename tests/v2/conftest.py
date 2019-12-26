@@ -2,7 +2,7 @@ import os, pytest, uuid, json
 from tests.mock_requests import MockResponse
 from dotenv import load_dotenv
 from afs import models
-
+import time
 
 @pytest.fixture(scope="session")
 def model_file():
@@ -13,6 +13,11 @@ def model_file():
     os.remove("unit_test_model")
     if os.path.exists("delete_mr_and_model"):
         os.remove("delete_mr_and_model")
+
+
+@pytest.fixture(scope="session")
+def model_repository_name():
+    return "mr_{0}".format(time.strftime("%H-%M-%S"))
 
 
 @pytest.fixture(scope="function")
@@ -35,46 +40,46 @@ def afs_models_blob(test_env):
 
 
 @pytest.fixture(scope="function")
-def model_repository(afs_models):
-    yield afs_models.create_model_repo(model_repository_name="test_model_repository")
+def model_repository(afs_models, model_repository_name):
+    yield afs_models.create_model_repo(model_repository_name=model_repository_name)
 
 
 @pytest.fixture(scope="function")
-def clean_mr(afs_models):
+def clean_mr(afs_models, model_repository_name):
     try:
-        afs_models.delete_model_repository(model_repository_name="test_model_repository")
+        afs_models.delete_model_repository(model_repository_name=model_repository_name)
     except Exception as e:
         print(e)
 
 @pytest.fixture(scope="function")
-def model(clean_mr, afs_models, model_repository, model_file):
+def model(clean_mr, afs_models, model_repository, model_file, model_repository_name):
     yield afs_models.upload_model(
         model_path="unit_test_model",
         extra_evaluation={"extra_loss": 1.23},
-        model_repository_name="test_model_repository",
+        model_repository_name=model_repository_name,
         model_name="test_model",
     )
 
 
 @pytest.fixture(scope="function")
-def delete_model_respository(afs_models):
+def delete_model_respository(afs_models, model_repository_name):
     yield
-    afs_models.delete_model_repository(model_repository_name="test_model_repository")
+    afs_models.delete_model_repository(model_repository_name=model_repository_name)
 
 
 @pytest.fixture(scope="function")
-def delete_mr_and_model(afs_models):
+def delete_mr_and_model(afs_models, model_repository_name):
     yield
     try:
         afs_models.delete_model(
-            model_name="test_model", model_repository_name="test_model_repository"
+            model_name="test_model", model_repository_name=model_repository_name
         )
     except Exception as e:
         pass
 
     try:
         afs_models.delete_model_repository(
-            model_repository_name="test_model_repository"
+            model_repository_name=model_repository_name
         )
     except Exception as e:
         pass
@@ -144,18 +149,18 @@ def model_metafile():
 
 
 @pytest.fixture(scope="function")
-def delete_mr_and_metafile(afs_models):
+def delete_mr_and_metafile(afs_models, model_repository_name):
     yield
     try:
         afs_models.delete_model_metafile(
-            name="test_metafile", model_repository_name="test_model_repository"
+            name="test_metafile", model_repository_name=model_repository_name
         )
     except Exception as e:
         print(e)
 
     try:
         afs_models.delete_model_repository(
-            model_repository_name="test_model_repository"
+            model_repository_name=model_repository_name
         )
     except Exception as e:
         pass
