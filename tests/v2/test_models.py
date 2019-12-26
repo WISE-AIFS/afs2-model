@@ -62,8 +62,8 @@ def test_delete_model(test_env, afs_models, model, delete_model_respository, mod
     assert resp == True
     get_resp = afs_models.get_model_id(
         model_name="test_model",
-        model_repository_name=model_repository_name
-        last_one=True,
+        model_repository_name=model_repository_name,
+        last_one=True
     )
     assert get_resp == None
 

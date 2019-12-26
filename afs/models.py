@@ -169,14 +169,14 @@ class models(AfsEnv):
 
         # Evaluation_result info
         evaluation_result = {}
-        if accuracy is None:
+        if accuracy is not None:
             if not isinstance(accuracy, (float, int)):
                 raise TypeError("Type error, accuracy is float.")
             if accuracy > 1.0 or accuracy < 0:
                 raise ValueError("Accuracy value should be between 0-1")
             evaluation_result.update({"accuracy": accuracy})
 
-        if loss is None:
+        if loss is not None:
             if not isinstance(loss, (float, int)):
                 raise TypeError("Type error, loss is float.")
             evaluation_result.update({"loss": loss})
