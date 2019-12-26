@@ -167,16 +167,16 @@ class models(AfsEnv):
                 "Type error, accuracy and loss are float, and tags and extra_evaluation are dict."
             )
 
-        # evaluation_result info
+        # Evaluation_result info
         evaluation_result = {}
-        if accuracy:
+        if accuracy is None:
             if not isinstance(accuracy, (float, int)):
                 raise TypeError("Type error, accuracy is float.")
             if accuracy > 1.0 or accuracy < 0:
                 raise ValueError("Accuracy value should be between 0-1")
             evaluation_result.update({"accuracy": accuracy})
 
-        if loss:
+        if loss is None:
             if not isinstance(loss, (float, int)):
                 raise TypeError("Type error, loss is float.")
             evaluation_result.update({"loss": loss})
@@ -217,7 +217,7 @@ class models(AfsEnv):
                     "PAI_DATA_DIR value is not valid json format for apm_node. Exception:{}, Value: {}".format(e, pai_data_dir)
                 )
 
-        # evaluation result
+        # Evaluation result
         evaluation_result.update(extra_evaluation)
         data = dict(
             tags=json.dumps(tags), evaluation_result=json.dumps(evaluation_result)
@@ -240,7 +240,7 @@ class models(AfsEnv):
                 data=data, files=files, extra_paths=extra_paths, form="data"
             )
 
-        # between 300M - 1G model file
+        # Between 300M - 1G model file
         elif file_size < (1024 * 1024 * 1024) or blob_mode:
             if not (
                 self._blob_endpoint
@@ -252,10 +252,9 @@ class models(AfsEnv):
                     "Blob information is not enough to put object to blob, {}, {}, {}, {}".format(self._blob_endpoint, self._blob_accessKey, self._blob_secretKey, self.bucket_name)
                 )
 
-            # create model metadata
+            # Create model metadata
             resp = self._create(data=data, extra_paths=extra_paths, form="data")
             self.model_id = resp.json()["uuid"]
-
             key = "models/{}/{}/{}".format(self.instance_id, self.repo_id, self.model_id)
 
             try:
@@ -291,7 +290,7 @@ class models(AfsEnv):
             self.model_id = resp.get("uuid")
             return resp
         else:
-            return resp.text
+            raise RuntimeError(resp.text)
 
     def create_model_repo(self, model_repository_name):
         """
