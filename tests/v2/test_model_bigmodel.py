@@ -1,11 +1,11 @@
 
-def test_create_big_model(test_env, afs_models_blob, clean_mr, big_model, delete_mr_and_model):
+def test_create_big_model(test_env, afs_models_blob, clean_mr, big_model, delete_mr_and_model, model_repository_name):
     resp = afs_models_blob.upload_model(
         model_path=big_model,
         accuracy=1.0,
         loss=1.0,
         tags={"tag_key": "tag_value"},
-        model_repository_name="test_model_repository",
+        model_repository_name=model_repository_name,
         model_name="test_model",
         blob_mode=True,
     )
@@ -21,19 +21,19 @@ def test_create_big_model(test_env, afs_models_blob, clean_mr, big_model, delete
 
     get_resp = afs_models_blob.get_model_id(
         model_name="test_model",
-        model_repository_name="test_model_repository",
+        model_repository_name=model_repository_name,
         last_one=True,
     )
     assert get_resp == resp["uuid"]
 
 
-def test_create_big_model_env(test_env, afs_models, clean_mr, big_model, delete_mr_and_model):
+def test_create_big_model_env(test_env, afs_models, clean_mr, big_model, delete_mr_and_model, model_repository_name):
     resp = afs_models.upload_model(
         model_path=big_model,
         accuracy=1.0,
         loss=1.0,
         tags={"tag_key": "tag_value"},
-        model_repository_name="test_model_repository",
+        model_repository_name=model_repository_name,
         model_name="test_model",
         blob_mode=True,
     )
@@ -49,7 +49,7 @@ def test_create_big_model_env(test_env, afs_models, clean_mr, big_model, delete_
 
     get_resp = afs_models.get_model_id(
         model_name="test_model",
-        model_repository_name="test_model_repository",
+        model_repository_name=model_repository_name,
         last_one=True,
     )
     assert get_resp == resp["uuid"]

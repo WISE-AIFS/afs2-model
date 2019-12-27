@@ -1,3 +1,9 @@
+2.1.28 (unreleased)
+-------------------
+
+- Fix accuracy cannot send when value is 0
+
+
 2.1.27.1 (2019-10-04)
 -------------------
 
