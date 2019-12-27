@@ -1,4 +1,4 @@
-2.1.28 (unreleased)
+2.1.28 (2019-12-27)
 -------------------
 
 - Fix accuracy cannot send when value is 0
