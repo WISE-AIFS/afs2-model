@@ -21,7 +21,6 @@ class models(AfsEnv):
         self.sub_entity_uri = "models"
         self.metafile_uri = "model_metafiles"
         self.repo_id = None
-        self.model_id = None
 
         # Blob info
         self._blob_endpoint = self.blob_endpoint
@@ -91,16 +90,19 @@ class models(AfsEnv):
         if model_name:
             params = dict(name=model_name)
             extra_paths = [self.repo_id, self.sub_entity_uri]
-            resp = self._get(extra_paths=extra_paths, params=params).json()
+            resp = self._get(extra_paths=extra_paths, params=params)
+            resp = resp.json()
+            for resource in resp["resources"]:
+                if resource['name'] == model_name:
+                    return resource['uuid']
         else:
             extra_paths = [self.repo_id, self.sub_entity_uri]
-            resp = self._get(extra_paths=extra_paths).json()
-
-        if resp["resources"]:
-            model_id = resp["resources"][0]["uuid"]
-        else:
-            return None
-        return model_id
+            resp = self._get(extra_paths=extra_paths)
+            resp = resp.json()
+            resources = resp["resources"]
+            if resources:
+                return resources[0]["uuid"]
+        return None
 
     def download_model(
         self, save_path, model_repository_name=None, model_name=None, last_one=False
@@ -109,7 +111,7 @@ class models(AfsEnv):
 
         :param str model_repository_name: The model name exists in the model repository
         :param str save_path: The path exist in the file system
-        :param str model_name: Get the specific model file from the model reposiotry
+        :param str model_name: Get the specific model file from the model reposiotry, if getting last one value for None.
         :param str last_one: Get the last uploading model from the model repository.
         """
         if model_repository_name:
@@ -254,8 +256,8 @@ class models(AfsEnv):
 
             # Create model metadata
             resp = self._create(data=data, extra_paths=extra_paths, form="data")
-            self.model_id = resp.json()["uuid"]
-            key = "models/{}/{}/{}".format(self.instance_id, self.repo_id, self.model_id)
+            model_id = resp.json()["uuid"]
+            key = "models/{}/{}/{}".format(self.instance_id, self.repo_id, model_id)
 
             try:
                 object_size = upload_file_to_blob(
@@ -268,7 +270,7 @@ class models(AfsEnv):
                 )
             except ConnectionError as ex:
                 # Delete model metadata if connection error
-                extra_paths = [self.repo_id, self.sub_entity_uri, self.model_id]
+                extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
                 resp = self._del(extra_paths=extra_paths)
                 raise ex
 
@@ -276,7 +278,7 @@ class models(AfsEnv):
             extra_paths = [
                 self.repo_id,
                 self.sub_entity_uri,
-                self.model_id,
+                model_id,
                 "file_info",
             ]
             put_payload = {"size": object_size}
@@ -286,9 +288,7 @@ class models(AfsEnv):
             raise Exception("The size of the file has exceeded the upper limit of 1G")
 
         if int(resp.status_code / 100) == 2:
-            resp = resp.json()
-            self.model_id = resp.get("uuid")
-            return resp
+            return resp.json()
         else:
             raise RuntimeError(resp.text)
 
