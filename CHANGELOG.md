@@ -1,7 +1,7 @@
 2.1.28.2 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- Fix Bug #12428 -Fix get_model_info and download_model get error model by model_name
 
 
 2.1.28 (2019-12-27)
