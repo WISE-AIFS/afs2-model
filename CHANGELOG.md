@@ -1,7 +1,11 @@
 3.0.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add Requirement - [SDK] Update upload model default using blob mode.
+
+- Add Requirement #12871 - [SDK] Add feature importance field.
+
+- Remove EnSaaS 3.0 function and doc.
 
 
 2.1.28.2 (2020-03-09)
