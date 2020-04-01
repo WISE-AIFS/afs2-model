@@ -43,10 +43,10 @@ def test_token_create_model(afs_models_token, delete_mr_and_model, model_file, m
     assert "uuid" in resp
     assert "name" in resp
     assert "created_at" in resp
-    assert "parameters" in resp
     assert "tags" in resp
     assert "evaluation_result" in resp
-
+    assert "feature_importance" in resp
+    assert "coefficient" in resp
 
 def test_token_get_model_id(afs_models_token, model, delete_mr_and_model, model_file, model_repository_name):
     get_resp = afs_models_token.get_model_id(
@@ -86,11 +86,11 @@ def test_token_get_latest_model_info(afs_models_token, model, delete_mr_and_mode
 
 def test_token_download_model(afs_models_token, model, delete_mr_and_model, model_repository_name):
     resp = afs_models_token.download_model(
-        save_path="download_model",
+        save_path="download_model.h5",
         model_repository_name=model_repository_name,
         model_name="test_model",
     )
     assert resp == True
-    with open("download_model", "r") as f:
+    with open("download_model.h5", "r") as f:
         content = f.read()
     assert content == "unit test"

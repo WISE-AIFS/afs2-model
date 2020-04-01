@@ -41,10 +41,10 @@ def test_create_model(test_env, afs_models, clean_mr, delete_mr_and_model, model
     assert "uuid" in resp
     assert "name" in resp
     assert "created_at" in resp
-    assert "parameters" in resp
     assert "tags" in resp
     assert "evaluation_result" in resp
-
+    assert "feature_importance" in resp
+    assert "coefficient" in resp
 
 def test_get_model_id(test_env, afs_models, model, delete_mr_and_model, model_file, model_repository_name):
     get_resp = afs_models.get_model_id(
@@ -109,10 +109,11 @@ def test_create_firehose_apm_model(
     assert "uuid" in resp
     assert "name" in resp
     assert "created_at" in resp
-    assert "parameters" in resp
     assert "tags" in resp
     assert "evaluation_result" in resp
     assert "apm_node" in resp["tags"]
+    assert "feature_importance" in resp
+    assert "coefficient" in resp
     assert "3" in resp["tags"]["apm_node"]
 
     get_resp = afs_models.get_model_id(
@@ -138,9 +139,10 @@ def test_error1_create_firehose_apm_model(
     assert "uuid" in resp
     assert "name" in resp
     assert "created_at" in resp
-    assert "parameters" in resp
     assert "tags" in resp
     assert "evaluation_result" in resp
+    assert "feature_importance" in resp
+    assert "coefficient" in resp
 
     get_resp = afs_models.get_model_id(
         model_name="test_model",
