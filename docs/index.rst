@@ -8,7 +8,6 @@
 
    overview
    Examples
-   CLI
    api_reference
 
 

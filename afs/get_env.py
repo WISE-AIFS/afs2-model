@@ -55,13 +55,6 @@ class AfsEnv:
 
         # Check AFS version
         afs_version = response.json().get("AFS_version", None)
-        if afs_version.split('.')[2] != afs.__version__.split('.')[2]:
-            warnings.warn(
-                "SDK version: {0}, and AFS api version: {1}. It might cause some compatibility issues. \
-                    Readthedocs: https://afs-sdk.readthedocs.io/en/latest/Examples.html#models".format(
-                    afs.__version__, afs_version
-                )
-            )
 
         # Check API version
         api_version = response.json().get("API_version", None)
