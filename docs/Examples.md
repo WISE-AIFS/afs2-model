@@ -65,21 +65,38 @@ print(model_info)
 **results**
 ```
 {
+	'uuid': '3369315c-d652-4c4d-b481-405be2ad5b33',
+	'name': '3369315c-d652-4c4d-b481-405be2ad5b33',
+	'model_repository': 'ef388859-64fb-4718-b90f-34defc8a3aae',
+	'owner': '12345338-62b6-11ea-b1de-d20dfb084846',
 	'evaluation_result': {
 		'accuracy': 0.4,
 		'loss': 0.3,
-		'confusion_matrix': {
-			'TP': 0.9,
-			'FP': 0.8,
-			'TN': 0.7,
-			'FN': 0.6
-		},
+		'confusion_matrix_TP': 0.9,
+		'confusion_matrix_FP': 0.8,
+		'confusion_matrix_TN': 0.7,
+		'confusion_matrix_FN': 0.6,
 		'AUC': 1.0
 	},
 	'tags': {
 		'machine': 'machine01'
 	},
-	'created_at': '2018-12-06 08:41:39'
+	'feature_importance': [{
+		'feature': 'petal_length',
+		'importance': 0.9473576808
+	}, {
+		'feature': 'petal_width',
+		'importance': 0.0381916359
+	}, {
+		'feature': 'sepal_length',
+		'importance': 0.0110532412
+	}, {
+		'feature': 'sepal_width',
+		'importance': 0.0033974421
+	}],
+	'coefficient': [],
+	'size': 11,
+	'created_at': '2020-04-06T10:23:56.228000+00:00'
 }
 ```
 
