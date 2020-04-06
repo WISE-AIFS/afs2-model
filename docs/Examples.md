@@ -16,7 +16,7 @@ from afs import models
 with open('model.h5', 'w') as f:
     f.write('dummy model')
 
-# User-define evaluation result
+# User-define evaluation result. Type:dict
 extra_evaluation = {
     'confusion_matrix_TP': 0.9,
     'confusion_matrix_FP': 0.8,
@@ -25,8 +25,16 @@ extra_evaluation = {
     'AUC': 1.0
 }
 
-# User-define Tags 
+# User-define Tags. Type:dict
 tags = {'machine': 'machine01'}
+
+# User-define Feature Importance Type:list(dict)
+feature_importance = [
+	{'feature': 'petal_length', 'importance': 0.9473576807512394}, 
+	{'feature': 'petal_width',  'importance': 0.038191635936882906}, 
+	{'feature': 'sepal_length', 'importance': 0.011053241240641932}, 
+	{'feature': 'sepal_width',  'importance': 0.0033974420712357825}
+]
 
 # Model object
 afs_models = models()
@@ -36,8 +44,16 @@ afs_models = models()
 #   2. (optional) loss is a evaluation of the model by the result of testing.
 #   3. (optional) extra_evaluation is for other evaluations for the model, you can put them to this parameter.
 #   4. (optional) tags is the label for the model, like the time of data or the type of the algorithm.
+#   5. (optional) feature_importance is the record how the features important in the model.
 afs_models.upload_model(
-    model_path='model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5')
+    model_path='model.h5',
+	model_repository_name='model.h5'
+	accuracy=0.4,
+	loss=0.3, 
+	extra_evaluation=extra_evaluation, 
+	tags=tags,
+	feature_importance=feature_importance
+	)
 
 # Get the latest model info 
 model_info = afs_models.get_latest_model_info(model_repository_name='model.h5')
@@ -100,10 +116,16 @@ from afs import models
 afs_models = models()
 
 # Download model from model repository, and get the last one model.
-afs_models.download_model(save_path='dl_model.h5', model_repository_name='model.h5', last_one=True)
+afs_models.download_model(
+	save_path='dl_model.h5', 
+	model_repository_name='model.h5', 
+	last_one=True)
 
 # Or get the specific model name in the model repository.
-afs_models.download_model(save_path='dl_model.h5', model_repository_name='model.h5', model_name='2019-07-10 02:59:11.610828')
+afs_models.download_model(
+	save_path='dl_model.h5', 
+	model_repository_name='model.h5', 
+	model_name='2019-07-10 02:59:11.610828')
 
 # List the directory
 !ls
@@ -154,7 +176,13 @@ afs_models.set_blob_credential(
 # Upload the model to repository and the repository name is the same as file name.
 # Accuracy and loss is necessary, but extra_evaluation and tags are optional.
 afs_models.upload_model(
-    model_path='big_model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5', blob_mode=True)
+    model_path='big_model.h5', 
+	accuracy=0.4, 
+	loss=0.3, 
+	extra_evaluation=extra_evaluation, 
+	tags=tags, 
+	model_repository_name='model.h5', 
+	blob_mode=True)
 
 ```
 
@@ -183,7 +211,12 @@ afs_models = models()
 # Upload the model to repository and the repository name is the same as file name.
 # Accuracy and loss is necessary, but extra_evaluation and tags are optional.
 afs_models.upload_model(
-    model_path='big_model.h5', accuracy=0.4, loss=0.3, extra_evaluation=extra_evaluation, tags=tags, model_repository_name='model.h5', blob_mode=True)
+    model_path='big_model.h5', 
+	accuracy=0.4, 
+	loss=0.3, 
+	extra_evaluation=extra_evaluation, 
+	tags=tags, model_repository_name='model.h5', 
+	blob_mode=True)
 
 ```
 

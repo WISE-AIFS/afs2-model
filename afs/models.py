@@ -147,9 +147,10 @@ class models(AfsEnv):
         loss=None,
         tags={},
         extra_evaluation={},
+        feature_importance=None,
         model_repository_name=None,
         model_name=None,
-        blob_mode=False,
+        blob_mode=True,
     ):
         """Upload model to model repository. (Support v2 API)
 
@@ -160,7 +161,8 @@ class models(AfsEnv):
         :param dict extra_evaluation: (optional) other evaluation from model
         :param str model_name: (optional) Give model a name or a default name 
         :param str model_repository_name: (optional) model_repository_name
-        :param bool blob_mode: (optional) upload model direct to blob mode, default False
+        :param list feature_importance: (optional) feature_importance is the record how the features important in the model
+        :param bool blob_mode: (optional) upload model direct to blob mode, default True
         :return: dict. the information of the upload model.
         """
 
@@ -184,7 +186,7 @@ class models(AfsEnv):
             evaluation_result.update({"loss": loss})
 
         if not isinstance(model_path, str):
-            raise TypeError("Type error, model_name  cannot convert to string")
+            raise TypeError("Type error, model_name cannot convert to string")
 
         if not os.path.isfile(model_path):
             raise IOError("File not found, model path is not exist.")
@@ -211,7 +213,6 @@ class models(AfsEnv):
 
                     if "machineIdList" in data and firehose_type == "apm-firehose":
                         machineIdList = data.get("machineIdList", [None]).pop(0)
-
                         if machineIdList:
                             tags.update({"apm_node": str(machineIdList)})
             except Exception as e:
@@ -222,7 +223,9 @@ class models(AfsEnv):
         # Evaluation result
         evaluation_result.update(extra_evaluation)
         data = dict(
-            tags=json.dumps(tags), evaluation_result=json.dumps(evaluation_result)
+            tags=json.dumps(tags), 
+            evaluation_result=json.dumps(evaluation_result),
+            feature_importance=json.dumps(feature_importance)
         )
         # model name
         if model_name:
@@ -232,7 +235,7 @@ class models(AfsEnv):
         extra_paths = [self.repo_id, self.sub_entity_uri]
         # Load model size < 300 MB
         file_size = os.path.getsize(model_path)
-        if file_size < (300 * 1024 * 1024) and not blob_mode:
+        if file_size < (300 * (1024**2)) and not blob_mode:
             with open(model_path, "rb") as f:
                 model_file = BytesIO(f.read())
             model_file.seek(0)
@@ -243,7 +246,7 @@ class models(AfsEnv):
             )
 
         # Between 300M - 1G model file
-        elif file_size < (1024 * 1024 * 1024) or blob_mode:
+        elif file_size < (1024**3) or blob_mode:
             if not (
                 self._blob_endpoint
                 and self._blob_accessKey
@@ -407,7 +410,8 @@ class models(AfsEnv):
             and self.bucket_name
         ):
             raise ValueError(
-                "Blob information is not enough to put object to blob, {}, {}, {}, {}".foramt(self._blob_endpoint, self._blob_accessKey, self._blob_secretKey, self.bucket_name)
+                "Blob information is not enough to put object to blob, {}, {}, {}, {}".foramt(
+                    self._blob_endpoint, self._blob_accessKey, self._blob_secretKey, self.bucket_name)
             )
 
         # Create model metadata
@@ -420,7 +424,6 @@ class models(AfsEnv):
 
         resp = self._create(data=payload, extra_paths=extra_paths, form="json")
         self.model_metadata_id = resp.json()["uuid"]
-
         key = resp.json()["blob_key"]
 
         try:
