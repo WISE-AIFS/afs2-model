@@ -47,7 +47,7 @@ afs_models = models()
 #   5. (optional) feature_importance is the record how the features important in the model.
 afs_models.upload_model(
     model_path='model.h5',
-	model_repository_name='model.h5'
+	model_repository_name='model.h5',
 	accuracy=0.4,
 	loss=0.3, 
 	extra_evaluation=extra_evaluation, 
