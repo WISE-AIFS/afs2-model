@@ -1,4 +1,4 @@
-3.0.0 (unreleased)
+3.0.0 (2020-04-06)
 ------------------
 
 - Add Requirement - [SDK] Update upload model default using blob mode.
