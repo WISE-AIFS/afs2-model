@@ -164,3 +164,26 @@ def test_connect_blob_error_create_model(
             model_name="test_model",
             blob_mode=True,
         )
+
+
+def test_create_model_with_datasetid_target(test_env, afs_models, clean_mr, delete_mr_and_model, model_file, model_repository_name):
+    resp = afs_models.upload_model(
+        model_path="unit_test_model",
+        accuracy=1.0,
+        loss=1.0,
+        tags={"tag_key": "tag_value"},
+        extra_evaluation={"extra_loss": 1.23},
+        model_repository_name=model_repository_name,
+        model_name="test_model",
+    )
+    assert isinstance(resp, dict)
+    assert "uuid" in resp
+    assert "name" in resp
+    assert "created_at" in resp
+    assert "tags" in resp
+    assert "evaluation_result" in resp
+    assert "feature_importance" in resp
+    assert "coefficient" in resp
+    assert "dataset_id" in resp
+    assert "afs_target" in resp
+    print(resp)

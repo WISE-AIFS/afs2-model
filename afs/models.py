@@ -225,8 +225,16 @@ class models(AfsEnv):
         data = dict(
             tags=json.dumps(tags), 
             evaluation_result=json.dumps(evaluation_result),
-            feature_importance=json.dumps(feature_importance)
+            feature_importance=json.dumps(feature_importance),
         )
+        if self.afs_version >= '3.1.3':
+            data.update(
+                {
+                    'dataset_id': os.getenv('dataset_id'),
+                    'afs_target': os.getenv('afs_target'),
+                }
+            )
+
         # model name
         if model_name:
             self._naming_rule(model_name)

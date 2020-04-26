@@ -1,7 +1,7 @@
 3.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add Requirement #13390 - [SDK] Store dataset_id and target when upload model.
 
 
 3.0.0 (2020-04-06)
