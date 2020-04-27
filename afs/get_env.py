@@ -39,7 +39,7 @@ class AfsEnv:
         if not self.target_endpoint.endswith("/"):
             self.target_endpoint = self.target_endpoint + "/"
 
-        self.api_version, self.afs_portal_version = self._get_api_version()
+        self.api_version, self.afs_version = self._get_api_version()
         self.target_endpoint = self.target_endpoint + self.api_version + "/"
         self.bucket_name = self._get_blob_bucket()
 
