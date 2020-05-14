@@ -1,6 +1,7 @@
 requests
 urllib3
 botocore
+boto3
 
 # For client
 pyyaml

@@ -187,3 +187,44 @@ def test_create_model_with_datasetid_target(test_env, afs_models, clean_mr, dele
     assert "dataset_id" in resp
     assert "afs_target" in resp
     print(resp)
+
+def test_create_model_with_ft_and_cofficient(test_env, afs_models, clean_mr, delete_mr_and_model, model_file, model_repository_name):
+
+    feature_importance = [
+        {'feature': 'petal_length', 'importance': 0.9473576807512394}, 
+        {'feature': 'petal_width',  'importance': 0.038191635936882906}, 
+        {'feature': 'sepal_length', 'importance': 0.011053241240641932}, 
+        {'feature': 'sepal_width',  'importance': 0.0033974420712357825}
+    ]
+
+    coefficient = [
+        {'feature': 'B-0070-0068-1-FN66F_strength', 'coefficient': -4.730741400252476}, 
+        {'feature': 'B-0070-0068-1-FN66F_vendor', 'coefficient': -0.9335123601234512}, 
+        {'feature': 'B-0070-0068-1-FN66F_tensile','coefficient': 0.16411707246054036}, 
+        {'feature': 'B-0070-0068-1-FN66F_lot','coefficient': -0.08745686004816221}, 
+        {'feature': 'Machine','coefficient': 0.015048547152059243}, 
+        {'feature': 'Lot','coefficient': -0.010971975766858174}, 
+        {'feature': 'RPM','coefficient': 0.0003730247816832932}, 
+        {'feature': 'record_purpose','coefficient': 0.0}
+    ]
+
+    resp = afs_models.upload_model(
+        model_path="unit_test_model",
+        accuracy=1.0,
+        loss=1.0,
+        tags={"tag_key": "tag_value"},
+        extra_evaluation={"extra_loss": 1.23},
+        feature_importance=feature_importance,
+        coefficient=coefficient,
+        model_repository_name=model_repository_name,
+        model_name="test_model",
+    )
+    assert isinstance(resp, dict)
+    assert "uuid" in resp
+    assert "name" in resp
+    assert "created_at" in resp
+    assert "tags" in resp
+    assert "evaluation_result" in resp
+    assert "feature_importance" in resp
+    assert "coefficient" in resp
+    print(resp)

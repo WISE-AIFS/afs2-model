@@ -36,6 +36,18 @@ feature_importance = [
 	{'feature': 'sepal_width',  'importance': 0.0033974420712357825}
 ]
 
+coefficient = [
+	{'feature': 'B-0070-0068-1-FN66F_strength', 'coefficient': -4.730741400252476}, 
+	{'feature': 'B-0070-0068-1-FN66F_vendor', 'coefficient': -0.9335123601234512}, 
+	{'feature': 'B-0070-0068-1-FN66F_tensile','coefficient': 0.16411707246054036}, 
+	{'feature': 'B-0070-0068-1-FN66F_lot','coefficient': -0.08745686004816221}, 
+	{'feature': 'Machine','coefficient': 0.015048547152059243}, 
+	{'feature': 'Lot','coefficient': -0.010971975766858174}, 
+	{'feature': 'RPM','coefficient': 0.0003730247816832932}, 
+	{'feature': 'record_purpose','coefficient': 0.0}
+]
+
+
 # Model object
 afs_models = models()
 
@@ -45,6 +57,7 @@ afs_models = models()
 #   3. (optional) extra_evaluation is for other evaluations for the model, you can put them to this parameter.
 #   4. (optional) tags is the label for the model, like the time of data or the type of the algorithm.
 #   5. (optional) feature_importance is the record how the features important in the model.
+#	6. (optional) coefficient indicates the direction of the relationship between a predictor variable and the response variable.
 afs_models.upload_model(
     model_path='model.h5',
 	model_repository_name='model.h5',
@@ -52,8 +65,9 @@ afs_models.upload_model(
 	loss=0.3, 
 	extra_evaluation=extra_evaluation, 
 	tags=tags,
-	feature_importance=feature_importance
-	)
+	feature_importance=feature_importance,
+	coefficient=coefficient,
+)
 
 # Get the latest model info 
 model_info = afs_models.get_latest_model_info(model_repository_name='model.h5')
@@ -94,7 +108,16 @@ print(model_info)
 		'feature': 'sepal_width',
 		'importance': 0.0033974421
 	}],
-	'coefficient': [],
+	'coefficient': [
+		{'feature': 'B-0070-0068-1-FN66F_strength', 'coefficient': -4.730741400252476}, 
+		{'feature': 'B-0070-0068-1-FN66F_vendor', 'coefficient': -0.9335123601234512}, 
+		{'feature': 'B-0070-0068-1-FN66F_tensile','coefficient': 0.16411707246054036}, 
+		{'feature': 'B-0070-0068-1-FN66F_lot','coefficient': -0.08745686004816221}, 
+		{'feature': 'Machine','coefficient': 0.015048547152059243}, 
+		{'feature': 'Lot','coefficient': -0.010971975766858174}, 
+		{'feature': 'RPM','coefficient': 0.0003730247816832932}, 
+		{'feature': 'record_purpose','coefficient': 0.0}
+	],
 	'size': 11,
 	'created_at': '2020-04-06T10:23:56.228000+00:00'
 }
