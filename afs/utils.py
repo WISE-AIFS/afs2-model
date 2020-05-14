@@ -1,8 +1,9 @@
 import json
 import requests
 import logging
-import botocore.session
+# import botocore.session
 from botocore.client import Config
+import boto3
 
 _logger = logging.getLogger(__name__)
 
@@ -43,46 +44,63 @@ def upload_file_to_blob(
     blob_endpoint, blob_accessKey, blob_secretKey, bucket_name, key, filename
 ):
     try:
-        config = Config(signature_version="s3")
-        session = botocore.session.get_session()
-        blob_client = session.create_client(
+        # config = Config(signature_version="s3")
+        # session = botocore.session.get_session()
+        # blob_client = session.create_client(
+        #     "s3",
+        #     region_name="",
+        #     endpoint_url=blob_endpoint,
+        #     aws_access_key_id=blob_accessKey,
+        #     aws_secret_access_key=blob_secretKey,
+        #     verify=False,
+        #     config=config,
+        # )
+
+        blob_client = boto3.client(
             "s3",
-            region_name="",
             endpoint_url=blob_endpoint,
-            aws_access_key_id=blob_accessKey,
             aws_secret_access_key=blob_secretKey,
+            aws_access_key_id=blob_accessKey,
             verify=False,
-            config=config,
+            config=Config(signature_version="s3"),
         )
     except Exception as e:
-        raise ConnectionError("Connect to blob {} error, exception: {}".foramt(blob_endpoint, e))
+        raise ConnectionError("Connect to blob {} error, exception: {}".format(blob_endpoint, e))
 
     retry = 0
     while retry < 3:
         try:
-            resp = blob_client.put_object(
-                Bucket=bucket_name, Key=key, Body=open(filename, "rb").read()
-            )
+            # resp = blob_client.put_object(
+            #     Bucket=bucket_name, Key=key, Body=open(filename, "rb").read()
+            # )
+            with open(filename, 'rb') as data:
+                blob_client.upload_fileobj(Fileobj=data, Bucket=bucket_name, Key=key)
+
         except Exception as e:
-            resp = {}
             print(
                 ConnectionError(
                     "[ConnectionError] Put object error {} time, exeception: {}".format(retry, e)
                 )
             )
-
-        if not resp or resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
-            retry = retry + 1
+            retry += 1
             if retry == 3:
                 raise ConnectionError(
-                    "[ConnectionError] Put object error after retry 3 times, check response {}".format(resp)
+                    "[ConnectionError] Put object error after retry 3 times."
                 )
-        else:
-            break
+
+        # if not resp or resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
+        # if resp is None:
+        #     retry += 1
+        #     if retry == 3:
+        #         raise ConnectionError(
+        #             "[ConnectionError] Put object error after retry 3 times, check response {}".format(resp)
+        #         )
+        # else:
+        #     break
 
     resp_get = blob_client.list_objects(Bucket=bucket_name, Prefix=key)
-    if not resp_get or resp["ResponseMetadata"]["HTTPStatusCode"] != 200:
-        raise ConnectionError("List blob key has some error, check response {}".format(resp))
+    if not resp_get or resp_get["ResponseMetadata"]["HTTPStatusCode"] != 200:
+        raise ConnectionError("List blob key has some error, check response {}".format(resp_get))
 
     object_size = resp_get["Contents"][0]["Size"]
     return object_size
