@@ -1,4 +1,4 @@
-3.0.2 (unreleased)
+3.0.2 (2020-05-14)
 ------------------
 
 - Add Requirement #13878 - Support Coefficient parameter
