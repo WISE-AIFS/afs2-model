@@ -1,7 +1,9 @@
 3.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add Requirement #13878 - Support Coefficient parameter
+
+- Fix Bug #13864 - Fix botocore upload incomplete model, and use boto3 instead.
 
 
 3.0.1 (2020-04-27)

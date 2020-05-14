@@ -148,6 +148,7 @@ class models(AfsEnv):
         tags={},
         extra_evaluation={},
         feature_importance=None,
+        coefficient=None,
         model_repository_name=None,
         model_name=None,
         blob_mode=True,
@@ -225,8 +226,12 @@ class models(AfsEnv):
         data = dict(
             tags=json.dumps(tags), 
             evaluation_result=json.dumps(evaluation_result),
-            feature_importance=json.dumps(feature_importance),
         )
+        if feature_importance:
+            data.update({'feature_importance': json.dumps(feature_importance)})
+        if coefficient:
+            data.update({'coefficient': json.dumps(coefficient)})
+
         if self.afs_version >= '3.1.3':
             data.update(
                 {
