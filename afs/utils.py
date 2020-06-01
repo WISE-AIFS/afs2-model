@@ -4,6 +4,7 @@ import logging
 # import botocore.session
 from botocore.client import Config
 import boto3
+import hashlib
 
 _logger = logging.getLogger(__name__)
 
