@@ -8,6 +8,7 @@ import base64
 def test_env():
     load_dotenv()
 
+    blobstore = json.loads(os.getenv('blobstore'))
     credentials = json.loads(os.getenv('blobstore'))['credentials']
     mapping = {
         "blob_endpoint": 'endpoint', 
@@ -16,6 +17,13 @@ def test_env():
     for k, v in mapping.items():
         os.environ[k] = credentials[v]
 
+    mapping = {
+        'bucket_name': 'bucket_name',
+        'blob_record_id': 'blob_record_id'
+    }
+    for k, v in mapping.items():
+        os.environ[k] = blobstore[v]
+        
     os.environ['blob_accessKey'] = str(base64.b64encode(bytes(os.environ['blob_accessKey'], 'utf-8')), 'utf-8')
     os.environ['blob_secretKey'] = str(base64.b64encode(bytes(os.environ['blob_secretKey'], 'utf-8')), 'utf-8')
 

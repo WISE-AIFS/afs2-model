@@ -28,13 +28,15 @@ class models(AfsEnv):
         self._blob_secretKey = self.blob_secretKey
 
     def set_blob_credential(
-        self, blob_endpoint, encode_blob_accessKey, encode_blob_secretKey
+        self, blob_endpoint, encode_blob_accessKey, encode_blob_secretKey, blob_record_id, bucket_name
     ):
         """Set blob credential when upload the big model.
 
         :param str blob_endpoint: blob endpoint
         :param str encode_blob_accessKey: blob accessKey encode with base64
         :param str encode_blob_secretKey: blob secretKey encode with base64
+        :param str blob_record_id: MD5 with instance_id + '_' + accessKey
+        :param str bucket_name: blob bucket name
         """
         try:
             _blob_accessKey = str(base64.b64decode(encode_blob_accessKey), "utf-8")
@@ -47,7 +49,9 @@ class models(AfsEnv):
         self._blob_endpoint = blob_endpoint
         self._blob_accessKey = _blob_accessKey
         self._blob_secretKey = _blob_secretKey
-
+        self.blob_record_id = blob_record_id
+        self.bucket_name = bucket_name
+        
     def get_model_repo_id(self, model_repository_name=None):
         """Get model repository by name.
         
@@ -151,7 +155,6 @@ class models(AfsEnv):
         coefficient=None,
         model_repository_name=None,
         model_name=None,
-        blob_mode=True,
     ):
         """Upload model to model repository. (Support v2 API)
 
@@ -163,7 +166,7 @@ class models(AfsEnv):
         :param str model_name: (optional) Give model a name or a default name 
         :param str model_repository_name: (optional) model_repository_name
         :param list feature_importance: (optional) feature_importance is the record how the features important in the model
-        :param bool blob_mode: (optional) upload model direct to blob mode, default True
+        :param list coefficient: (optional) coefficient indicates the direction of the relationship between a predictor variable and the response 
         :return: dict. the information of the upload model.
         """
 
@@ -246,20 +249,9 @@ class models(AfsEnv):
             data.update({"name": model_name})
 
         extra_paths = [self.repo_id, self.sub_entity_uri]
-        # Load model size < 300 MB
         file_size = os.path.getsize(model_path)
-        if file_size < (300 * (1024**2)) and not blob_mode:
-            with open(model_path, "rb") as f:
-                model_file = BytesIO(f.read())
-            model_file.seek(0)
-            files = {"model": model_file}
-
-            resp = self._create(
-                data=data, files=files, extra_paths=extra_paths, form="data"
-            )
-
-        # Between 300M - 1G model file
-        elif file_size < (1024**3) or blob_mode:
+        # upload model file
+        if file_size < (1024**3):
             if not (
                 self._blob_endpoint
                 and self._blob_accessKey
@@ -297,9 +289,8 @@ class models(AfsEnv):
                 model_id,
                 "file_info",
             ]
-            put_payload = {"size": object_size}
+            put_payload = {"size": object_size, "blob_record_id": self.blob_record_id}
             resp = self._put(extra_paths=extra_paths, data=put_payload)
-
         else:
             raise Exception("The size of the file has exceeded the upper limit of 1G")
 
@@ -398,129 +389,6 @@ class models(AfsEnv):
         if not model_id:
             raise ValueError("Model not found.")
         extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
-        resp = self._del(extra_paths=extra_paths)
-
-        if int(resp.status_code / 100) == 2:
-            return True
-        else:
-            return False
-
-    def upload_model_metafile(self, file_path, name, model_repository_name=None):
-        """Upload model metafile
-        :param file_path: model name.
-        :param name: model metafile name.
-        :param model_repository_name: model repository name.
-        :return: dict API
-        """
-
-        if model_repository_name:
-            self.get_model_repo_id(model_repository_name)
-
-        if not (
-            self._blob_endpoint
-            and self._blob_accessKey
-            and self._blob_secretKey
-            and self.bucket_name
-        ):
-            raise ValueError(
-                "Blob information is not enough to put object to blob, {}, {}, {}, {}".foramt(
-                    self._blob_endpoint, self._blob_accessKey, self._blob_secretKey, self.bucket_name)
-            )
-
-        # Create model metadata
-        if name:
-            self._naming_rule(name)
-            payload = {"name": name}
-        else:
-            raise ValueError("Name of model metafile is empty.")
-        extra_paths = [self.repo_id, self.metafile_uri]
-
-        resp = self._create(data=payload, extra_paths=extra_paths, form="json")
-        self.model_metadata_id = resp.json()["uuid"]
-        key = resp.json()["blob_key"]
-
-        try:
-            object_size = upload_file_to_blob(
-                self._blob_endpoint,
-                self._blob_accessKey,
-                self._blob_secretKey,
-                self.bucket_name,
-                key,
-                file_path,
-            )
-        except ConnectionError as ex:
-            # Delete model metadata if connection error
-            extra_paths = [self.repo_id, self.metafile_uri, self.model_metadata_id]
-            resp = self._del(extra_paths=extra_paths)
-            raise ex
-
-        # Update PUT Model metafile File_info
-        extra_paths = [
-            self.repo_id,
-            self.metafile_uri,
-            self.model_metadata_id,
-            "file_info",
-        ]
-        put_payload = {"size": object_size}
-        resp = self._put(extra_paths=extra_paths, data=put_payload)
-
-        if int(resp.status_code / 100) == 2:
-            resp = resp.json()
-            self.model_metadata_id = resp.get("uuid")
-            return resp
-        else:
-            return resp.text
-
-    def get_model_metafile_id(self, name, model_repository_name=None):
-        """Get model metafile id by name.
-        
-        :param str name: model metafile name..
-        :param str model_repository_name: model respository name where the model metafile is.
-        :return: str model metafile id
-        """
-        if not model_repository_name:
-            if not self.repo_id:
-                raise ValueError("Please enter model_repository_name.")
-        else:
-            self.get_model_repo_id(model_repository_name=model_repository_name)
-            if not self.repo_id:
-                raise ValueError(
-                    "Model repository with name {} not found.".format(
-                        model_repository_name
-                    )
-                )
-
-        if name:
-            params = dict(name=name)
-            extra_paths = [self.repo_id, self.metafile_uri]
-            resp = self._get(extra_paths=extra_paths, params=params).json()
-
-        if resp["resources"]:
-            model_metafile_id = resp["resources"][0]["uuid"]
-        else:
-            return None
-        return model_metafile_id
-
-    def delete_model_metafile(self, name, model_repository_name=None):
-        """Delete model metafile.
-        
-        :param model_name: model metafile name.
-        :param model_repository_name: model repository name.
-        :return: bool
-        """
-        if not model_repository_name:
-            if not self.repo_id:
-                raise ValueError("Please enter model_repository_name.")
-        else:
-            self.get_model_repo_id(model_repository_name=model_repository_name)
-            if not self.repo_id:
-                raise ValueError(
-                    "Model repository with name {} not found.".format(
-                        model_repository_name
-                    )
-                )
-        model_metafile_id = self.get_model_metafile_id(name=name)
-        extra_paths = [self.repo_id, self.metafile_uri, model_metafile_id]
         resp = self._del(extra_paths=extra_paths)
 
         if int(resp.status_code / 100) == 2:

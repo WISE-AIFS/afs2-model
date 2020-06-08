@@ -81,3 +81,18 @@ def upload_file_to_blob(
 
     object_size = resp_get["Contents"][0]["Size"]
     return object_size
+
+
+# def hash_blob_md5(instance_id, access_key):
+#     """
+#     Hash blob record id
+#     """
+#     if not instance_id or not access_key:
+#         return None
+
+#     data = str(instance_id) + '_' + str(access_key)
+#     m = hashlib.md5()
+#     m.update(data.encode(encoding='utf-8'))
+#     h = m.hexdigest()
+
+#     return str(h)

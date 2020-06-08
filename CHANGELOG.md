@@ -1,7 +1,11 @@
 3.2.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add Requirement - Support AFS 3.2 upload model to different blob.
+
+- Remove model metadata API.
+
+- Remove part of test case.
 
 
 3.0.2 (2020-05-14)

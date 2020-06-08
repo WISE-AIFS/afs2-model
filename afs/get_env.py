@@ -41,12 +41,15 @@ class AfsEnv:
 
         self.api_version, self.afs_version = self._get_api_version()
         self.target_endpoint = self.target_endpoint + self.api_version + "/"
-        self.bucket_name = self._get_blob_bucket()
 
-        self.blob_endpoint = None
+        self.blob_endpoint =  None
         self.blob_accessKey = None
         self.blob_secretKey = None
+        self.blob_record_id = None
+        self.bucket_name = None
         self._get_blobstore_credential()
+        # self.blob_record_id = utils.hash_blob_md5(self.instance_id, self.blob_accessKey)
+
 
     def _get_api_version(self):
         # Fetch api-afs root info 
@@ -83,13 +86,27 @@ class AfsEnv:
         if blobstore:
             try:
                 blobstore = json.loads(blobstore)
+                self.blob_record_id = blobstore.get('blob_record_id')
+                self.bucket_name = blobstore.get('bucket_name')
                 credentials = blobstore.get('credentials')
                 self.blob_endpoint = credentials.get('endpoint')
                 self.blob_accessKey = credentials.get('accessKey')
                 self.blob_secretKey = credentials.get('secretKey')
             except Exception as e:
-                print('Please set blob credentials manually, if you need to upload large model.')            
+                print('The env blobstore format is error.\n \
+                    Please set blob credentials manually.\n \
+                    Reference models.set_blob_credential usage.')
         else:
-            print('Please set blob credentials manually, if you need to upload large model.')
+            print('Please set blob credentials manually.\n \
+                Reference models.set_blob_credential usage.')
 
-            
+    def check_blob_connection(self):
+        if self.blob_endpoint and \
+        self.blob_accessKey and \
+        self.blob_secretKey and \
+        self.blob_record_id and \
+        self.bucket_name:
+            return True
+        else:
+            raise ValueError("No values in blob_endpoint, blob_accessKey, blob_secretKey, blob_record_id, bucket_name. \
+                {}, {}, {}, {}, {}".format(self.blob_endpoint, self.blob_accessKey, self.blob_secretKey, self.blob_record_id, self.bucket_name))

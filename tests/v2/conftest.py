@@ -30,11 +30,17 @@ def afs_models(test_env):
 def afs_models_blob(test_env):
     my_models = models()
     blob_endpoint = os.getenv("blob_endpoint", None)
-    encode_blob_accessKey = os.getenv("blob_accessKey", None)
-    encode_blob_secretKey = os.getenv("blob_secretKey", None)
+    blob_accessKey = os.getenv("blob_accessKey", None)
+    blob_secretKey = os.getenv("blob_secretKey", None)
+    bucket_name = os.getenv("bucket_name", None)
+    blob_record_id = os.getenv("blob_record_id", None)
 
     my_models.set_blob_credential(
-        blob_endpoint, encode_blob_accessKey, encode_blob_secretKey
+        blob_endpoint, 
+        blob_accessKey, 
+        blob_secretKey,
+        blob_record_id,
+        bucket_name,
     )
     yield my_models
 
@@ -120,10 +126,11 @@ def afs_models_with_error_blob():
     blob_endpoint = os.getenv("blob_endpoint", None)
     encode_blob_accessKey = os.getenv("blob_accessKey", None)
     encode_blob_secretKey = "NDhkZTU1MGFjOTEwNGI3MTk4N2RjZGQ5ZWFjMTI0OTk="
+    bucket_name = os.getenv("bucket_name", None)
+    blob_record_id = os.getenv("blob_record_id", None)
 
-    encode_blob_accessKey = os.getenv("blob_accessKey", None)
     my_models.set_blob_credential(
-        blob_endpoint, encode_blob_accessKey, encode_blob_secretKey
+        blob_endpoint, encode_blob_accessKey, encode_blob_secretKey, blob_record_id, bucket_name
     )
     yield my_models
 

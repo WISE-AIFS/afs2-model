@@ -2,31 +2,6 @@ from uuid import UUID
 import pytest
 
 
-def test_create_model_repo(test_env, clean_mr, afs_models, delete_model_respository, model_repository_name):
-    create_resp = afs_models.create_model_repo(
-        model_repository_name=model_repository_name
-    )
-    assert isinstance(UUID(create_resp), UUID)
-
-
-def test_get_model_repo_id(
-    test_env, afs_models, model_repository, delete_model_respository, model_repository_name
-):
-    get_resp = afs_models.get_model_repo_id(
-        model_repository_name=model_repository_name
-    )
-    assert get_resp == model_repository
-
-
-def test_delete_model_repo(test_env, afs_models, model_repository, model_repository_name):
-    delete_resp = afs_models.delete_model_repository(
-        model_repository_name=model_repository_name
-    )
-    assert delete_resp == True
-    resp = afs_models.get_model_repo_id(model_repository_name=model_repository_name)
-    assert resp == None
-
-
 def test_create_model(test_env, afs_models, clean_mr, delete_mr_and_model, model_file, model_repository_name):
     resp = afs_models.upload_model(
         model_path="unit_test_model",
@@ -191,10 +166,10 @@ def test_create_model_with_datasetid_target(test_env, afs_models, clean_mr, dele
 def test_create_model_with_ft_and_cofficient(test_env, afs_models, clean_mr, delete_mr_and_model, model_file, model_repository_name):
 
     feature_importance = [
-        {'feature': 'petal_length', 'importance': 0.9473576807512394}, 
-        {'feature': 'petal_width',  'importance': 0.038191635936882906}, 
-        {'feature': 'sepal_length', 'importance': 0.011053241240641932}, 
-        {'feature': 'sepal_width',  'importance': 0.0033974420712357825}
+        {'feature': 'petal_length', 'feature_importance': 0.9473576807512394}, 
+        {'feature': 'petal_width',  'feature_importance': 0.038191635936882906}, 
+        {'feature': 'sepal_length', 'feature_importance': 0.011053241240641932}, 
+        {'feature': 'sepal_width',  'feature_importance': 0.0033974420712357825}
     ]
 
     coefficient = [
