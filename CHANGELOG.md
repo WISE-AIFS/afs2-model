@@ -7,6 +7,8 @@
 
 - Remove part of test case.
 
+- Add Requirement - Update to get blob key credential.
+
 
 3.0.2 (2020-05-14)
 ------------------

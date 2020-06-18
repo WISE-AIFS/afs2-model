@@ -42,13 +42,13 @@ class AfsEnv:
         self.api_version, self.afs_version = self._get_api_version()
         self.target_endpoint = self.target_endpoint + self.api_version + "/"
 
+        self.blob_id = None
         self.blob_endpoint =  None
         self.blob_accessKey = None
         self.blob_secretKey = None
         self.blob_record_id = None
         self.bucket_name = None
         self._get_blobstore_credential()
-        # self.blob_record_id = utils.hash_blob_md5(self.instance_id, self.blob_accessKey)
 
 
     def _get_api_version(self):
@@ -86,12 +86,40 @@ class AfsEnv:
         if blobstore:
             try:
                 blobstore = json.loads(blobstore)
-                self.blob_record_id = blobstore.get('blob_record_id')
-                self.bucket_name = blobstore.get('bucket_name')
-                credentials = blobstore.get('credentials')
-                self.blob_endpoint = credentials.get('endpoint')
-                self.blob_accessKey = credentials.get('accessKey')
-                self.blob_secretKey = credentials.get('secretKey')
+
+                if self.afs_version >= '3.2.4':
+                    self.blob_id = blobstore.get('blob_id')
+                    self.blob_record_id = blobstore.get('blob_record_id')
+                    self.openpai_id = os.getenv('openpai_id')
+                    pai_job_name = os.getenv('PAI_JOB_NAME')
+                    url = utils.urljoin(
+                        self.target_endpoint, "instances", self.instance_id, "blobs", self.blob_id, "info", extra_paths=[])
+                    params = {
+                        'openpai_id': self.openpai_id, 
+                        'pai_job_name': pai_job_name,
+                    }
+                    if not self.token:
+                        params.update({"auth_code": self.auth_code})
+
+                    response = self.session.get(
+                        url, params=params, verify=False
+                    )
+                    if response.status_code / 100 == 2:
+                        blobstore = response.json()
+                        self.blob_record_id = blobstore.get('blob_record_id')
+                        self.bucket_name = blobstore.get('bucket_name')
+                        self.blob_endpoint = blobstore.get('endpoint')
+                        self.blob_accessKey = blobstore.get('access_key')
+                        self.blob_secretKey = blobstore.get('secret_key')
+                    else:
+                        print("Not found {}, {}".format(url, response.text))
+                else:
+                    print('Using AFS version {}'.format(self.afs_version))
+                    self.bucket_name =  self._get_blob_bucket()
+                    credentials = blobstore.get('credentials')
+                    self.blob_endpoint = credentials.get('endpoint')
+                    self.blob_accessKey = credentials.get('accessKey')
+                    self.blob_secretKey = credentials.get('secretKey')
             except Exception as e:
                 print('The env blobstore format is error.\n \
                     Please set blob credentials manually.\n \

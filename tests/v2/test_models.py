@@ -126,20 +126,6 @@ def test_error1_create_firehose_apm_model(
     )
     assert get_resp == resp["uuid"]
 
-def test_connect_blob_error_create_model(
-    test_env, afs_models_with_error_blob, big_model, delete_mr_and_model, model_repository_name
-):
-    with pytest.raises(Exception):
-        assert afs_models_with_error_blob.upload_model(
-            model_path=big_model,
-            accuracy=1.0,
-            loss=1.0,
-            tags={"tag_key": "tag_value"},
-            model_repository_name=model_repository_name,
-            model_name="test_model",
-            blob_mode=True,
-        )
-
 
 def test_create_model_with_datasetid_target(test_env, afs_models, clean_mr, delete_mr_and_model, model_file, model_repository_name):
     resp = afs_models.upload_model(

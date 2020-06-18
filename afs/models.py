@@ -19,7 +19,6 @@ class models(AfsEnv):
         super(models, self).__init__(target_endpoint, instance_id, auth_code, token)
         self.entity_uri = "model_repositories"
         self.sub_entity_uri = "models"
-        self.metafile_uri = "model_metafiles"
         self.repo_id = None
 
         # Blob info
