@@ -1,4 +1,4 @@
-3.2.0 (unreleased)
+3.2.0 (2020-07-13)
 ------------------
 
 - Add Requirement - Support AFS 3.2 upload model to different blob.
