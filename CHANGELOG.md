@@ -1,7 +1,7 @@
 3.3.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add Requirement #15395 - [SDK] Download model through boto3
 
 
 3.2.0 (2020-07-13)

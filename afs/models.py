@@ -6,7 +6,7 @@ import afs.utils as utils
 import re
 import base64
 from uuid import uuid4
-from afs.utils import upload_file_to_blob
+from afs.utils import upload_file_to_blob, dowload_file_from_blob
 from afs.get_env import AfsEnv
 
 
@@ -128,19 +128,16 @@ class models(AfsEnv):
             model_repository_name=model_repository_name,
             last_one=last_one,
         )
-        if model_id:
-            extra_paths = [self.repo_id, self.sub_entity_uri, model_id]
-            params = {"alt": "media"}
-            resp = self._get(params=params, extra_paths=extra_paths)
-        else:
-            raise ValueError("Model with name {} not found.".format(model_name))
 
-        try:
-            with open(save_path, "wb") as f:
-                f.write(resp.content)
-        except Exception as e:
-            raise RuntimeError("Write download file error. Exception: {}".format(e))
-
+        key = "models/{}/{}/{}".format(self.instance_id, self.repo_id, model_id)
+        dowload_file_from_blob(
+            self._blob_endpoint,
+            self._blob_accessKey,
+            self._blob_secretKey,
+            self.bucket_name,
+            key,
+            model_name,
+        )
         return True
 
     def upload_model(

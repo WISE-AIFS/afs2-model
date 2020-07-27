@@ -61,7 +61,7 @@ def upload_file_to_blob(
         try:
             with open(filename, 'rb') as data:
                 blob_client.upload_fileobj(Fileobj=data, Bucket=bucket_name, Key=key)
-            # Upload uccess
+            # Upload file success
             break
         except Exception as e:
             print(
@@ -83,16 +83,36 @@ def upload_file_to_blob(
     return object_size
 
 
-# def hash_blob_md5(instance_id, access_key):
-#     """
-#     Hash blob record id
-#     """
-#     if not instance_id or not access_key:
-#         return None
+def dowload_file_from_blob(
+    blob_endpoint, blob_accessKey, blob_secretKey, bucket_name, key, filename
+):
+    try:
+        blob_client = boto3.client(
+            "s3",
+            endpoint_url=blob_endpoint,
+            aws_secret_access_key=blob_secretKey,
+            aws_access_key_id=blob_accessKey,
+            verify=False,
+            config=Config(signature_version="s3"),
+        )
+    except Exception as e:
+        raise RuntimeError("Write download file error. Exception: {}".format(e))
 
-#     data = str(instance_id) + '_' + str(access_key)
-#     m = hashlib.md5()
-#     m.update(data.encode(encoding='utf-8'))
-#     h = m.hexdigest()
+    retry = 0
+    while retry < 3:
+        try:
+            blob_client.download_file(bucket_name, key, filename)
+            # Download file success
+            break
+        except Exception as e:
+            print(
+                ConnectionError(
+                    "[ConnectionError] Put object error {} time, exeception: {}".format(retry, e)
+                )
+            )
+            retry += 1
+            if retry == 3:
+                raise ConnectionError(
+                    "[ConnectionError] Put object error after retry 3 times."
+                )
 
-#     return str(h)
