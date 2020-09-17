@@ -136,7 +136,7 @@ class models(AfsEnv):
             self._blob_secretKey,
             self.bucket_name,
             key,
-            model_name,
+            save_path,
         )
         return True
 

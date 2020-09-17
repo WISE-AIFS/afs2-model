@@ -5,9 +5,7 @@ import logging
 from botocore.client import Config
 import boto3
 import hashlib
-
-_logger = logging.getLogger(__name__)
-
+import time
 
 class InvalidStatusCode(Exception):
     def __init__(self, status_code, body):
@@ -105,14 +103,10 @@ def dowload_file_from_blob(
             # Download file success
             break
         except Exception as e:
-            print(
-                ConnectionError(
-                    "[ConnectionError] Put object error {} time, exeception: {}".format(retry, e)
-                )
-            )
-            retry += 1
+            print("[ConnectionError] Put object error {} time, exeception: {}".format(retry, e))
             if retry == 3:
                 raise ConnectionError(
                     "[ConnectionError] Put object error after retry 3 times."
                 )
-
+            retry += 1
+            time.sleep(1)
