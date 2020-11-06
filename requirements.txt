@@ -2,6 +2,7 @@ requests
 urllib3
 botocore
 boto3
+pycrypto
 
 # For client
 pyyaml

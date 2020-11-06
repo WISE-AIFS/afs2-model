@@ -6,7 +6,8 @@ import afs.utils as utils
 import re
 import base64
 from uuid import uuid4
-from afs.utils import upload_file_to_blob, dowload_file_from_blob
+from afs.utils import (upload_file_to_blob, dowload_file_from_blob,
+                        encrypt, decrypt)
 from afs.get_env import AfsEnv
 
 
@@ -151,6 +152,7 @@ class models(AfsEnv):
         coefficient=None,
         model_repository_name=None,
         model_name=None,
+        encrypt_key=''
     ):
         """Upload model to model repository. (Support v2 API)
 
@@ -163,6 +165,7 @@ class models(AfsEnv):
         :param str model_repository_name: (optional) model_repository_name
         :param list feature_importance: (optional) feature_importance is the record how the features important in the model
         :param list coefficient: (optional) coefficient indicates the direction of the relationship between a predictor variable and the response 
+        :param str encrypt_key: (optional) If there is a encrypt_key, use the encrypt_key to encrypt the model
         :return: dict. the information of the upload model.
         """
 
@@ -220,6 +223,17 @@ class models(AfsEnv):
                     "PAI_DATA_DIR value is not valid json format for apm_node. Exception:{}, Value: {}".format(e, pai_data_dir)
                 )
 
+        # record encrypy or not
+        tags.update({"is_encrypted": bool(encrypt_key)})
+
+        if encrypt_key:
+            data = None
+            with open(model_path, 'rb') as f:
+                data = f.read()
+                data = encrypt(data, encrypt_key)
+            with open(model_path, 'wb') as f:
+                f.write(data)
+
         # Evaluation result
         evaluation_result.update(extra_evaluation)
         data = dict(
@@ -247,7 +261,7 @@ class models(AfsEnv):
         extra_paths = [self.repo_id, self.sub_entity_uri]
         file_size = os.path.getsize(model_path)
         # upload model file
-        if file_size < (1024**3):
+        if file_size < (1024**3): # True
             if not (
                 self._blob_endpoint
                 and self._blob_accessKey
@@ -391,6 +405,15 @@ class models(AfsEnv):
             return True
         else:
             return False
+
+    def decrypt_model(self, model, decrypt_key):
+        """Decrypt model.
+        
+        :param object model: the object of model
+        :param str decrypt_key: use decrypt_key to decrypt the model
+        :return: object
+        """
+        return decrypt(model, decrypt_key)
 
     def _create(self, data, files=None, extra_paths=[], form="json"):
         url = utils.urljoin(

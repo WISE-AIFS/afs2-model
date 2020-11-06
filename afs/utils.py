@@ -6,6 +6,9 @@ from botocore.client import Config
 import boto3
 import hashlib
 
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
+
 _logger = logging.getLogger(__name__)
 
 
@@ -116,3 +119,32 @@ def dowload_file_from_blob(
                     "[ConnectionError] Put object error after retry 3 times."
                 )
 
+
+def encrypt(
+    data, key
+):
+    rsakey = RSA.importKey(key)
+    cipher = Cipher_PKCS1_v1_5.new(rsakey)
+    length = 100 
+
+    res = []
+    for i in range(0, len(data), length):
+        res.append(cipher.encrypt(data[i:i+length]))
+
+    encrypted = b''.join(res)
+    return encrypted
+
+def decrypt(
+    data, key
+):
+    rsakey = RSA.importKey(key)
+    decipher = Cipher_PKCS1_v1_5.new(rsakey)
+    length = 128
+
+    res = []
+    for i in range(0, len(data), length):
+        res.append(decipher.decrypt(data[i:i+length], None))
+
+    model = b''.join(res)
+
+    return model
