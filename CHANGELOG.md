@@ -1,3 +1,11 @@
+3.3.1 (2020/11/11)
+------------------
+
+- Add Requirement #16655 - [SDK] Fix decode data_dir message for apm source
+
+- Add Requirement - [SDK] Can use blob credential in env without api version
+
+
 3.3.0 (unreleased)
 ------------------
 
