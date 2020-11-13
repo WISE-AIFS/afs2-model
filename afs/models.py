@@ -137,7 +137,7 @@ class models(AfsEnv):
             self._blob_secretKey,
             self.bucket_name,
             key,
-            model_name,
+            save_path,
         )
         return True
 
@@ -209,10 +209,12 @@ class models(AfsEnv):
         pai_data_dir = os.getenv("PAI_DATA_DIR", None)
         if pai_data_dir:
             try:
-                pai_data_dir = json.loads(pai_data_dir)
-                if "data" in pai_data_dir and "type" in pai_data_dir:
-                    data = pai_data_dir["data"]
-                    firehose_type = pai_data_dir["type"]
+                pai_data_dir = str(base64.b64decode(pai_data_dir), "utf-8")
+                # double load to escape double quotes
+                firehose = json.loads(json.loads(pai_data_dir))
+                if ("data" in firehose) and ("type" in firehose):
+                    data = firehose["data"]
+                    firehose_type = firehose["type"]
 
                     if "machineIdList" in data and firehose_type == "apm-firehose":
                         machineIdList = data.get("machineIdList", [None]).pop(0)
@@ -220,7 +222,7 @@ class models(AfsEnv):
                             tags.update({"apm_node": str(machineIdList)})
             except Exception as e:
                 print(
-                    "PAI_DATA_DIR value is not valid json format for apm_node. Exception:{}, Value: {}".format(e, pai_data_dir)
+                    "PAI_DATA_DIR value is not valid json format for apm_node. Exception: {}, Value: {}".format(e, pai_data_dir)
                 )
 
         # record encrypy or not

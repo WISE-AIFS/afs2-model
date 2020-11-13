@@ -50,6 +50,8 @@ class AfsEnv:
         self.bucket_name = None
         self._get_blobstore_credential()
 
+        print('Using AFS version {}'.format(self.afs_version))
+
 
     def _get_api_version(self):
         # Fetch api-afs root info 
@@ -87,7 +89,7 @@ class AfsEnv:
             try:
                 blobstore = json.loads(blobstore)
 
-                if self.afs_version >= '3.2.4':
+                if not blobstore.get('credentials'):
                     self.blob_id = blobstore.get('blob_id')
                     self.blob_record_id = blobstore.get('blob_record_id')
                     self.openpai_id = os.getenv('openpai_id')
@@ -114,16 +116,18 @@ class AfsEnv:
                     else:
                         print("Not found {}, {}".format(url, response.text))
                 else:
-                    print('Using AFS version {}'.format(self.afs_version))
-                    self.bucket_name =  self._get_blob_bucket()
+                    self.blob_record_id = blobstore.get('blob_record_id')
                     credentials = blobstore.get('credentials')
                     self.blob_endpoint = credentials.get('endpoint')
                     self.blob_accessKey = credentials.get('accessKey')
                     self.blob_secretKey = credentials.get('secretKey')
+                    self.bucket_name = credentials.get('bucket_name')
+                    
             except Exception as e:
                 print('The env blobstore format is error.\n \
                     Please set blob credentials manually.\n \
-                    Reference models.set_blob_credential usage.')
+                    Reference models.set_blob_credential usage. \n \
+                    Exception: {}'.format(e))
         else:
             print('Please set blob credentials manually.\n \
                 Reference models.set_blob_credential usage.')
