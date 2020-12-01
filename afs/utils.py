@@ -142,6 +142,9 @@ def decrypt(
     for i in range(0, len(data), length):
         res.append(decipher.decrypt(data[i:i+length], None))
 
+    if any(response is None for response in res):
+        raise ValueError('decrypt_key is invalid.')
+
     model = b''.join(res)
 
     return model
