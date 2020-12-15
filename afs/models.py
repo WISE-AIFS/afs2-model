@@ -208,7 +208,7 @@ class models(AfsEnv):
             try:
                 pai_data_dir = str(base64.b64decode(pai_data_dir), "utf-8")
                 # double load to escape double quotes
-                firehose = json.loads(json.loads(pai_data_dir))
+                firehose = json.loads(pai_data_dir)
                 if ("data" in firehose) and ("type" in firehose):
                     data = firehose["data"]
                     firehose_type = firehose["type"]
@@ -249,7 +249,7 @@ class models(AfsEnv):
         extra_paths = [self.repo_id, self.sub_entity_uri]
         file_size = os.path.getsize(model_path)
         # upload model file
-        if file_size < (1024**3):
+        if file_size < (5*1024**3):
             if not (
                 self._blob_endpoint
                 and self._blob_accessKey
