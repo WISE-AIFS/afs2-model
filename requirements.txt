@@ -3,9 +3,3 @@ urllib3
 botocore
 boto3
 pycrypto
-
-# For client
-pyyaml
-
-# For CLI
-click
