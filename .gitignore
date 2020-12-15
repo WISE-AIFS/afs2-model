@@ -117,3 +117,8 @@ test_workspace/
 
 # something
 *.h5
+
+# others
+test_develop.py
+test_model
+test.py
