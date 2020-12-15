@@ -47,6 +47,13 @@ coefficient = [
 	{'feature': 'record_purpose','coefficient': 0.0}
 ]
 
+# User-define RSA Public key Type:string
+encrypt_key = """-----BEGIN RSA PUBLIC KEY-----
+MIGJAoGBAJrX4NIpPBdsOoFDo6oTUiRVM2CCYF/wdCy/KZ54mHyPRRFwtxcuRYt5omODY8uh
+zTWjkb0jv0JphsHJmjeYkggHUxTrWeJ2gPfReTKPfmIGP0BQhHtwb92gxPYiJVHjSVgLLOe2
+75iRyb7a5N20eiw5bEB4IFsuy+QXbDvUUsNPAgMBAAE=
+-----END RSA PUBLIC KEY-----
+"""
 
 # Model object
 afs_models = models()
@@ -58,6 +65,7 @@ afs_models = models()
 #   4. (optional) tags is the label for the model, like the time of data or the type of the algorithm.
 #   5. (optional) feature_importance is the record how the features important in the model.
 #	6. (optional) coefficient indicates the direction of the relationship between a predictor variable and the response variable.
+#   7. (optional) If there is a encrypt_key, use the encrypt_key to encrypt the model
 afs_models.upload_model(
     model_path='model.h5',
 	model_repository_name='model.h5',
@@ -67,6 +75,7 @@ afs_models.upload_model(
 	tags=tags,
 	feature_importance=feature_importance,
 	coefficient=coefficient,
+	encrypt_key=encrypt_key
 )
 
 # Get the latest model info 
@@ -93,7 +102,8 @@ print(model_info)
 		'AUC': 1.0
 	},
 	'tags': {
-		'machine': 'machine01'
+		'machine': 'machine01',
+		'is_encrypted': True
 	},
 	'feature_importance': [{
 		'feature': 'petal_length',
@@ -176,6 +186,45 @@ afs_models.download_model(
 dl_model.h5 
 ```
 
+
+
+
+###  decrypt_model
+
+**Code**
+```
+from afs import models
+
+decrypt_key = """-----BEGIN RSA PRIVATE KEY-----
+MIICXgIBAAKBgQCCCmzSJsR2kb5Tol7RyNM19XIbXsYYjzNSA0maJ3lPDNnJE0Kb6bP2Au+Y
+QOT6y9Mse/hqKkeXjpMaOBbx+5fGM5ivEJiqepRBdD3mbkJMhvnrNTR4hzYpUgD69d+LzZkp
+Q4GBHR93LRYvdUaBrSDXH0G6BLFe3AGF44LoWEa5fQIDAQABAoGBAICWFmzncLVeADlrAR+n
+2VIt1htCZ9e5IiIiphEMn2OPbXrq1J6fRRgqZwjCgqmMCtCd9VHlZM10afkvJWE6SySBHR2T
+qsMTuvJfGAEIRKo19p6BSqxpSRitP/Ow3liaND0i8MTJ5ixaiOhmRUX2jlWM1XfhuUjF6YGV
+ProlojMBAkEA0s6eyxTUjazAEVCQ9BeCorwF/FM9Nf+4ZShOlLJZ+eRwFa5Epeziu/ecVbzQ
+jzDI1KWlj+Gxl35zl03ooA5JrQJBAJ3rPG8CJFafxi2WcORIhGr2R/tcJRGjJcutMyGpi+zH
+k7+eNRt9ZBowwCkjeJh+MJmKwjZ0NToS8jGox2LHyRECQFQ20L7mSmdynKQOIGoyvjBOlsGP
+a0OYLczThljmywUGWjR/EtOKR6W5rE2gCV06qvAwYGyTSAPyMzE9oXHXY10CQQAO5g2aj4Is
+JgDFdkcKUokjqj6aSVQ5+MFtGNcVGvDXkvCuiFeMU2UpT2Yhu3X6NRWSttOh3Y7T/suYwcql
+2CFxAkEAu+c3M1YSCpUZLdne9EW18/+4wWYNuFSOuGVK0FUyjjNhWzfDFARYNFgR+5mUMaJ0
+4wNCyD5hvUVkBOZINHWtiw==
+-----END RSA PRIVATE KEY-----
+"""
+
+# Model object
+afs_models = models()
+
+# Download model from model repository.
+afs_models.download_model(
+	save_path='dl_model.h5', 
+	model_repository_name='model.h5', 
+	last_one=True)
+
+# Open the model and decrypt.
+with open('dl_model.h5', 'rb') as f:
+	data = f.read()
+	model = afs_models.decrypt_model(data, decrypt_key
+```
 
 
 ### [Advanced] Token download_model

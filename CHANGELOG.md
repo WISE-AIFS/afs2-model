@@ -1,3 +1,9 @@
+3.4.0 (unreleased)
+------------------
+
+- Add Requirement #16536 - [SDK] encrypt / decrypt model with RSA public/private key
+
+
 3.3.1 (2020/11/11)
 ------------------
 
