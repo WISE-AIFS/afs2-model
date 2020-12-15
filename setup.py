@@ -2,20 +2,24 @@
 # encoding: utf-8
 
 import os
-
-try:  # for pip >= 10
-    from pip._internal.req import parse_requirements
-except ImportError:  # for pip <= 9.0.3
-    from pip.req import parse_requirements
+import pathlib
 from setuptools import setup, find_packages
+import pkg_resources
 
-dev_requirements_path = os.path.join(os.path.dirname(__file__), "requirements_dev.txt")
-dev_requires = parse_requirements(dev_requirements_path, session="hack")
-dev_requires = [str(ir.req) for ir in dev_requires]
+with pathlib.Path('requirements_dev.txt').open() as requirements_txt:
+    dev_requires = [
+        str(requirement)
+        for requirement
+        in pkg_resources.parse_requirements(requirements_txt)
+    ]
 
-requirements_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
-install_requires = parse_requirements(requirements_path, session="hack")
-install_requires = [str(ir.req) for ir in install_requires]
+
+with pathlib.Path('requirements.txt').open() as requirements_txt:
+    install_requires = [
+        str(requirement)
+        for requirement
+        in pkg_resources.parse_requirements(requirements_txt)
+    ]
 
 with open(os.path.join(os.path.dirname(__file__), "VERSION"), "r") as f:
     version = f.read()
