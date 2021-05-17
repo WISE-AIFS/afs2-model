@@ -504,10 +504,11 @@ class models(AfsEnv):
         return response
 
     def _naming_rule(self, name):
-        if len(name) > 42 or len(name) < 1:
-            raise ValueError("Name length is upper limit 1-42 char")
+        limit = 72
+        if len(name) > limit or len(name) < 1:
+            raise ValueError("Name length is upper limit 1-{} char".format((limit)))
 
-        pattern = re.compile(r"(?!.*[^a-zA-Z0-9-_.]).{1,42}")
+        pattern = re.compile(r"(?!.*[^a-zA-Z0-9-_.]).{1,72}")
         match = pattern.match(name)
         if match is None:
             raise ValueError("Naming rule is only a-z, A-Z, 0-9, - and _ allowed.")
