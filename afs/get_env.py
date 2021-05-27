@@ -103,6 +103,15 @@ class AfsEnv:
                     if not self.token:
                         params.update({"auth_code": self.auth_code})
 
+                    from requests.adapters import HTTPAdapter
+                    from requests.packages.urllib3.util import Retry
+                    retries = Retry(
+                        total=5, 
+                        method_whitelist=frozenset(['GET', 'POST']), 
+                        status_forcelist=[404, 500, 502, 503, 504]
+                        )
+                    self.session.mount('https://', HTTPAdapter(max_retries=retries))
+
                     response = self.session.get(
                         url, params=params, verify=False
                     )
