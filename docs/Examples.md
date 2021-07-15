@@ -5,7 +5,7 @@
 
 ### upload_model
 
-How to upload a model file(<1GB) on notebook.  
+How to upload a model file(<3GB) on notebook.  
 
 **Code**
 
