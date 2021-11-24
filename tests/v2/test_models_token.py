@@ -1,19 +1,6 @@
 from uuid import UUID
 import pytest
 
-# def test_connect_blob_error_create_model(
-#     test_env, afs_models_with_error_blob, big_model, delete_mr_and_model, model_repository_name
-# ):
-#     with pytest.raises(Exception):
-#         assert afs_models_with_error_blob.upload_model(
-#             model_path=big_model,
-#             accuracy=1.0,
-#             loss=1.0,
-#             tags={"tag_key": "tag_value"},
-#             model_repository_name=model_repository_name,
-#             model_name="test_model",
-#             blob_mode=True,
-#         )
 
 def test_token_create_model_repo(afs_models_token, delete_model_respository, model_repository_name):
     create_resp = afs_models_token.create_model_repo(

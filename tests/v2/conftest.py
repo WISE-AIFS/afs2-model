@@ -3,6 +3,7 @@ from tests.mock_requests import MockResponse
 from dotenv import load_dotenv
 from afs import models
 import time
+import base64
 
 @pytest.fixture(scope="session")
 def model_file():
@@ -94,7 +95,8 @@ def delete_mr_and_model(afs_models, model_repository_name):
 @pytest.fixture(scope="function")
 def apm_node_env():
     pai_data_dir = {"type": "apm-firehose", "data": {"machineIdList": [3]}}
-    os.environ["PAI_DATA_DIR"] = json.dumps(pai_data_dir)
+    # os.environ["PAI_DATA_DIR"] = str(base64.b64encode(json.dumps(pai_data_dir)), 'utf-8')
+    os.environ["PAI_DATA_DIR"] = str(base64.b64encode(bytes(json.dumps(pai_data_dir), 'utf-8')), 'utf-8')
     yield
     del os.environ["PAI_DATA_DIR"]
 
