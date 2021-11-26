@@ -1,5 +1,5 @@
 requests
 urllib3
 boto3<=1.17
-botocore
+botocore<1.21.0,>=1.20.0
 pycrypto
