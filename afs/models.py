@@ -417,6 +417,22 @@ class models(AfsEnv):
         """
         return decrypt(model, decrypt_key)
 
+    def api_download_model(self, instance_id, model_repository_id, model_id, save_path):
+        """API dowload model
+        : instance_id:
+        : model_repository_id:
+        : model_id:
+        """
+        key = "models/{}/{}/{}".format(instance_id, model_repository_id, model_id)
+        dowload_file_from_blob(
+            self._blob_endpoint,
+            self._blob_accessKey,
+            self._blob_secretKey,
+            self.bucket_name,
+            key,
+            save_path,
+        )
+
     def _create(self, data, files=None, extra_paths=[], form="json"):
         url = utils.urljoin(
             self.target_endpoint,

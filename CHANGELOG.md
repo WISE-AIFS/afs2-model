@@ -1,3 +1,12 @@
+3.8.0 ()
+------------------
+
+- Add Requirement - [SDK] upload model from api define
+
+3.6.0 ()
+------------------
+
+
 3.4.0 (unreleased)
 ------------------
 
