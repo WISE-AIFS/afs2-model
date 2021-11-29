@@ -5,7 +5,7 @@
 
 ### upload_model
 
-How to upload a model file(<3GB) on notebook.  
+How to upload a model file(<5GB) on notebook.  
 
 **Code**
 
@@ -266,3 +266,35 @@ my_models.download_model(save_path='dl_model.h5', model_repository_name='model.h
 ```
 dl_model.h5 
 ```
+
+
+### [Advanced] Download model from blob
+
+**Code**
+```
+from afs import models
+
+# Model object
+afs_models = models()
+
+# Example format, CANNOT COPY AND PASTE.
+# Download model from blob
+afs_models.download_model_from_blob(
+        instance_id="123e4567-e89b-12d3-a456-426655440000", 
+        model_repository_id="7a54b92d-96d7-413c-968e-6c2c75251233", 
+        model_id="b2ea5261-743f-40bb-8e8f-643b2b3eecaf", 
+        save_path="dl_model.h5",
+        blob_endpoint="https://minio.aifs.wise-paas.com",
+        blob_accessKey="xxx",
+        blob_secretKey="xxx",
+        bucket_name="xxx",
+    )
+# List the directory
+!ls
+```
+
+**Output**
+```
+dl_model.h5 
+```
+
