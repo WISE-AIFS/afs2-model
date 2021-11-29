@@ -1,13 +1,19 @@
 3.8.0 ()
 ------------------
 
-- Add Requirement - [SDK] upload model from api define
+- Add Requirement #23140 - [SDK] Download model from blob define
 
-3.6.0 ()
+3.6.2 (2021-11-26)
 ------------------
 
+- Fix boto3 version
 
-3.4.0 (unreleased)
+3.6.0 (2021-07-15)
+------------------
+
+- Add blob info retries
+
+3.4.0 (2021-05-17)
 ------------------
 
 - Add Requirement #16536 - [SDK] encrypt / decrypt model with RSA public/private key

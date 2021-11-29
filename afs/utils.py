@@ -104,7 +104,7 @@ def dowload_file_from_blob(
     retry = 0
     while retry < 3:
         try:
-            progress = ProgressPercentage(blob_client, bucket_name, filename)
+            progress = ProgressPercentage(blob_client, bucket_name, key)
             blob_client.download_file(
                 bucket_name, 
                 key, 
@@ -113,10 +113,10 @@ def dowload_file_from_blob(
             # Download file success
             break
         except Exception as e:
-            print("[ConnectionError] Put object error {} time, exception: {}".format(retry, e))
+            print("[ConnectionError] Get object error {} time, exception: {}".format(retry, e))
             if retry == 3:
                 raise ConnectionError(
-                    "[ConnectionError] Put object error after retry 3 times."
+                    "[ConnectionError] Get object error after retry 3 times."
                 )
             retry += 1
             time.sleep(1)

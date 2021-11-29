@@ -10,6 +10,7 @@ from afs.utils import (upload_file_to_blob, dowload_file_from_blob,
                         encrypt, decrypt)
 from afs.get_env import AfsEnv
 
+UPLOAD_LIMIT_SIZE_GB = 5
 
 class models(AfsEnv):
     def __init__(
@@ -263,7 +264,7 @@ class models(AfsEnv):
         extra_paths = [self.repo_id, self.sub_entity_uri]
         file_size = os.path.getsize(model_path)
         # upload model file
-        if file_size < (5*1024**3):
+        if file_size < (UPLOAD_LIMIT_SIZE_GB*2**30):
             if not (
                 self._blob_endpoint
                 and self._blob_accessKey
@@ -304,7 +305,7 @@ class models(AfsEnv):
             put_payload = {"size": object_size, "blob_record_id": self.blob_record_id}
             resp = self._put(extra_paths=extra_paths, data=put_payload)
         else:
-            raise Exception("The size of the file has exceeded the upper limit of 1G")
+            raise Exception("The size of the file has exceeded the upper limit of {}G".format(UPLOAD_LIMIT_SIZE_GB))
 
         if int(resp.status_code / 100) == 2:
             return resp.json()
@@ -417,21 +418,29 @@ class models(AfsEnv):
         """
         return decrypt(model, decrypt_key)
 
-    def api_download_model(self, instance_id, model_repository_id, model_id, save_path):
+    def download_model_from_blob(
+        self, instance_id, model_repository_id, model_id, save_path,
+        blob_endpoint, blob_accessKey, blob_secretKey, bucket_name):
         """API dowload model
-        : instance_id:
-        : model_repository_id:
-        : model_id:
+        : instance_id: AIFS instance id
+        : model_repository_id: model repository id in instance 
+        : model_id: model id in model repository 
+        : save_path: download filepath
+        : blob_endpoint: blob 
+        : blob_accessKey: 
+        : blob_secretKey:
+        : bucket_name:
         """
         key = "models/{}/{}/{}".format(instance_id, model_repository_id, model_id)
         dowload_file_from_blob(
-            self._blob_endpoint,
-            self._blob_accessKey,
-            self._blob_secretKey,
-            self.bucket_name,
+            blob_endpoint,
+            blob_accessKey,
+            blob_secretKey,
+            bucket_name,
             key,
             save_path,
         )
+        return True
 
     def _create(self, data, files=None, extra_paths=[], form="json"):
         url = utils.urljoin(
