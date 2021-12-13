@@ -432,10 +432,12 @@ class models(AfsEnv):
         : bucket_name:
         """
         key = "models/{}/{}/{}".format(instance_id, model_repository_id, model_id)
+        _blob_accessKey = str(base64.b64decode(blob_accessKey), "utf-8")
+        _blob_secretKey = str(base64.b64decode(blob_secretKey), "utf-8")
         dowload_file_from_blob(
             blob_endpoint,
-            blob_accessKey,
-            blob_secretKey,
+            _blob_accessKey,
+            _blob_secretKey,
             bucket_name,
             key,
             save_path,
