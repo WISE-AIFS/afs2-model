@@ -1,4 +1,4 @@
-3.8.0 ()
+3.8.0 (2021-12-26)
 ------------------
 
 - Add Requirement #23140 - [SDK] Download model from blob define
