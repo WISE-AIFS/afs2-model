@@ -237,6 +237,12 @@ class models(AfsEnv):
             with open(model_path, 'wb') as f:
                 f.write(data)
 
+        # Task tags
+        tags.update({
+            "task_name": os.getenv('task_name', ''),
+            "job_name": os.getenv('PAI_JOB_NAME', '').split('~')[-1]
+            })
+
         # Evaluation result
         evaluation_result.update(extra_evaluation)
         data = dict(

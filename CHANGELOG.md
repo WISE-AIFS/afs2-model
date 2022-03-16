@@ -1,3 +1,8 @@
+3.8.1 ()
+------------------
+
+- Add Requirement - [SDK] Add tag for task and job
+
 3.8.0 (2021-12-26)
 ------------------
 
