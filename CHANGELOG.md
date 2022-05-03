@@ -1,3 +1,8 @@
+3.8.2 ()
+------------------
+
+- Fix Bug - Fix upload models to different model repository
+
 3.8.1 ()
 ------------------
 

@@ -195,15 +195,15 @@ class models(AfsEnv):
         if not os.path.isfile(model_path):
             raise IOError("File not found, model path is not exist.")
 
-        # Check default repo_id
-        if not self.repo_id:
-            # Find model_repo_id from name
-            if model_repository_name:
-                self.get_model_repo_id(model_repository_name)
-                # If not found, create one
-                if not self.repo_id:
-                    self.repo_id = self.create_model_repo(model_repository_name)
-            else:
+        # Find model_repo_id from name
+        if model_repository_name:
+            self.get_model_repo_id(model_repository_name)
+            # If not found, create one
+            if not self.repo_id:
+                self.repo_id = self.create_model_repo(model_repository_name)
+        else:
+            # Check default repo_id
+            if not self.repo_id:
                 raise ValueError("Please enter model_repository_name")
 
         # Fetch tags apm_node
