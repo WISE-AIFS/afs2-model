@@ -1,4 +1,4 @@
-3.8.2 ()
+3.8.2 (2022-03-30)
 ------------------
 
 - Fix Bug - Fix upload models to different model repository

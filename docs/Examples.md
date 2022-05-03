@@ -175,7 +175,7 @@ afs_models.download_model(
 afs_models.download_model(
 	save_path='dl_model.h5', 
 	model_repository_name='model.h5', 
-	model_name='2019-07-10 02:59:11.610828')
+	model_name='3369315c-d652-4c4d-b481-405be2ad5b33')
 
 # List the directory
 !ls
