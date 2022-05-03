@@ -10,6 +10,7 @@ from afs.utils import (upload_file_to_blob, dowload_file_from_blob,
                         encrypt, decrypt)
 from afs.get_env import AfsEnv
 
+UPLOAD_LIMIT_SIZE_GB = 5
 
 class models(AfsEnv):
     def __init__(
@@ -194,15 +195,15 @@ class models(AfsEnv):
         if not os.path.isfile(model_path):
             raise IOError("File not found, model path is not exist.")
 
-        # Check default repo_id
-        if not self.repo_id:
-            # Find model_repo_id from name
-            if model_repository_name:
-                self.get_model_repo_id(model_repository_name)
-                # If not found, create one
-                if not self.repo_id:
-                    self.repo_id = self.create_model_repo(model_repository_name)
-            else:
+        # Find model_repo_id from name
+        if model_repository_name:
+            self.get_model_repo_id(model_repository_name)
+            # If not found, create one
+            if not self.repo_id:
+                self.repo_id = self.create_model_repo(model_repository_name)
+        else:
+            # Check default repo_id
+            if not self.repo_id:
                 raise ValueError("Please enter model_repository_name")
 
         # Fetch tags apm_node
@@ -236,6 +237,12 @@ class models(AfsEnv):
             with open(model_path, 'wb') as f:
                 f.write(data)
 
+        # Task tags
+        tags.update({
+            "task_name": os.getenv('task_name', ''),
+            "job_name": os.getenv('PAI_JOB_NAME', '').split('~')[-1]
+            })
+
         # Evaluation result
         evaluation_result.update(extra_evaluation)
         data = dict(
@@ -263,7 +270,7 @@ class models(AfsEnv):
         extra_paths = [self.repo_id, self.sub_entity_uri]
         file_size = os.path.getsize(model_path)
         # upload model file
-        if file_size < (5*1024**3):
+        if file_size < (UPLOAD_LIMIT_SIZE_GB*2**30):
             if not (
                 self._blob_endpoint
                 and self._blob_accessKey
@@ -304,7 +311,7 @@ class models(AfsEnv):
             put_payload = {"size": object_size, "blob_record_id": self.blob_record_id}
             resp = self._put(extra_paths=extra_paths, data=put_payload)
         else:
-            raise Exception("The size of the file has exceeded the upper limit of 1G")
+            raise Exception("The size of the file has exceeded the upper limit of {}G".format(UPLOAD_LIMIT_SIZE_GB))
 
         if int(resp.status_code / 100) == 2:
             return resp.json()
@@ -416,6 +423,32 @@ class models(AfsEnv):
         :return: object
         """
         return decrypt(model, decrypt_key)
+
+    def download_model_from_blob(
+        self, instance_id, model_repository_id, model_id, save_path,
+        blob_endpoint, blob_accessKey, blob_secretKey, bucket_name):
+        """API dowload model
+        : instance_id: AIFS instance id
+        : model_repository_id: model repository id in instance 
+        : model_id: model id in model repository 
+        : save_path: download filepath
+        : blob_endpoint: blob 
+        : blob_accessKey: 
+        : blob_secretKey:
+        : bucket_name:
+        """
+        key = "models/{}/{}/{}".format(instance_id, model_repository_id, model_id)
+        _blob_accessKey = str(base64.b64decode(blob_accessKey), "utf-8")
+        _blob_secretKey = str(base64.b64decode(blob_secretKey), "utf-8")
+        dowload_file_from_blob(
+            blob_endpoint,
+            _blob_accessKey,
+            _blob_secretKey,
+            bucket_name,
+            key,
+            save_path,
+        )
+        return True
 
     def _create(self, data, files=None, extra_paths=[], form="json"):
         url = utils.urljoin(

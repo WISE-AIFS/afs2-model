@@ -1,17 +1,16 @@
+import sys
+import time
 import json
 import requests
 import logging
-# import botocore.session
-from botocore.client import Config
 import boto3
 import hashlib
-
+import threading
+from botocore.client import Config
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
 
 _logger = logging.getLogger(__name__)
-
-import time
 
 class InvalidStatusCode(Exception):
     def __init__(self, status_code, body):
@@ -70,7 +69,7 @@ def upload_file_to_blob(
         except Exception as e:
             print(
                 ConnectionError(
-                    "[ConnectionError] Put object error {} time, exeception: {}".format(retry, e)
+                    "[ConnectionError] Put object error {} time, exception: {}".format(retry, e)
                 )
             )
             retry += 1
@@ -105,14 +104,19 @@ def dowload_file_from_blob(
     retry = 0
     while retry < 3:
         try:
-            blob_client.download_file(bucket_name, key, filename)
+            progress = ProgressPercentage(blob_client, bucket_name, key)
+            blob_client.download_file(
+                bucket_name, 
+                key, 
+                filename, 
+                Callback=progress)
             # Download file success
             break
         except Exception as e:
-            print("[ConnectionError] Put object error {} time, exeception: {}".format(retry, e))
+            print("[ConnectionError] Get object error {} time, exception: {}".format(retry, e))
             if retry == 3:
                 raise ConnectionError(
-                    "[ConnectionError] Put object error after retry 3 times."
+                    "[ConnectionError] Get object error after retry 3 times."
                 )
             retry += 1
             time.sleep(1)
@@ -148,3 +152,42 @@ def decrypt(
     model = b''.join(res)
 
     return model
+
+class ProgressPercentage(object):
+    ''' Progress Class
+    Class for calculating and displaying download progress
+    '''
+    def __init__(self, client, bucket, filename):
+        ''' Initialize
+        initialize with: file name, file size and lock.
+        Set seen_so_far to 0. Set progress bar length
+        '''
+        self._filename = filename
+        self._size = client.head_object(Bucket=bucket, Key=filename)['ContentLength']
+        self._seen_so_far = 0
+        self._lock = threading.Lock()
+        self.prog_bar_len = 80
+
+    def __call__(self, bytes_amount):
+        ''' Call
+        When called, increments seen_so_far by bytes_amount,
+        calculates percentage of seen_so_far/total file size 
+        and prints progress bar.
+        '''
+        # To simplify we'll assume this is hooked up to a single filename.
+        with self._lock:
+            self._seen_so_far += bytes_amount
+            ratio = round((float(self._seen_so_far) / float(self._size)) * (self.prog_bar_len - 6), 1)
+            current_length = int(round(ratio))
+
+            percentage = round(100 * ratio / (self.prog_bar_len - 6), 1)
+
+            bars = '+' * current_length
+            output = bars + ' ' * (self.prog_bar_len - current_length - len(str(percentage)) - 1) + str(percentage) + '%'
+
+            if self._seen_so_far != self._size:
+                sys.stdout.write(output + '\r')
+            else:
+                sys.stdout.write(output + '\n')
+            sys.stdout.flush()
+            

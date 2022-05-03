@@ -18,7 +18,17 @@ def model_file():
 
 @pytest.fixture(scope="session")
 def model_repository_name():
-    return "mr_{0}".format(time.strftime("%H-%M-%S"))
+    return "mr_{0}".format(time.strftime("%H%M%S"))
+
+
+@pytest.fixture(scope="session")
+def blob_info():
+    return {
+        'blob_endpoint': os.getenv('blob_endpoint'),
+        'blob_accessKey': os.getenv('blob_accessKey'),
+        'blob_secretKey': os.getenv('blob_secretKey'),
+        'bucket_name': os.getenv('bucket_name'),
+        }
 
 
 @pytest.fixture(scope="function")
@@ -173,3 +183,4 @@ def delete_mr_and_metafile(afs_models, model_repository_name):
         )
     except Exception as e:
         pass
+

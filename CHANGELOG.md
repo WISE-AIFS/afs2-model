@@ -1,4 +1,29 @@
-3.4.0 (unreleased)
+3.8.2 (2022-03-30)
+------------------
+
+- Fix Bug - Fix upload models to different model repository
+
+3.8.1 ()
+------------------
+
+- Add Requirement - [SDK] Add tag for task and job
+
+3.8.0 (2021-12-26)
+------------------
+
+- Add Requirement #23140 - [SDK] Download model from blob define
+
+3.6.2 (2021-11-26)
+------------------
+
+- Fix boto3 version
+
+3.6.0 (2021-07-15)
+------------------
+
+- Add blob info retries
+
+3.4.0 (2021-05-17)
 ------------------
 
 - Add Requirement #16536 - [SDK] encrypt / decrypt model with RSA public/private key

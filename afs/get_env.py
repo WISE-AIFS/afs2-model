@@ -3,7 +3,8 @@ import requests
 import warnings
 import afs.utils as utils
 import afs
-
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util import Retry
 
 class AfsEnv:
     def __init__(
@@ -71,83 +72,57 @@ class AfsEnv:
         else:
             raise ConnectionError("Cannot fetch AFS server from {}.".format(url))
 
-    def _get_blob_bucket(self):
-        url = utils.urljoin(self.afs_url, "info", "bucket", extra_paths=[])
-        response = self.session.get(
-            url, params={"auth_code": self.auth_code}, verify=False
-        )
-        if response.status_code == 200:
-            bucket = response.json()["bucket"]
-            return bucket
-        else:
-            print("Not found {}, {}".format(url, response.text))
-            return None
 
     def _get_blobstore_credential(self):
         blobstore = os.getenv("blobstore", None)
-        if blobstore:
+        blob_id = os.getenv('blob_id')
+        blob_record_id = os.getenv('blob_record_id')
+        
+        if blob_id and blob_record_id:
+            self.blob_id = blob_id
+            self.blob_record_id = blob_record_id
+        elif blobstore:
             try:
                 blobstore = json.loads(blobstore)
-
                 if not blobstore.get('credentials'):
                     self.blob_id = blobstore.get('blob_id')
                     self.blob_record_id = blobstore.get('blob_record_id')
-                    self.openpai_id = os.getenv('openpai_id')
-                    pai_job_name = os.getenv('PAI_JOB_NAME')
-                    url = utils.urljoin(
-                        self.target_endpoint, "instances", self.instance_id, "blobs", self.blob_id, "info", extra_paths=[])
-                    params = {
-                        'openpai_id': self.openpai_id, 
-                        'pai_job_name': pai_job_name,
-                    }
-                    if not self.token:
-                        params.update({"auth_code": self.auth_code})
-
-                    from requests.adapters import HTTPAdapter
-                    from requests.packages.urllib3.util import Retry
-                    retries = Retry(
-                        total=5, 
-                        method_whitelist=frozenset(['GET', 'POST']), 
-                        status_forcelist=[404, 500, 502, 503, 504]
-                        )
-                    self.session.mount('https://', HTTPAdapter(max_retries=retries))
-
-                    response = self.session.get(
-                        url, params=params, verify=False
-                    )
-                    if response.status_code / 100 == 2:
-                        blobstore = response.json()
-                        self.blob_record_id = blobstore.get('blob_record_id')
-                        self.bucket_name = blobstore.get('bucket_name')
-                        self.blob_endpoint = blobstore.get('endpoint')
-                        self.blob_accessKey = blobstore.get('access_key')
-                        self.blob_secretKey = blobstore.get('secret_key')
-                    else:
-                        print("Not found {}, {}".format(url, response.text))
-                else:
-                    self.blob_record_id = blobstore.get('blob_record_id')
-                    credentials = blobstore.get('credentials')
-                    self.blob_endpoint = credentials.get('endpoint')
-                    self.blob_accessKey = credentials.get('accessKey')
-                    self.blob_secretKey = credentials.get('secretKey')
-                    self.bucket_name = credentials.get('bucket_name')
-                    
             except Exception as e:
-                print('The env blobstore format is error.\n \
+                raise EnvironmentError('The env blobstore format is error.\n \
                     Please set blob credentials manually.\n \
                     Reference models.set_blob_credential usage. \n \
                     Exception: {}'.format(e))
         else:
-            print('Please set blob credentials manually.\n \
+            raise EnvironmentError('Please set blob credentials manually.\n \
                 Reference models.set_blob_credential usage.')
+        
+        self.openpai_id = os.getenv('openpai_id')
+        pai_job_name = os.getenv('PAI_JOB_NAME')
+        url = utils.urljoin(
+            self.target_endpoint, "instances", self.instance_id, "blobs", self.blob_id, "info", extra_paths=[])
+        params = {
+            'openpai_id': self.openpai_id, 
+            'pai_job_name': pai_job_name,
+        }
+        if not self.token:
+            params.update({"auth_code": self.auth_code})
 
-    def check_blob_connection(self):
-        if self.blob_endpoint and \
-        self.blob_accessKey and \
-        self.blob_secretKey and \
-        self.blob_record_id and \
-        self.bucket_name:
-            return True
+        retries = Retry(
+            total=5, 
+            method_whitelist=frozenset(['GET', 'POST']), 
+            status_forcelist=[404, 500, 502, 503, 504]
+            )
+        self.session.mount('https://', HTTPAdapter(max_retries=retries))
+
+        response = self.session.get(
+            url, params=params, verify=False
+        )
+        if response.status_code / 100 == 2:
+            blobstore = response.json()
+            self.blob_record_id = blobstore.get('blob_record_id')
+            self.bucket_name = blobstore.get('bucket_name')
+            self.blob_endpoint = blobstore.get('endpoint')
+            self.blob_accessKey = blobstore.get('access_key')
+            self.blob_secretKey = blobstore.get('secret_key')
         else:
-            raise ValueError("No values in blob_endpoint, blob_accessKey, blob_secretKey, blob_record_id, bucket_name. \
-                {}, {}, {}, {}, {}".format(self.blob_endpoint, self.blob_accessKey, self.blob_secretKey, self.blob_record_id, self.bucket_name))
+            raise ConnectionError("Not found {}, {}".format(url, response.text))
