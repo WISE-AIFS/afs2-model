@@ -1,13 +1,9 @@
 import json
-import logging
 import os
-from io import BytesIO
 import afs.utils as utils
 import re
 import base64
-from uuid import uuid4
-from afs.utils import (upload_file_to_blob, dowload_file_from_blob,
-                        encrypt, decrypt)
+from afs.utils import (upload_file_to_blob, dowload_file_from_blob)
 from afs.get_env import AfsEnv
 
 UPLOAD_LIMIT_SIZE_GB = 5
@@ -233,7 +229,7 @@ class models(AfsEnv):
             data = None
             with open(model_path, 'rb') as f:
                 data = f.read()
-                data = encrypt(data, encrypt_key)
+                # data = encrypt(data, encrypt_key)
             with open(model_path, 'wb') as f:
                 f.write(data)
 
@@ -422,7 +418,8 @@ class models(AfsEnv):
         :param str decrypt_key: use decrypt_key to decrypt the model
         :return: object
         """
-        return decrypt(model, decrypt_key)
+        return model
+        # return decrypt(model, decrypt_key)
 
     def download_model_from_blob(
         self, instance_id, model_repository_id, model_id, save_path,
